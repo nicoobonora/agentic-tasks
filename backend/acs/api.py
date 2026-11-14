@@ -1,6 +1,8 @@
 """Generic discussion API; the optional charging data app has its own OpenAPI."""
 import asyncio
 import json
+import logging
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
@@ -9,33 +11,72 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import os
 from . import discussion as engine
 from . import models as m
-from .db import transaction, documents
+from .db import transaction
 from .errors import Conflict
 from .providers import settings
 
-async def worker():
-    while True:
+def running_ids():
+    with transaction() as db:
+        return [row['id'] for row in db.execute(
+            """SELECT d.id FROM documents d LEFT JOIN discussion_leases l ON l.run_id=d.id
+               WHERE d.kind=? AND json_extract(d.payload, '$.state')='running'
+               AND (l.run_id IS NULL OR l.expires_at<=?)
+               ORDER BY json_extract(d.payload, '$.updated_at'), d.id""",
+            (engine.KIND, time.time()))]
+
+
+def event_batch(run_id, cursor):
+    with transaction() as db:
+        return db.execute('SELECT * FROM events WHERE run_id=? AND sequence>? ORDER BY sequence LIMIT 100',
+                          (run_id, cursor)).fetchall()
+
+
+def worker_concurrency():
+    return max(1, min(32, int(os.getenv('ACS_WORKER_CONCURRENCY', '4'))))
+
+
+async def worker(concurrency=None):
+    concurrency = concurrency or worker_concurrency()
+    pending = {}
+
+    async def turn(run_id):
         try:
-            with transaction() as db:
-                ids = [r['id'] for r in documents(db, engine.KIND) if r['state'] == 'running']
-            for run_id in ids:
-                await asyncio.to_thread(engine.step, run_id)
-        except asyncio.CancelledError:
-            raise
+            await asyncio.to_thread(engine.step, run_id)
         except Exception:
-            import logging
-            logging.exception('Discussion worker iteration failed; pending runs remain persisted')
-        await asyncio.sleep(.2)
+            logging.exception('Discussion turn failed for run %s', run_id)
+
+    try:
+        while True:
+            pending = {ident: task for ident, task in pending.items() if not task.done()}
+            try:
+                ids = await asyncio.to_thread(running_ids)
+                for run_id in ids:
+                    if len(pending) >= concurrency:
+                        break
+                    if run_id not in pending:
+                        pending[run_id] = asyncio.create_task(turn(run_id))
+            except Exception:
+                logging.exception('Discussion worker iteration failed; pending runs remain persisted')
+            await asyncio.sleep(.2)
+    finally:
+        # Cancelling to_thread does not stop its thread. Drain owned turns before
+        # shutdown so a graceful stop cannot leave untracked database writers.
+        await asyncio.gather(*pending.values())
 
 @asynccontextmanager
 async def lifespan(app):
-    job = asyncio.create_task(worker())
-    yield
-    job.cancel()
+    # Reject malformed configuration at startup, not in a detached worker.
+    concurrency = worker_concurrency()
+    settings()
+    job = asyncio.create_task(worker(concurrency))
     try:
-        await job
-    except asyncio.CancelledError:
-        pass
+        yield
+    finally:
+        job.cancel()
+        try:
+            await job
+        except asyncio.CancelledError:
+            pass
 
 app = FastAPI(title='Task Discussion API', version='2.0.0', lifespan=lifespan,
               description='Submit any task, discuss, clarify, and deliver a versioned proposal. No execution.')
@@ -84,7 +125,7 @@ def retry(run_id: str, body: m.Command):
 
 @app.get('/api/v2/runs/{run_id}/events', responses=ERRORS, response_class=StreamingResponse)
 async def events(run_id: str, request: Request, after: int = Query(0, ge=0), once: bool = False):
-    read_run(run_id)
+    await asyncio.to_thread(read_run, run_id)
     try:
         cursor = max(after, int(request.headers.get('Last-Event-ID', '0')))
     except ValueError:
@@ -92,8 +133,7 @@ async def events(run_id: str, request: Request, after: int = Query(0, ge=0), onc
     async def stream():
         nonlocal cursor
         while not await request.is_disconnected():
-            with transaction() as db:
-                rows = db.execute('SELECT * FROM events WHERE run_id=? AND sequence>? ORDER BY sequence LIMIT 100', (run_id,cursor)).fetchall()
+            rows = await asyncio.to_thread(event_batch, run_id, cursor)
             for row in rows:
                 cursor = row['sequence']
                 event = m.StreamEvent(sequence=cursor, run_id=run_id, data=json.loads(row['payload']))

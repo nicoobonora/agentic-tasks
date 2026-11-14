@@ -1,6 +1,8 @@
 import gzip
+import hashlib
 import json
 import os
+import zlib
 from datetime import datetime, timezone, timedelta
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
@@ -100,14 +102,20 @@ def evidence_raw(evidence_id: str):
             return Response(json.dumps(item, sort_keys=True), media_type="application/json")
         path = ROOT / row["path"]
         catalog_data.require(path.exists(), "not_found", "Copia raw non disponibile su questa macchina")
-        return Response(gzip.decompress(path.read_bytes()), media_type="application/json")
+        try:
+            raw = gzip.decompress(path.read_bytes())
+        except (OSError, EOFError, zlib.error):
+            raise catalog_data.Conflict('corrupt_evidence', 'Copia raw danneggiata')
+        catalog_data.require(hashlib.sha256(raw).hexdigest() == row['sha256'],
+                             'corrupt_evidence', 'Checksum della prova raw non valido')
+        return Response(raw, media_type="application/json")
 
 @app.get("/api/v1/live", response_model=m.LiveData)
 def live(refresh: bool = False):
     mode, warning = "snapshot", None
     with transaction() as db:
         if refresh:
-            client = ODHClient(db)
+            client = ODHClient(db, timeout=5, attempts=1)
             try:
                 client.metadata("Neogy-AMPECO", network=True)
                 client.observations("Neogy-AMPECO", network=True, latest=True)

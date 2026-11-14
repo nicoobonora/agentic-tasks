@@ -12,7 +12,7 @@ make api
 # Swagger: http://localhost:8000/docs
 ```
 
-Per modelli reali, impostare nel server `OPENAI_API_KEY` e `ACS_MODEL` prima dell'avvio. Il modello deve supportare Structured Outputs. La modalità predefinita è `model`; senza credenziali restituisce un errore esplicito, non passa al mock.
+Per modelli reali, impostare nel server `OPENAI_API_KEY` e `ACS_MODEL` prima dell'avvio. Il modello deve supportare Structured Outputs. Omettendo `mode`, il backend usa automaticamente la demo `mock` se manca chiave o modello; altrimenti usa `model`. La richiesta esplicita `mode=model` senza configurazione restituisce 503. Gli errori delle chiamate reali non vengono sostituiti con risultati mock.
 
 Esempio di sviluppo senza credenziali:
 

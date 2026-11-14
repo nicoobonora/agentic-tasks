@@ -2,6 +2,7 @@
 import json
 import os
 import sqlite3
+import time
 from pathlib import Path
 from contextlib import contextmanager
 
@@ -56,9 +57,24 @@ def connect(path=None):
     path.parent.mkdir(parents=True, exist_ok=True)
     db = sqlite3.connect(path, timeout=30)
     db.row_factory = sqlite3.Row
-    db.execute("PRAGMA foreign_keys=ON")
-    db.executescript(SCHEMA)
-    return db
+    try:
+        db.execute("PRAGMA foreign_keys=ON")
+        deadline = time.monotonic() + 30
+        while True:
+            try:
+                # Concurrent first connections can collide while enabling WAL;
+                # that PRAGMA does not consistently honor SQLite's busy timeout.
+                # All schema statements are idempotent, so retry only contention.
+                db.executescript(SCHEMA)
+                return db
+            except sqlite3.OperationalError as exc:
+                code = getattr(exc, 'sqlite_errorcode', 0) & 0xff
+                if code not in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(.05)
+    except BaseException:
+        db.close()
+        raise
 
 @contextmanager
 def transaction(path=None):

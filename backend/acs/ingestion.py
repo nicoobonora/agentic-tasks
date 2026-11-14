@@ -42,11 +42,14 @@ def source_filter(source, network=False):
     return f'and(sorigin.eq.{json.dumps(source)},or({",".join(terms)}))'
 
 class ODHClient:
-    def __init__(self, db, raw_dir=None, client=None):
+    def __init__(self, db, raw_dir=None, client=None, *, timeout=90, attempts=4):
+        if timeout <= 0 or not 1 <= attempts <= 4:
+            raise ValueError('Expected a positive timeout and 1..4 attempts')
         self.db = db
         self.raw_dir = Path(raw_dir or ROOT / "data/raw")
         self.raw_dir.mkdir(parents=True, exist_ok=True)
-        self.client = client or httpx.Client(timeout=90, follow_redirects=True)
+        self.client = client or httpx.Client(timeout=timeout, follow_redirects=True)
+        self.attempts = attempts
 
     @staticmethod
     def storage_path(path):
@@ -63,7 +66,7 @@ class ODHClient:
             if hashlib.sha256(raw).hexdigest() != meta["sha256"]:
                 raise ValueError(f"Corrupt cache: {manifest}")
         else:
-            for attempt in range(4):
+            for attempt in range(self.attempts):
                 try:
                     response = self.client.get(url)
                     if response.status_code == 429 or response.status_code >= 500:
@@ -76,7 +79,7 @@ class ODHClient:
                     break
                 except (httpx.TransportError, httpx.HTTPStatusError) as exc:
                     retryable = not isinstance(exc, httpx.HTTPStatusError) or exc.response.status_code == 429 or exc.response.status_code >= 500
-                    if not retryable or attempt == 3:
+                    if not retryable or attempt == self.attempts - 1:
                         raise
                     time.sleep(min(60, max(2 ** attempt, float(exc.response.headers.get("Retry-After", 0))) if isinstance(exc, httpx.HTTPStatusError) else 2 ** attempt))
             sha = hashlib.sha256(raw).hexdigest()

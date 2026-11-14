@@ -8,7 +8,7 @@ import httpx
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--mode',choices=['mock','model'],default='mock')
+    parser.add_argument('--mode',choices=['auto','mock','model'],default='mock')
     parser.add_argument('--base-url',default='http://127.0.0.1:8000')
     args=parser.parse_args()
     with httpx.Client(base_url=args.base_url,timeout=30) as client:
@@ -18,7 +18,10 @@ def main():
             'context':'Usare risorse già disponibili. Il primo risultato desiderato è una guida di due pagine.',
             'attachments':[{'name':'Disponibilità','text':'I volontari sono disponibili sabato mattina.'}]}]
         for task in tasks:
-            response=client.post('/api/v2/runs',json={'task':task,'mode':args.mode,'max_rounds':2,'idempotency_key':str(uuid4())})
+            body={'task':task,'max_rounds':2,'idempotency_key':str(uuid4())}
+            if args.mode != 'auto':
+                body['mode'] = args.mode
+            response=client.post('/api/v2/runs',json=body)
             response.raise_for_status();run=response.json();deadline=time.monotonic()+900;answers=0
             while time.monotonic()<deadline:
                 response=client.get('/api/v2/runs/'+run['id']);response.raise_for_status();run=response.json()

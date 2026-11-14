@@ -31,14 +31,20 @@ def save(db, run):
     db.execute('INSERT INTO events(run_id,payload) VALUES (?,?)', (run.id, json.dumps(value)))
     return run
 
+def request_fingerprint(body):
+    payload = body.model_dump(mode='json')
+    if isinstance(body, CreateRun) and 'mode' not in body.model_fields_set:
+        payload.pop('mode')  # Automatic selection is distinct from explicit model.
+    return fingerprint(payload)
+
 def replay(db, key, body):
     prior = get(db, 'discussion_commands', key)
     if prior:
-        require(prior['hash'] == fingerprint(body.model_dump(mode='json')), 'idempotency_conflict', 'Key reused with a different request')
+        require(prior['hash'] == request_fingerprint(body), 'idempotency_conflict', 'Key reused with a different request')
         return Run.model_validate(prior['result'])
 
 def record(db, key, body, run):
-    put(db, 'discussion_commands', key, {'hash': fingerprint(body.model_dump(mode='json')), 'result': run.model_dump(mode='json')})
+    put(db, 'discussion_commands', key, {'hash': request_fingerprint(body), 'result': run.model_dump(mode='json')})
 
 def evidence(ident, name, text, url=None, origin='user_provided'):
     return Evidence(id=ident, name=name, text=text, url=url, origin=origin,
@@ -52,15 +58,18 @@ def create(body: CreateRun):
         if previous:
             return previous
         config = settings()
-        require(body.mode == 'mock' or bool(config['key'] and config['model']), 'model_not_configured',
+        mode = body.mode
+        if 'mode' not in body.model_fields_set and not (config['key'] and config['model']):
+            mode = 'mock'
+        require(mode == 'mock' or bool(config['key'] and config['model']), 'model_not_configured',
                 'Set OPENAI_API_KEY and ACS_MODEL, or explicitly request mode=mock.', 503)
         sources = [evidence('task', body.task.title, body.task.description)]
         if body.task.context:
             sources.append(evidence('context', 'Task context', body.task.context))
         sources.extend(evidence(f'attachment-{i+1}', a.name, a.text, a.url,
                        'user_provided' if a.text else 'reference_only') for i, a in enumerate(body.task.attachments))
-        run = Run(id=str(uuid4()), task=body.task, mode=body.mode, model=config['model'] if body.mode == 'model' else None,
-                  notice='MOCK: deterministic development fixture; no model calls.' if body.mode == 'mock' else 'Model-backed discussion. Actions are proposals only and are never executed.',
+        run = Run(id=str(uuid4()), task=body.task, mode=mode, model=config['model'] if mode == 'model' else None,
+                  notice='MOCK: deterministic development fixture; no model calls.' if mode == 'mock' else 'Model-backed discussion. Actions are proposals only and are never executed.',
                   state='running', max_rounds=body.max_rounds or config['max_rounds'], evidence=sources,
                   created_at=now(), updated_at=now())
         save(db, run)
@@ -173,7 +182,7 @@ def apply_turn(run, role, result):
         run.next_role = ROLES[ROLES.index(role)+1]
         return
     unresolved = any(o.status == 'open' for o in run.objections)
-    needs_revision = any(m.content.needs_revision for m in run.messages if m.cycle == run.cycle and m.round == run.round and m.actor != 'analyst')
+    needs_revision = any(m.content.needs_revision for m in run.messages if m.cycle == run.cycle and m.round == run.round)
     if unresolved or needs_revision or not run.proposal:
         if run.round >= run.max_rounds:
             limit_question(run)
