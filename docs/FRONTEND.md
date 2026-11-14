@@ -117,3 +117,105 @@ riepilogo dell'ultima previsione e dell'ultima analisi per la discussione; i tas
 precedenti conservano il proprio snapshot e non si aggiornano in silenzio.
 Non confondere la data di generazione con l'origine del forecast: un esperimento
 ricalcolato oggi su un cutoff passato non è una previsione sul periodo attuale.
+
+## Workspace desktop (frontend)
+
+Avvio della UI senza server o credenziali:
+
+```sh
+npm ci
+npm run dev
+# http://127.0.0.1:5173
+npm run build
+npx playwright install chromium  # solo la prima volta
+npm run test:frontend
+```
+
+La UI ha tre colonne: catalogo task locale, area di discussione e risultati.
+Il mock locale è il default; non effettua richieste HTTP né chiamate AI e si azzera
+al refresh. I tre task sono generici e fittizi; il terzo dimostra un errore e il
+retry esplicito. I dialoghi sono script dimostrativi, non repliche del motore
+backend né risultati verificati. Le fonti e le preferenze umane non sono prove
+esterne. È possibile lavorare su più task e selezionarne la discussione.
+
+### Mappa azioni → flussi esistenti
+
+Tutti i percorsi qui sotto sono relativi a `/api/v2`. Non sono introdotti nuovi
+endpoint o stati di orchestrazione.
+
+| Azione frontend | Client / endpoint | Transizione e rappresentazione |
+| --- | --- | --- |
+| Consultare la colonna sinistra | Fixture `tasks` in `frontend/mock.ts` | Catalogo locale, nessuna API catalogo prevista |
+| Trascinare al centro o premere “Avvia task” | `createRun` / POST `/runs` con task, mode esplicito, max_rounds e chiave idempotente | La card lascia il catalogo solo dopo la risposta; apertura del run al centro |
+| Seguire ruoli e dialogo | `subscribe` / GET `/runs/{id}/events` | Snapshot completi; running mostra ciclo, round, ruolo prossimo, messaggi pubblici e bozza |
+| Recuperare stato / riconnettersi | `run` / GET `/runs/{id}` | GET periodica ogni 5 secondi in modalità API, SSE con riconnessione nativa e deduplicazione nel client |
+| Selezionare un task avviato o un risultato | Stato locale, stessa subscription | Nessuna nuova elaborazione; apertura del dettaglio |
+| Leggere contesto e fonti | `run.evidence` nello snapshot | Mostra origine e testo; un riferimento URL non è una fonte letta |
+| Scegliere un’opzione o inviare testo libero | `answer` / POST `/runs/{id}/answers` | awaiting_input → running; ID domanda e opzioni dal server, versione corrente del run e identità utente |
+| Finalizzare con disaccordi al limite round | Stessa answer, `finalize_with_unresolved: true` | Disponibile solo per round_limit con bozza; proposta conditional, obiezioni ancora visibili |
+| Ricevere una proposta | Snapshot `proposal_ready` | Proposta nella discussione centrale, tab “Da approvare”; nessuna approvazione automatica |
+| Approvare il documento | `approve` / POST `/runs/{id}/approve` | proposal_ready → approved, colonna destra “Completati”; disabilitato con obiezioni bloccanti aperte |
+| Ritentare un turno fallito | `retry` / POST `/runs/{id}/retry` | failed → running; scelta esplicita, mai fallback a mock |
+| Gestire versione/domanda superata | 409 + GET `/runs/{id}` | Mostra errore e stato aggiornato, richiede nuova scelta; nessuna riconferma automatica |
+
+I comandi conservano la stessa chiave per ripetizioni dello stesso payload dopo
+errori di rete, per tutta la sessione della pagina. Dopo una risposta si rilegge
+lo stato corrente (un replay può essere vecchio). Non cambiare il payload per
+ritentare una richiesta di esito incerto. Il registro locale in modalità API
+memorizza gli ID dei run avviati da questo browser; non è un elenco globale.
+Le chiavi delle operazioni incerte non sopravvivono al refresh.
+
+### Collegamento al backend
+
+`frontend/main.ts` sceglie tra `createMockClient()` e l'esistente `createClient()`;
+entrambi espongono lo stesso tipo e usano i contratti generati senza modificarli.
+Per collegarsi al server mock separato:
+
+```sh
+VITE_DATA_SOURCE=api VITE_API_BASE_URL=http://localhost:8001 VITE_RUN_MODE=mock npm run dev
+```
+
+Per richieste modello reali, impostare **esplicitamente** `VITE_RUN_MODE=model` e
+la base URL del server configurato. L'intestazione distingue trasporto locale/API
+e modalità model/mock; ogni run mostra anche `mode`, `model` e `notice` ricevuti.
+In modalità model i task e le risposte sono inviati al servizio modello tramite
+backend. Non inserire chiavi API nelle variabili VITE: sono pubbliche nel bundle.
+In produzione, senza base URL, il client usa la stessa origine della pagina.
+
+### Integrazioni da concordare, non implementate nel backend
+
+- Il catalogo task non ha un contratto API: per task reali servono sorgente,
+  identificatori e regole di assegnazione. Le fixture non inventano tale endpoint.
+- Non esiste un endpoint di elenco run: la UI recupera solo gli ID conosciuti nel
+  browser. Per storico condiviso, altri dispositivi o altri utenti occorre
+  definire un contratto di elenco/ricerca e il legame task → run.
+- Il backend include già CORS per `http://127.0.0.1:5173` e
+  `http://localhost:5173`. Per origini diverse occorre configurare
+  `ACS_CORS_ORIGINS`, oppure esporre `/api` sulla stessa origine tramite reverse
+  proxy. Nessuna modifica backend o proxy implicito è inclusa.
+- L'actor è un nome dichiarato, non un'identità autenticata; autenticazione e
+  autorizzazione non sono definite da questi contratti.
+- Non sono previsti cancellazione, sospensione, riassegnazione degli agenti,
+  modifica del task avviato, esecuzione delle raccomandazioni o trascinamento
+  manuale verso “Finiti”. Non vengono simulati come capacità backend.
+
+Test frontend: drag-and-drop fino all'approvazione, risposta libera, retry dopo
+fallimento, più run contemporanei con conservazione del testo durante gli
+aggiornamenti, replay idempotente e rifiuto di versioni superate. Questi test
+usano il simulatore locale. Un ulteriore test del client HTTP con risposte
+intercettate verifica la conservazione della chiave dopo un errore di rete,
+la gestione di 409 senza retry automatico e il recupero degli ID dopo refresh.
+Non attestano la qualità del modello o la connettività con un backend reale. La finalizzazione round_limit viene predisposta sul
+contratto ma non è prodotta dai tre scenari dimostrativi iniziali.
+
+### Interfaccia essenziale
+
+Il workspace occupa tutta la finestra, senza barra superiore o inferiore. A sinistra
+compaiono solo i ticket (titolo, maniglia e pulsante accessibile “Avvia task”).
+Il centro accoglie il trascinamento, le discussioni e le richieste umane; le schede
+permettono di cambiare task. Le proposte da approvare rimangono al centro, mentre
+la colonna “Completati” contiene solo proposte approvate, non azioni eseguite.
+Modalità mock/model resta visibile nella colonna agenti. Contesto, fonti, notice,
+metadati e motivazioni con ipotesi sono consultabili in sezioni espandibili;
+le obiezioni rimangono esplicite. Su schermi piccoli le tre aree si impilano e
+il pulsante sul ticket offre un’alternativa al trascinamento.
