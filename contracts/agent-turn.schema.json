@@ -1,0 +1,334 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "rationale",
+        "evidence_ids"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "supported",
+            "assumption",
+            "estimate"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement",
+        "basis",
+        "evidence_ids"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Draft": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "recommended_actions": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Recommended Actions",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "recommended_actions",
+        "risks",
+        "unresolved_questions"
+      ],
+      "title": "Draft",
+      "type": "object"
+    },
+    "ObjectionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "target_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Target Message Id"
+        },
+        "concern": {
+          "title": "Concern",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_message_id",
+        "concern",
+        "explanation",
+        "blocking",
+        "evidence_ids"
+      ],
+      "title": "ObjectionDraft",
+      "type": "object"
+    },
+    "Option": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "explanation"
+      ],
+      "title": "Option",
+      "type": "object"
+    },
+    "QuestionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "maxItems": 5,
+          "minItems": 2,
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "explanation",
+        "options"
+      ],
+      "title": "QuestionDraft",
+      "type": "object"
+    },
+    "Resolution": {
+      "additionalProperties": false,
+      "properties": {
+        "objection_id": {
+          "title": "Objection Id",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "objection_id",
+        "explanation",
+        "evidence_ids"
+      ],
+      "title": "Resolution",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "applicability": {
+      "enum": [
+        "applicable",
+        "not_applicable"
+      ],
+      "title": "Applicability",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "proposal",
+        "review",
+        "objection",
+        "revision",
+        "not_applicable"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "explanation": {
+      "title": "Explanation",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "objections": {
+      "items": {
+        "$ref": "#/$defs/ObjectionDraft"
+      },
+      "title": "Objections",
+      "type": "array"
+    },
+    "resolutions": {
+      "items": {
+        "$ref": "#/$defs/Resolution"
+      },
+      "title": "Resolutions",
+      "type": "array"
+    },
+    "draft": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Draft"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "question": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuestionDraft"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "needs_revision": {
+      "title": "Needs Revision",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "applicability",
+    "kind",
+    "text",
+    "explanation",
+    "evidence_ids",
+    "claims",
+    "objections",
+    "resolutions",
+    "draft",
+    "question",
+    "needs_revision"
+  ],
+  "title": "AgentTurn",
+  "type": "object"
+}

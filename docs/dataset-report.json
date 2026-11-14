@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-11-14T00:25:46.279Z",
+  "counts": {
+    "sites": 51,
+    "plugs": 183,
+    "observations": 669197,
+    "source_pages": 199,
+    "transitions": 498217,
+    "heartbeats": 669197,
+    "episodes": 111870
+  },
+  "sources": [
+    {
+      "source": "Neogy",
+      "plugs": 17,
+      "observations": 428696,
+      "first_observation": "2024-11-19T16:00:07.317Z",
+      "last_observation": "2026-06-09T08:00:33.522Z"
+    },
+    {
+      "source": "Neogy-AMPECO",
+      "plugs": 166,
+      "observations": 240501,
+      "first_observation": "2026-07-28T00:04:56.499Z",
+      "last_observation": "2026-11-14T00:22:16.057Z"
+    }
+  ],
+  "selection": {
+    "base_url": "https://mobility.api.opendatahub.com/v2",
+    "station_type": "EChargingPlug",
+    "data_type": "echarging-plug-status-ocpi",
+    "sources": [
+      "Neogy-AMPECO",
+      "Neogy"
+    ],
+    "sites": [
+      "BZ_C_RISPARMIO_01",
+      "BZ_PIAVE_01",
+      "RENON_01"
+    ],
+    "context_sites": [
+      "BZ_C_RISPARMIO_02",
+      "BZ_BOEHLER_01",
+      "CORNEDO"
+    ],
+    "network_city_regex": "BOLZANO|BOZEN",
+    "current_start": "2026-07-28T00:00:00Z",
+    "legacy_start": "2024-11-01T00:00:00Z",
+    "legacy_end": "2026-06-10T00:00:00Z",
+    "window_days": 5,
+    "page_size": 10000,
+    "heartbeat_max_gap_minutes": 120,
+    "short_episode_seconds": 120,
+    "long_episode_hours": 48,
+    "prolonged_unavailability_days": 14,
+    "network_bbox": [
+      11.27539,
+      46.444913,
+      11.432577,
+      46.530384,
+      4326
+    ]
+  },
+  "limitations": [
+    "Counts reflect this download, not the figures quoted in the plan.",
+    "Historical and current feeds are separate; station-name matching is not a validated merge.",
+    "No energy, official sessions or demand forecasts are observed.",
+    "Gaps over the configured heartbeat threshold split intervals. DC coupling is flagged for review.",
+    "Analysis tables and agent decisions are not computed by the foundation."
+  ]
+}

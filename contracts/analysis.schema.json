@@ -1,0 +1,404 @@
+{
+  "$defs": {
+    "Cell": {
+      "additionalProperties": false,
+      "properties": {
+        "p": {
+          "enum": [
+            1.0,
+            0.5
+          ],
+          "title": "P",
+          "type": "number"
+        },
+        "quantile": {
+          "enum": [
+            "p50",
+            "high"
+          ],
+          "title": "Quantile",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "available",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "demand_per_hour": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Demand Per Hour"
+        },
+        "mean_occupancy_hours": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mean Occupancy Hours"
+        },
+        "access_current": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Current"
+        },
+        "access_plus_2": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Plus 2"
+        },
+        "access_plus_4": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Plus 4"
+        },
+        "access_restored": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Restored"
+        },
+        "required_total_capacity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Total Capacity"
+        },
+        "minimum_increment": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                2,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Increment"
+        }
+      },
+      "required": [
+        "p",
+        "quantile",
+        "status"
+      ],
+      "title": "Cell",
+      "type": "object"
+    },
+    "ControlTable": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "site_name": {
+          "enum": [
+            "BZ_C_RISPARMIO_01",
+            "BZ_PIAVE_01",
+            "RENON_01"
+          ],
+          "title": "Site Name",
+          "type": "string"
+        },
+        "group": {
+          "const": "AC_22",
+          "default": "AC_22",
+          "title": "Group",
+          "type": "string"
+        },
+        "origin": {
+          "const": "derived",
+          "default": "derived",
+          "title": "Origin",
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "timestral",
+            "seasonal_naive",
+            "seasonal_naive_trend",
+            "reserve"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date",
+          "title": "Period Start",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "title": "Period End",
+          "type": "string"
+        },
+        "measure_nature": {
+          "title": "Measure Nature",
+          "type": "string"
+        },
+        "high_quantile_definition": {
+          "enum": [
+            "daily_p90_curve",
+            "historical_percentile_90"
+          ],
+          "title": "High Quantile Definition",
+          "type": "string"
+        },
+        "operational_capacity": {
+          "minimum": 0,
+          "title": "Operational Capacity",
+          "type": "integer"
+        },
+        "registry_capacity": {
+          "minimum": 0,
+          "title": "Registry Capacity",
+          "type": "integer"
+        },
+        "restored_capacity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Restored Capacity"
+        },
+        "service_threshold": {
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Service Threshold",
+          "type": "number"
+        },
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/Cell"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "title": "Cells",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "site_name",
+        "method",
+        "period_start",
+        "period_end",
+        "measure_nature",
+        "high_quantile_definition",
+        "operational_capacity",
+        "registry_capacity",
+        "service_threshold",
+        "cells",
+        "evidence_ids",
+        "limitations"
+      ],
+      "title": "ControlTable",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "input_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "input_start": {
+      "format": "date-time",
+      "title": "Input Start",
+      "type": "string"
+    },
+    "input_end": {
+      "format": "date-time",
+      "title": "Input End",
+      "type": "string"
+    },
+    "method_version": {
+      "title": "Method Version",
+      "type": "string"
+    },
+    "cleaning_parameters": {
+      "additionalProperties": true,
+      "title": "Cleaning Parameters",
+      "type": "object"
+    },
+    "reconstruction_parameters": {
+      "additionalProperties": true,
+      "title": "Reconstruction Parameters",
+      "type": "object"
+    },
+    "model_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Model Name"
+    },
+    "model_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Model Version"
+    },
+    "covariates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Covariates",
+      "type": "array"
+    },
+    "backtest": {
+      "additionalProperties": true,
+      "title": "Backtest",
+      "type": "object"
+    },
+    "tables": {
+      "items": {
+        "$ref": "#/$defs/ControlTable"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Tables",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "generated_at",
+    "input_sha256",
+    "input_start",
+    "input_end",
+    "method_version",
+    "cleaning_parameters",
+    "reconstruction_parameters",
+    "model_name",
+    "model_version",
+    "covariates",
+    "backtest",
+    "tables"
+  ],
+  "title": "AnalysisBundle",
+  "type": "object"
+}

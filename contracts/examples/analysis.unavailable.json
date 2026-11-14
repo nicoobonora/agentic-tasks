@@ -1,0 +1,271 @@
+{
+  "schema_version": "1.0",
+  "id": "example-unavailable-not-a-result",
+  "generated_at": "2026-11-14T00:00:00Z",
+  "input_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "input_start": "2026-08-01T00:00:00Z",
+  "input_end": "2026-11-01T00:00:00Z",
+  "method_version": "example-only",
+  "cleaning_parameters": {
+    "heartbeat_max_gap_minutes": 120
+  },
+  "reconstruction_parameters": {
+    "p": [
+      1,
+      0.5
+    ],
+    "minimum_non_full_minutes": 10,
+    "minimum_comparable_days": 4,
+    "maximum_missing_hours_per_day": 6
+  },
+  "model_name": null,
+  "model_version": null,
+  "covariates": [],
+  "backtest": {
+    "status": "not_run",
+    "candidates": [
+      "timestral",
+      "seasonal_naive",
+      "seasonal_naive_trend"
+    ]
+  },
+  "tables": [
+    {
+      "schema_version": "1.0",
+      "site_name": "BZ_C_RISPARMIO_01",
+      "group": "AC_22",
+      "origin": "derived",
+      "method": "reserve",
+      "period_start": "2026-08-01",
+      "period_end": "2026-10-31",
+      "measure_nature": "Esempio di contratto: nessuna analisi eseguita",
+      "high_quantile_definition": "historical_percentile_90",
+      "operational_capacity": 0,
+      "registry_capacity": 2,
+      "restored_capacity": null,
+      "service_threshold": 0.95,
+      "cells": [
+        {
+          "p": 1.0,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 1.0,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        }
+      ],
+      "evidence_ids": [
+        "REPLACE_WITH_REAL_EVIDENCE_ID"
+      ],
+      "limitations": [
+        "Tutti i valori di intestazione sono esempi, non misure dei siti."
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "site_name": "BZ_PIAVE_01",
+      "group": "AC_22",
+      "origin": "derived",
+      "method": "reserve",
+      "period_start": "2026-08-01",
+      "period_end": "2026-10-31",
+      "measure_nature": "Esempio di contratto: nessuna analisi eseguita",
+      "high_quantile_definition": "historical_percentile_90",
+      "operational_capacity": 0,
+      "registry_capacity": 2,
+      "restored_capacity": null,
+      "service_threshold": 0.95,
+      "cells": [
+        {
+          "p": 1.0,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 1.0,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        }
+      ],
+      "evidence_ids": [
+        "REPLACE_WITH_REAL_EVIDENCE_ID"
+      ],
+      "limitations": [
+        "Tutti i valori di intestazione sono esempi, non misure dei siti."
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "site_name": "RENON_01",
+      "group": "AC_22",
+      "origin": "derived",
+      "method": "reserve",
+      "period_start": "2026-08-01",
+      "period_end": "2026-10-31",
+      "measure_nature": "Esempio di contratto: nessuna analisi eseguita",
+      "high_quantile_definition": "historical_percentile_90",
+      "operational_capacity": 0,
+      "registry_capacity": 2,
+      "restored_capacity": null,
+      "service_threshold": 0.95,
+      "cells": [
+        {
+          "p": 1.0,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 1.0,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "p50",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        },
+        {
+          "p": 0.5,
+          "quantile": "high",
+          "status": "unavailable",
+          "reason": "Esempio: capacità e stima da determinare dal modulo analitico.",
+          "demand_per_hour": null,
+          "mean_occupancy_hours": null,
+          "access_current": null,
+          "access_plus_2": null,
+          "access_plus_4": null,
+          "access_restored": null,
+          "required_total_capacity": null,
+          "minimum_increment": null
+        }
+      ],
+      "evidence_ids": [
+        "REPLACE_WITH_REAL_EVIDENCE_ID"
+      ],
+      "limitations": [
+        "Tutti i valori di intestazione sono esempi, non misure dei siti."
+      ]
+    }
+  ]
+}

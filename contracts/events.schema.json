@@ -1,0 +1,1033 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "rationale",
+        "evidence_ids"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "AgentTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "enum": [
+            "applicable",
+            "not_applicable"
+          ],
+          "title": "Applicability",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "proposal",
+            "review",
+            "objection",
+            "revision",
+            "not_applicable"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "objections": {
+          "items": {
+            "$ref": "#/$defs/ObjectionDraft"
+          },
+          "title": "Objections",
+          "type": "array"
+        },
+        "resolutions": {
+          "items": {
+            "$ref": "#/$defs/Resolution"
+          },
+          "title": "Resolutions",
+          "type": "array"
+        },
+        "draft": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Draft"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "question": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuestionDraft"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "needs_revision": {
+          "title": "Needs Revision",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "applicability",
+        "kind",
+        "text",
+        "explanation",
+        "evidence_ids",
+        "claims",
+        "objections",
+        "resolutions",
+        "draft",
+        "question",
+        "needs_revision"
+      ],
+      "title": "AgentTurn",
+      "type": "object"
+    },
+    "ApprovalRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "proposal_version": {
+          "title": "Proposal Version",
+          "type": "integer"
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proposal_version",
+        "actor",
+        "at"
+      ],
+      "title": "ApprovalRecord",
+      "type": "object"
+    },
+    "Attachment": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Attachment",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "supported",
+            "assumption",
+            "estimate"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement",
+        "basis",
+        "evidence_ids"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "Draft": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "recommended_actions": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Recommended Actions",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "recommended_actions",
+        "risks",
+        "unresolved_questions"
+      ],
+      "title": "Draft",
+      "type": "object"
+    },
+    "Error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "Error",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        },
+        "origin": {
+          "enum": [
+            "user_provided",
+            "reference_only",
+            "human_answer"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "text",
+        "url",
+        "origin",
+        "sha256"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "proposal_version": {
+          "title": "Proposal Version",
+          "type": "integer"
+        },
+        "cycle": {
+          "title": "Cycle",
+          "type": "integer"
+        },
+        "round": {
+          "title": "Round",
+          "type": "integer"
+        },
+        "actor": {
+          "enum": [
+            "analyst",
+            "operations",
+            "finance",
+            "critic",
+            "operator",
+            "system"
+          ],
+          "title": "Actor",
+          "type": "string"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reply To"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "content": {
+          "$ref": "#/$defs/AgentTurn"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "provider_response_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Response Id"
+        }
+      },
+      "required": [
+        "id",
+        "proposal_version",
+        "cycle",
+        "round",
+        "actor",
+        "reply_to",
+        "created_at",
+        "content"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "Objection": {
+      "additionalProperties": false,
+      "properties": {
+        "target_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Target Message Id"
+        },
+        "concern": {
+          "title": "Concern",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "message_id": {
+          "title": "Message Id",
+          "type": "string"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "resolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Resolution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "resolved_by_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved By Message Id"
+        }
+      },
+      "required": [
+        "target_message_id",
+        "concern",
+        "explanation",
+        "blocking",
+        "evidence_ids",
+        "id",
+        "message_id"
+      ],
+      "title": "Objection",
+      "type": "object"
+    },
+    "ObjectionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "target_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Target Message Id"
+        },
+        "concern": {
+          "title": "Concern",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "blocking": {
+          "title": "Blocking",
+          "type": "boolean"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_message_id",
+        "concern",
+        "explanation",
+        "blocking",
+        "evidence_ids"
+      ],
+      "title": "ObjectionDraft",
+      "type": "object"
+    },
+    "Option": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "explanation"
+      ],
+      "title": "Option",
+      "type": "object"
+    },
+    "Proposal": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "recommended_actions": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "maxItems": 12,
+          "minItems": 1,
+          "title": "Recommended Actions",
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        },
+        "version": {
+          "title": "Version",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "final",
+            "conditional"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Message Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "recommended_actions",
+        "risks",
+        "unresolved_questions",
+        "version",
+        "created_at",
+        "status",
+        "evidence_ids",
+        "source_message_ids"
+      ],
+      "title": "Proposal",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "maxItems": 5,
+          "minItems": 2,
+          "title": "Options",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "proposal_version": {
+          "title": "Proposal Version",
+          "type": "integer"
+        },
+        "reason": {
+          "enum": [
+            "agent_request",
+            "round_limit"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "allow_free_text": {
+          "default": true,
+          "title": "Allow Free Text",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text",
+        "explanation",
+        "options",
+        "id",
+        "proposal_version",
+        "reason"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "QuestionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "maxItems": 5,
+          "minItems": 2,
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "explanation",
+        "options"
+      ],
+      "title": "QuestionDraft",
+      "type": "object"
+    },
+    "Resolution": {
+      "additionalProperties": false,
+      "properties": {
+        "objection_id": {
+          "title": "Objection Id",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "objection_id",
+        "explanation",
+        "evidence_ids"
+      ],
+      "title": "Resolution",
+      "type": "object"
+    },
+    "Run": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "2.0",
+          "default": "2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "task": {
+          "$ref": "#/$defs/Task"
+        },
+        "mode": {
+          "enum": [
+            "model",
+            "mock"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "notice": {
+          "title": "Notice",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "running",
+            "awaiting_input",
+            "proposal_ready",
+            "approved",
+            "failed"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "proposal_version": {
+          "default": 0,
+          "title": "Proposal Version",
+          "type": "integer"
+        },
+        "cycle": {
+          "default": 1,
+          "title": "Cycle",
+          "type": "integer"
+        },
+        "round": {
+          "default": 1,
+          "title": "Round",
+          "type": "integer"
+        },
+        "max_rounds": {
+          "title": "Max Rounds",
+          "type": "integer"
+        },
+        "next_role": {
+          "default": "analyst",
+          "enum": [
+            "analyst",
+            "operations",
+            "finance",
+            "critic"
+          ],
+          "title": "Next Role",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "title": "Messages",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "objections": {
+          "items": {
+            "$ref": "#/$defs/Objection"
+          },
+          "title": "Objections",
+          "type": "array"
+        },
+        "proposal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Proposal"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proposals": {
+          "items": {
+            "$ref": "#/$defs/Proposal"
+          },
+          "title": "Proposals",
+          "type": "array"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Question"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "approval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApprovalRecord"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Error"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "task",
+        "mode",
+        "model",
+        "notice",
+        "state",
+        "max_rounds",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "Run",
+      "type": "object"
+    },
+    "Task": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "attachments": {
+          "items": {
+            "$ref": "#/$defs/Attachment"
+          },
+          "maxItems": 10,
+          "title": "Attachments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "description"
+      ],
+      "title": "Task",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "sequence": {
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "snapshot",
+      "default": "snapshot",
+      "title": "Type",
+      "type": "string"
+    },
+    "data": {
+      "$ref": "#/$defs/Run"
+    }
+  },
+  "required": [
+    "sequence",
+    "run_id",
+    "data"
+  ],
+  "title": "StreamEvent",
+  "type": "object"
+}

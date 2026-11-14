@@ -1,0 +1,83 @@
+# Backend — orchestrazione generica v2
+
+Il flusso è: task → analyst → operations → finance → critic → revisione, domanda umana o proposta finale. Nessun ordine, esecuzione esterna, sito o fornitore è codificato nell'orchestratore. Si riusano SQLite, eventi SSE e idempotenza della base precedente. L'esempio ODH resta separato in `backend/acs/examples/charging`; la sua documentazione è in [CHARGING.md](CHARGING.md).
+
+## Configurazione e avvio
+
+```sh
+make setup
+export OPENAI_API_KEY='...'  # impostare nel proprio ambiente; mai nel repository
+export ACS_MODEL='nome-del-modello-con-structured-outputs'
+export ACS_MAX_ROUNDS=3
+make api
+```
+
+Swagger: `http://localhost:8000/docs`. Il modello è scelto esplicitamente tramite `ACS_MODEL`: nessun modello implicito e nessuna sostituzione in caso di errore. `mode=model` è il default di `POST /api/v2/runs`; senza chiave/modello risponde 503. `mode=mock` è richiesto esplicitamente per sviluppo offline. `make mock` usa porta 8001 e `data/mock.sqlite`, ma non cambia implicitamente il mode delle richieste.
+
+L'adapter reale chiama `https://api.openai.com/v1/responses` con schema JSON strict (`text.format`), `store=false`, massimo 5.000 token di output e timeout di 60 secondi per chiamata. Implementazione verificata sulla [documentazione ufficiale Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs). Non richiede l'SDK: riusa httpx già presente. Il modello deve supportare lo schema strict; rifiuti, risposte incomplete e errori HTTP diventano errori persistenti visibili, mai risultati mock.
+
+In questa consegna non era configurata una chiave API. I test dell'adapter reale usano un trasporto HTTP controllato e verificano endpoint, payload, parsing, rifiuti e flusso completo. **Non costituiscono una prova di qualità o una chiamata live al modello.** `scripts/smoke_discussion.py --mode model` permette la verifica live una volta configurate le credenziali del server.
+
+## File e responsabilità
+
+| File | Responsabilità |
+| --- | --- |
+| `models.py` | Contratto generico task, messaggi, prove, domande, proposte, comandi |
+| `providers.py` | Ruoli, prompt, adapter OpenAI reale, mock dichiarato |
+| `discussion.py` | Cicli limitati, validazione riferimenti, versioni, domande e persistenza |
+| `agent_port.py` | Inserimento controllato di un turno, senza bypass di versione/ruolo/lease |
+| `api.py` | HTTP, SSE e worker semplice nel lifespan FastAPI |
+| `db.py` | Tabelle esistenti più lease dei turni |
+| `examples/charging/` | API dati, schema analitico e catalogo opzionali di dominio |
+
+Non c'è un framework di plugin o un workflow designer. Il tool di esempio `GET /examples/charging/task` costruisce un task ordinario con uno snapshot di dati locali e catalogo esplicitamente simulato. Gli agenti ricevono quei dati come allegati; non viene data loro autorità di mutare il database o richiamare endpoint operativi.
+
+## Discussione e limiti
+
+Ogni ciclo ha 1–6 round, default `ACS_MAX_ROUNDS=3`, sovrascrivibile nella richiesta. Ogni round contiene quattro turni in ordine; ciascun turno legge task, prove, messaggi precedenti, bozza e obiezioni. Gli agenti non lavorano in parallelo perché devono poter reagire ai messaggi appena prodotti.
+
+L'analista propone/rivede la bozza. Operations valuta fattibilità e dipendenze. Finance valuta costi se pertinenti e può dichiararsi non applicabile. Anche gli altri ruoli possono dichiararsi non applicabili con motivazione; un analista applicabile deve comunque produrre una bozza. Il critico verifica i supporti e può chiedere revisione; solo il critico può risolvere obiezioni esistenti, sempre con spiegazione.
+
+Tutti producono `AgentTurn`, con tipo messaggio, applicabilità, spiegazione pubblica, riferimenti alle prove, claim, obiezioni, eventuali risoluzioni, bozza o domanda. Il programma assegna ID, tempi, versione e collegamenti. Non vengono richiesti ragionamenti privati. Il prompt distingue gli input del task dalle istruzioni di ruolo.
+
+Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il run diventa failed; il retry è una scelta esplicita. Rifiuti, errori di rete e risposte incomplete non generano un loop automatico. Limite di costo: al massimo `4 * max_rounds * 2` richieste modello per ciclo, contando le correzioni. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
+
+Se restano obiezioni o richieste di revisione, riparte l'analista nel round successivo. Al limite il run si ferma con una domanda che include i disaccordi effettivi. Se il modello richiede input prima del limite, si conserva la sua domanda e le opzioni dinamiche. Il server aggiunge ID e versione. La risposta viene registrata come prova e riparte dall'analista, senza perdere la conversazione.
+
+La proposta finale riporta azioni raccomandate, rischi, questioni irrisolte, versione e messaggi di provenienza. Le bozze precedenti restano in `proposals`. Il motore non riscrive in silenzio le raccomandazioni dopo il controllo del critico; aggiunge alle questioni finali i disaccordi ancora aperti. A esaurimento round, l'umano può richiedere una proposta conditional con le incertezze mantenute. Questo **non risolve** obiezioni bloccanti e non le rende approvabili. L'approvazione riguarda solo il documento, mai l'esecuzione delle azioni.
+
+## Persistenza, concorrenza e riavvio
+
+`documents(kind=discussion_v2)` contiene il run completo. I vecchi record `kind=run`, gli ordini preesistenti e l'archivio ODH rimangono intatti, ma non sono serviti dalle nuove API. `discussion_commands` conserva hash del payload e risposta per chiave idempotente. `events` conserva snapshot a sequenza globale crescente. `discussion_leases` assegna un singolo turno a un worker per 180 secondi.
+
+Un turno segue questa sequenza:
+
+1. Breve transazione `BEGIN IMMEDIATE`: legge stato/versione/ruolo e acquisisce la lease.
+2. Chiamata modello e eventuale correzione **fuori dalla transazione**: il database resta utilizzabile da SSE e altre richieste.
+3. Nuova transazione: controlla token lease, scadenza, versione, stato e ruolo attesi. Se sono cambiati, scarta la risposta tardiva.
+4. Registra messaggio, nuova bozza, obiezioni e snapshot nello stesso commit; rilascia la lease.
+
+Il worker riprende automaticamente i run running quando il server riparte. Dopo un arresto nel mezzo della chiamata, la lease scade entro tre minuti e il turno può essere richiesto nuovamente. Si garantisce l'applicazione una sola volta del risultato, **non** l'addebito una sola volta della chiamata esterna. Il worker semplice serve un turno alla volta per processo; non è progettato per grandi volumi. Non eseguire migrazioni distruttive o azzerare il DB per un normale riavvio.
+
+`proposal_version` cambia su nuova bozza, risposta umana, retry e finalizzazione. Una risposta a una domanda vecchia o un'approvazione su una versione superata viene rifiutata. Il frontend deve ricaricare, non aggiornare automaticamente il token e ritentare l'approvazione. Il replay idempotente restituisce la risposta originale, anche se nel frattempo lo stato è avanzato.
+
+## Prove e allegati
+
+Task, contesto e allegati vengono congelati in `run.evidence` con hash SHA256. Sono dichiarazioni dell'utente, non fatti automaticamente verificati. Un allegato con solo URL ha origine `reference_only`: il server non lo scarica, né legge file locali. Per documenti binari inviare testo estratto nel campo `text`; questa modifica non aggiunge un sistema di upload/conversione dei documenti.
+
+Ogni riferimento del modello deve esistere in queste prove. Un claim supported richiede almeno una prova testuale letta; altrimenti deve essere assumption o estimate. Il controllo strutturale evita riferimenti inventati, ma non dimostra che il testo sostenga davvero la frase: questa è parte del compito del critico e dell'ispezione umana. Le risposte umane non diventano prove di fatti esterni solo perché esprimono una preferenza.
+
+## Verifica e contratti
+
+```sh
+make contracts
+make test
+# Server avviato, sviluppo offline:
+.venv/bin/python -m scripts.smoke_discussion --mode mock
+# Server configurato con chiave e modello, richieste reali a pagamento:
+.venv/bin/python -m scripts.smoke_discussion --mode model
+```
+
+Il test smoke tratta sia l'esempio colonnine sia una guida per volontari. Le risposte umane dello smoke sono dichiaratamente risposte automatiche di test; il programma non approva né esegue azioni. I test unitari/integrati coprono anche round limit, non-applicabilità, disaccordo, restart, idempotenza, SSE, lease scaduta, risposta tardiva, riferimenti inesistenti, correzione singola, rifiuti e assenza di credenziali. I test ODH precedenti restano separati.
+
+Migrazione intenzionale a `/api/v2`: i vecchi endpoint v1 di run/ordine sono rimossi; le API dati v1 dell'esempio sono sotto `/examples/charging/api/v1`. OpenAPI principale, OpenAPI charging e tipi TypeScript sono generati separatamente. Non modificare a mano i file generati.

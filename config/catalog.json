@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "origin": "scenario_assumption",
+  "policy": {
+    "id": "POLICY-DEMO-001", "origin": "scenario_assumption", "currency": "EUR",
+    "budget_eur": 60000, "approval_limit_eur": 60000, "target_date": "2027-03-01",
+    "max_target_extension_days": 84, "service_threshold": 0.95,
+    "allowed_increments": [0, 2, 4], "repair_before_expansion_days": 14,
+    "initial_order_quantity_chargers": 2, "installation_days": 7,
+    "initial_order_notice": "Ordine iniziale simulato di integrazione, già dimensionato per il test. Non è una raccomandazione ricavata dai dati ODH.",
+    "phase_rule": "Incremento minimo sufficiente in tutte le celle; nessun nuovo allacciamento; costo entro budget; indisponibilità prolungata: prima verifica e ripristino.",
+    "selection_rule": "Siti con almeno due prese operative e nei primi cinque per ore-presa in ciascuno dei tre mesi; RENON resta come sito da ripristinare.",
+    "agent_thresholds": {"analyst_min_access": 0.95, "finance_budget_eur": 60000, "operations_max_extension_days": 84, "critic_max_correction_attempts": 1}
+  },
+  "site_assessments": [
+    {"site_name": "BZ_C_RISPARMIO_01", "phase": 1, "new_grid_connection": false, "origin": "scenario_assumption"},
+    {"site_name": "BZ_PIAVE_01", "phase": 1, "new_grid_connection": false, "origin": "scenario_assumption"},
+    {"site_name": "RENON_01", "phase": 2, "new_grid_connection": true, "prerequisites": ["repair_verified", "post_repair_measurement", "grid_date_confirmed"], "origin": "scenario_assumption"}
+  ],
+  "products": [{"id": "AC22-DUAL", "points_per_charger": 2, "power_kw_per_point": 22, "standard": "IEC_62196_T2", "origin": "simulated", "document": "CATALOG-DEMO-001"}],
+  "offers": [
+    {"id": "OFFER-A", "supplier": "A", "product_id": "AC22-DUAL", "price_per_charger_eur": 3000, "delivery_date": "2027-02-20", "delivery_confirmed": true, "valid_until": "2027-02-28", "vat_rate": 0.22, "origin": "simulated", "document": "OFFER-DEMO-A"},
+    {"id": "OFFER-B", "supplier": "B", "product_id": "AC22-DUAL", "price_per_charger_eur": 3800, "delivery_date": "2027-02-18", "delivery_confirmed": true, "valid_until": "2027-02-28", "vat_rate": 0.22, "origin": "simulated", "document": "OFFER-DEMO-B"}
+  ],
+  "work_schedule": [{"id": "INSTALL", "predecessors": ["delivery"], "duration_days": 7, "cost_per_charger_eur": 1000, "availability_confirmed": true, "origin": "simulated"}],
+  "contract_terms": [{"order_status": "confirmed", "action": "cancel", "penalty_fraction": 0.15, "refund_fraction": 0, "origin": "simulated", "note": "Demo: nessun anticipo pagato. Penale sul solo hardware netto; totale piano netto IVA."}],
+  "economic_parameters": [
+    {"id": "ENERGY_PURCHASE", "value": 0.25, "unit": "EUR/kWh", "range": [0.15, 0.35], "origin": "scenario_assumption", "source": null},
+    {"id": "PUBLIC_PRICE_ASSUMPTION", "value": 0.55, "unit": "EUR/kWh", "range": [0.45, 0.69], "origin": "scenario_assumption", "source": null, "note": "Non verificato come tariffa corrente: non presentare come dato pubblico osservato."},
+    {"id": "AC22_EFFECTIVE_POWER", "value": 7, "unit": "kW", "range": [3.7, 11], "origin": "scenario_assumption", "source": null},
+    {"id": "CHARGING_CAP", "value": 3, "unit": "hours", "range": [1, 4], "origin": "scenario_assumption", "source": null},
+    {"id": "NETWORK_DISPLACEMENT", "value": 0.25, "unit": "fraction", "range": [0, 1], "origin": "scenario_assumption", "source": null}
+  ]
+}

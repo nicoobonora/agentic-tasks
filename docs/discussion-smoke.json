@@ -1,0 +1,25 @@
+{
+  "mode": "mock",
+  "live_model_verified": false,
+  "reason": "OPENAI_API_KEY and ACS_MODEL were not configured.",
+  "runs": [
+    {
+      "id": "432d1b8c-3abb-4053-925e-11bbf94b163e",
+      "task": "Guida per nuovi volontari",
+      "state": "proposal_ready",
+      "proposal_version": 4,
+      "proposal_status": "final",
+      "messages": 9,
+      "evidence_count": 4
+    },
+    {
+      "id": "cef3c765-3f8d-4603-a1ea-6a0aea209bf1",
+      "task": "Valutare un ampliamento della rete di ricarica",
+      "state": "proposal_ready",
+      "proposal_version": 4,
+      "proposal_status": "final",
+      "messages": 9,
+      "evidence_count": 5
+    }
+  ]
+}
