@@ -6,13 +6,10 @@ test("drag, discussion, human answer and approval", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await expect(page.getByText("Local mock · no AI calls")).toBeVisible();
   await page.locator('[data-task="guide"]').dragTo(page.locator("[data-drop]"));
   await expect(page.locator('.backlog [data-task="guide"]')).toHaveCount(0);
   await expect(page.locator(".question")).toBeVisible({ timeout: 10000 });
   await expect(page.locator(".message")).toHaveCount(4);
-  await page.getByRole("button", { name: "Reply" }).click();
-  await expect(page.getByLabel("Choice")).toBeFocused();
   await page.getByLabel("Choice").selectOption("__custom");
   await page
     .getByLabel("Free answer")
@@ -22,7 +19,7 @@ test("drag, discussion, human answer and approval", async ({ page }) => {
   await expect(page.locator(".active-runs .proposal_ready")).toHaveCount(1, {
     timeout: 10000,
   });
-  await page.getByRole("button", { name: "History", exact: true }).click();
+  await page.getByRole("button", { name: "History ↗" }).first().click();
   await expect(page.locator(".message.operator")).toContainText(
     "Also include the coordinator",
   );
@@ -208,7 +205,7 @@ for (const viewport of [
     await page.screenshot({
       path: `test-results/viewport-${viewport.width}.png`,
     });
-    await page.getByRole("button", { name: "History", exact: true }).click();
+    await page.getByRole("button", { name: "History ↗" }).first().click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toHaveCount(0);

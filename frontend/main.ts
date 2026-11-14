@@ -381,7 +381,7 @@ function turnBar(r: Run) {
   steps.push(
     `<li class="step operator ${human.key}"><span class="step-icon">●</span><span><b>You</b><small>${human.label}</small></span></li>`,
   );
-  return `<ol class="turn-bar" aria-label="Turns of cycle ${r.cycle}"><li class="turn-meta"><b>Cycle ${r.cycle}</b><small>Round ${r.round}/${r.max_rounds}</small></li>${steps.join('<li class="arrow" aria-hidden="true">→</li>')}</ol>`;
+  return `<ol class="turn-bar" aria-label="Turns">${steps.join('<li class="arrow" aria-hidden="true">→</li>')}</ol>`;
 }
 function objectionList(r: Run) {
   const list = r.objections ?? [];
@@ -421,7 +421,7 @@ function rolePanel(r: Run, role: string) {
     : "";
   const tools = m && !working ? messageTools(r, m) : [];
   const body = m
-    ? `<article class="message ${role} ${working ? "previous" : ""}"><div class="msg-meta"><span class="kind ${m.content.kind}">${kindLabels[m.content.kind] ?? m.content.kind}</span><small>cycle ${m.cycle} · round ${m.round}</small></div>${tools.length ? `<ul class="tool-list">${tools.map((c) => toolRow(c)).join("")}</ul>` : ""}<p class="headline public-explanation">${esc(headline(m.content.text || m.content.explanation))}</p>${claims(r, m)}${m.content.objections.length ? `<ul class="raised">${m.content.objections.map((o) => `<li class="${o.blocking ? "blocking" : ""}">${o.blocking ? "Blocks" : "Objects"}: ${esc(clip(o.concern, 110))}</li>`).join("")}</ul>` : ""}<details data-disclosure="full-${esc(m.id)}"><summary>Full text</summary><p>${esc(m.content.text)}</p>${m.content.explanation && m.content.explanation !== m.content.text ? `<p class="muted">${esc(m.content.explanation)}</p>` : ""}</details></article>`
+    ? `<article class="message ${role} ${working ? "previous" : ""}"><div class="msg-meta"><span class="kind ${m.content.kind}">${kindLabels[m.content.kind] ?? m.content.kind}</span></div>${tools.length ? `<ul class="tool-list">${tools.map((c) => toolRow(c)).join("")}</ul>` : ""}<p class="headline public-explanation">${esc(headline(m.content.text || m.content.explanation))}</p>${claims(r, m)}${m.content.objections.length ? `<ul class="raised">${m.content.objections.map((o) => `<li class="${o.blocking ? "blocking" : ""}">${o.blocking ? "Blocks" : "Objects"}: ${esc(clip(o.concern, 110))}</li>`).join("")}</ul>` : ""}<details data-disclosure="full-${esc(m.id)}"><summary>Full text</summary><p>${esc(m.content.text)}</p>${m.content.explanation && m.content.explanation !== m.content.text ? `<p class="muted">${esc(m.content.explanation)}</p>` : ""}</details></article>`
     : working
       ? ""
       : `<p class="placeholder">${role === "critic" ? "Will check the other roles' claims and sources and can block the plan." : "Will join when its turn comes."}</p>`;
@@ -438,11 +438,9 @@ function question(r: Run) {
   return `<form class="question"><label class="question-text" for="answer-option"><span class="escalation">${q.reason === "round_limit" ? "Round limit reached · the operator decides" : "The agents have stopped · your decision is needed"}</span>${esc(q.text)}</label><div class="answer-controls"><select id="answer-option" aria-label="Choice" data-field="option"><option value="">Choose an answer…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}<option value="__custom" ${d.option === "__custom" ? "selected" : ""}>Write an answer…</option></select><button type="submit" aria-label="Send answer and resume" title="Send answer" ${busy.has(r.id) ? "disabled" : ""}>↑</button><button type="button" class="text-button" data-drawer="question" aria-label="Question details">ⓘ</button></div>${d.option === "__custom" ? `<textarea aria-label="Free answer" data-field="text" maxlength="10000" placeholder="Your answer…">${esc(d.text)}</textarea>` : ""}</form>`;
 }
 function detail(r: Run) {
-  return `<div class="detail-header"><div><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2></div><button class="text-button" data-drawer="context" aria-label="Task details and sources">ⓘ</button></div>
+  return `<div class="detail-header"><div><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2></div><button class="plan-button" data-drawer="proposal" ${!r.proposal ? "disabled" : ""}>${r.state === "proposal_ready" ? "Review and approve ↗" : "Open plan ↗"}</button></div>
     ${turnBar(r)}${rolePanel(r, "critic")}<div class="model-grid">${["analyst", "operations", "finance"].map((role) => rolePanel(r, role)).join("")}</div>
-    <div class="workspace-tools"><button class="text-button tools-button" data-drawer="investigation">Tools and evidence <span>${r.tool_activity?.length ?? 0}</span></button><button class="text-button" data-drawer="objections">Objections <span>${(r.objections ?? []).filter((o) => o.status === "open").length}</span></button><button class="text-button" data-drawer="history">History</button><span class="live-status">${r.turn_progress?.pending_job_id ? "Computation in progress" : esc(connection.get(r.id) || `Round ${r.round}/${r.max_rounds}`)}</span></div>
-    ${question(r)}${r.state === "failed" ? `<section class="failure"><p>${esc(r.error?.message)}</p><button data-retry>Retry turn</button></section>` : ""}
-    <div class="proposal-strip"><span>${r.proposal ? `<b>${r.proposal.status === "conditional" ? "Conditional plan" : "Proposal"} · v${r.proposal.version}</b><small>${esc(r.proposal.summary)}</small>` : "<small>The proposal will take shape as the roles discuss.</small>"}</span><button data-drawer="proposal" ${!r.proposal ? "disabled" : ""}>${r.state === "proposal_ready" ? "Review and approve ↗" : "Open plan ↗"}</button></div>`;
+    ${question(r)}${r.state === "failed" ? `<section class="failure"><p>${esc(r.error?.message)}</p><button data-retry>Retry turn</button></section>` : ""}`;
 }
 function drawerContent(r: Run) {
   if (drawer === "proposal")
@@ -485,7 +483,7 @@ function render() {
       ),
     ).map((el) => el.dataset.disclosure),
   );
-  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Available tickets"><div class="column-title"><h2>Tickets</h2><span>${pending.length}</span></div><p class="column-help">Drag a ticket to the agents.</p><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Start task: ${esc(t.task.title)}" title="Start task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">All tickets are assigned.</p>'}</div></aside><section class="column workspace" aria-label="Workspace" data-drop><div class="workspace-heading"><h1>Agents</h1><span class="environment">${remote ? `API · ${mode} mode` : "Local mock · no AI calls"}</span></div>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Close</button></div>` : ""}${activeRuns.length ? `<nav class="active-runs" aria-label="Tasks in progress">${activeRuns.map(card).join("")}${r?.state === "awaiting_input" ? '<button class="reply-shortcut" data-reply>Reply</button>' : ""}</nav>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assign the first ticket</h2><p>Drag it here, or press ↗ on the ticket.<br>The agents will discuss it and ask you for what they need.</p><small>Demo with fictional tickets and simulated dialogues.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Drop the ticket to start</div></section><aside class="column results" aria-label="Completed tasks"><div class="column-title"><h2>Completed</h2><span>${done.length}</span></div><p class="column-help">Approved proposals</p>${done.map(card).join("") || '<p class="empty-small">Completed tasks will appear here.</p>'}</aside></main>`;
+  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Available tickets"><div class="column-title"><h2>Tickets</h2><span>${pending.length}</span></div><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Start task: ${esc(t.task.title)}" title="Start task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">All tickets are assigned.</p>'}</div>${activeRuns.length ? `<nav class="active-runs" aria-label="Tasks in progress">${activeRuns.map(card).join("")}</nav>` : ""}</aside><section class="column workspace" aria-label="Workspace" data-drop>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Close</button></div>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assign the first ticket</h2><p>Drag it here, or press ↗ on the ticket.<br>The agents will discuss it and ask you for what they need.</p><small>Demo with fictional tickets and simulated dialogues.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Drop the ticket to start</div></section><aside class="column results" aria-label="Completed tasks"><div class="column-title"><h2>Completed</h2><span>${done.length}</span></div><div class="cards">${done.map(card).join("")}</div></aside></main>`;
   if (drawer && r) {
     root.insertAdjacentHTML(
       "beforeend",
@@ -585,12 +583,6 @@ root.addEventListener("click", (event) => {
     selected = el.dataset.select;
     render();
     root.querySelector(".detail")!.scrollTop = 0;
-  }
-  if (el.hasAttribute("data-reply")) {
-    root.querySelector(".question")?.scrollIntoView({ block: "center" });
-    root
-      .querySelector<HTMLSelectElement>('[data-field="option"]')
-      ?.focus({ preventScroll: true });
   }
   if (el.hasAttribute("data-dismiss")) {
     error = "";

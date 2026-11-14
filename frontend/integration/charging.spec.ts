@@ -28,7 +28,7 @@ for (const task of ["expansion", "maintenance"]) {
     expect(payloads[0].task.attachments).toBeUndefined();
     await page.getByLabel("Choice").selectOption("points");
     await page.getByRole("button", { name: "Send answer and resume" }).click();
-    await page.getByRole("button", { name: /^Tools and evidence/ }).click();
+    await page.locator(".agent-panel [data-evidence]").first().click();
     await expect(page.locator(".investigation")).toContainText(
       "charging.discover_sites",
     );
@@ -64,7 +64,7 @@ for (const task of ["expansion", "maintenance"]) {
       page.getByRole("button", { name: "Review and approve" }),
     ).toBeVisible({ timeout: 45000 });
     expect(payloads).toHaveLength(1);
-    await page.getByRole("button", { name: /^Tools and evidence/ }).click();
+    await page.locator(".agent-panel [data-evidence]").first().click();
     await page.locator(".investigation details summary").first().click();
     const evidence = page.locator(".investigation [data-evidence]").first();
     await evidence.click();

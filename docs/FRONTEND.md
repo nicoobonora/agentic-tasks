@@ -216,14 +216,16 @@ colonne affiancate, anche su schermi stretti. Ogni pannello mostra una sintesi
 breve di `content.text` (prima o prime due frasi), le affermazioni con la loro base
 (Data/Estimate/Assumption) e i chip della fonte citata; il testo completo e
 `content.explanation` restano in “Full text”. Una barra dei turni
-(Analyst → Operations → Finance → Critic → You) e lo stato del pannello derivano
-solo da `state`, `next_role`, ciclo/round e messaggi del round corrente: il ruolo
+(Analyst → Operations → Finance → Critic → You, senza indicatore di ciclo) e lo
+stato del pannello derivano solo da `state`, `next_role`, ciclo/round e messaggi
+del round corrente: il ruolo
 in `next_role` è evidenziato, gli altri sono attenuati mentre lavora.
 
 Le chiamate agli strumenti (`tool_activity`) sono mostrate nel pannello del ruolo
 che le ha richieste: nome leggibile, nome tecnico, parametri sintetici, stato
 (queued/running/succeeded/failed), risultato riassunto e pulsante “data ↗” verso
-l’artefatto. Il dialogo “Tools and evidence” elenca tutte le chiamate per ciclo.
+l’artefatto. Il dialogo delle prove, aperto dai pulsanti “data ↗”, elenca tutte
+le chiamate per ciclo (non c'è più una barra strumenti sotto i pannelli).
 Le etichette dei tool charging stanno in `frontend/examples/charging.ts`; un tool
 sconosciuto mostra il proprio nome. Nel simulatore locale i run charging
 producono chiamate, obiezione e risoluzione scriptate, marcate come simulate. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
@@ -233,10 +235,15 @@ consultare turni precedenti. Testi lunghi scorrono solo dentro il pannello.
 Domanda e selettore restano sotto i ruoli. L'invio richiede un gesto esplicito;
 selezionare “Write an answer…” apre il campo libero. La spiegazione della
 domanda, le motivazioni delle opzioni e l'identità sono nel pulsante dettagli.
-La barra del piano apre la proposta completa e l'approvazione. Cronologia,
+Il pulsante “Open plan” (o “Review and approve”) accanto al titolo del ticket
+apre la proposta completa e l'approvazione. Cronologia,
 obiezioni, contesto, prove e versioni sono consultabili in un dialogo con focus
 confinato, chiusura Escape e scorrimento indipendente. Nessun contenuto viene
-eliminato per farlo entrare nella schermata. Modalità mock/model resta visibile.
+eliminato per farlo entrare nella schermata. L'intestazione “Agents” con
+l'indicazione della modalità è stata rimossa: mode, model e notice del run restano
+nel dialogo di contesto, aperto dai chip delle fonti. I run in corso sono elencati
+nella colonna sinistra sotto i ticket; la colonna destra mostra solo “Completed”,
+il conteggio e i run approvati.
 
 Su mobile ticket e completati diventano barre compatte sopra e sotto il
 workspace. Le tre valutazioni rimangono affiancate. SSE conserva testo libero,
