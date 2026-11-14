@@ -161,7 +161,7 @@ async def events(run_id: str, request: Request, after: int = Query(0, ge=0), onc
             if once:
                 break
             yield ': heartbeat\n\n'
-            await asyncio.sleep(1)
+            await asyncio.sleep(.3)
     return StreamingResponse(stream(), media_type='text/event-stream', headers={'Cache-Control':'no-cache','X-Accel-Buffering':'no'})
 
 # A separate sub-application keeps charging-specific schemas out of the generic contract.

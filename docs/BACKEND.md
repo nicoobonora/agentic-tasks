@@ -63,7 +63,7 @@ Tutti producono `AgentTurn`, con tipo messaggio, applicabilità, spiegazione pub
 
 Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il sistema conserva il contenuto interpretabile come ipotesi esplicite, rimuove le citazioni inesistenti e i riferimenti numerici invalidi, apre un’obiezione e prosegue con il ruolo successivo fino al critico. Rifiuti, errori di rete e risposte incomplete producono un turno di indisponibilità dichiarata, senza inventare risultati e senza passare al mock. Se manca una bozza utilizzabile, il sistema propone soltanto la verifica degli input e della fattibilità. Per run generici: al massimo `4 * max_rounds * 2` richieste modello per ciclo. Per charging: al massimo `4 * max_rounds * 10`, incluse correzioni e riprese; default tre round = 120 richieste, massimo sei = 240. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
 
-Se restano obiezioni o richieste di revisione, riparte l'analista nel round successivo. Al limite il run si ferma con una domanda che include i disaccordi effettivi. Se il modello richiede input prima del limite, si conserva la sua domanda e le opzioni dinamiche. Il server aggiunge ID e versione. La risposta viene registrata come prova e riparte dall'analista, senza perdere la conversazione.
+Se restano obiezioni o richieste di revisione, riparte l'analista nel round successivo. Al limite il run si ferma con una domanda che include i disaccordi effettivi. Solo il critico può interrompere il ciclo con una domanda all'operatore: le domande degli altri ruoli restano nel loro messaggio e il critico decide se inoltrarle. La domanda del critico conserva le opzioni dinamiche. Il server aggiunge ID e versione. La risposta viene registrata come prova e riparte dall'analista, senza perdere la conversazione.
 
 La proposta finale riporta azioni raccomandate, rischi, questioni irrisolte, versione e messaggi di provenienza. Le bozze precedenti restano in `proposals`. Il motore non riscrive in silenzio le raccomandazioni dopo il controllo del critico; aggiunge alle questioni finali i disaccordi ancora aperti. A esaurimento round, l'umano può richiedere una proposta conditional con le incertezze mantenute. La conferma esplicita accetta le ipotesi e rende le obiezioni non bloccanti per l’approvazione del documento. Le obiezioni restano aperte, le prove restano non verificate e la proposta rimane conditional: non viene dichiarato consenso tecnico. L'approvazione riguarda solo il documento, mai l'esecuzione delle azioni.
 
@@ -173,8 +173,17 @@ sono separati dagli snapshot. GET `/api/v2/runs/{id}/tools` accetta offset/limit
 GET `/api/v2/runs/{id}/artifacts/{artifact_id}` è limitato al run proprietario.
 Il profilo non autorizza SQL, shell, URL arbitrari, download o ordini.
 
-Ogni ruolo ha un progresso persistente: massimo 8 tool e 10 chiamate provider,
-configurabili verso il basso con ACS_TOOL_REQUESTS e ACS_PROVIDER_REQUESTS.
+Ogni ruolo ha un progresso persistente: massimo 8 tool e 5 chiamate provider
+(default, massimo 10), configurabili con ACS_TOOL_REQUESTS e ACS_PROVIDER_REQUESTS.
+
+Profilo veloce (default): il server privilegia la rapidità dei turni rispetto alla
+profondità. `ACS_REASONING_EFFORT=low` (vuoto = parametro non inviato; il modello
+attuale accetta none/low/medium/high), `ACS_MAX_OUTPUT_TOKENS=3000`, solo gli ultimi
+`ACS_CONTEXT_MESSAGES=12` messaggi nel prompt (con il numero di quelli omessi) e testo
+delle prove troncato a `ACS_EVIDENCE_CHARS=1200` caratteri nel prompt; prove e
+artefatti completi restano immutabili sul server. Il prompt chiede testi di massimo
+due frasi. La UI richiede 1 round per ciclo (`VITE_MAX_ROUNDS`). SSE invia
+aggiornamenti ogni 0,3 s.
 Due job forecast unici al massimo per ciclo. Il contesto provider è limitato a
 300.000 caratteri, ogni output tool a 24.000; le serie complete stanno negli
 artefatti. Ogni invocazione provider ha la lease breve esistente e timeout HTTP;

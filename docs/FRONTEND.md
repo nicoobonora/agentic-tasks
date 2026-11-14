@@ -160,9 +160,10 @@ endpoint o stati di orchestrazione.
 I comandi conservano la stessa chiave per ripetizioni dello stesso payload dopo
 errori di rete, per tutta la sessione della pagina. Dopo una risposta si rilegge
 lo stato corrente (un replay può essere vecchio). Non cambiare il payload per
-ritentare una richiesta di esito incerto. Il registro locale in modalità API
-memorizza gli ID dei run avviati da questo browser; non è un elenco globale.
-Le chiavi delle operazioni incerte non sopravvivono al refresh.
+ritentare una richiesta di esito incerto. Il browser non conserva i run: a ogni caricamento
+della pagina il workspace riparte vuoto, tutti i ticket tornano disponibili e ogni
+flusso può essere ripetuto. I run restano nel database del server, ma la UI non li
+ricarica. Le chiavi delle operazioni incerte non sopravvivono al refresh.
 
 ### Collegamento al backend
 
@@ -203,7 +204,7 @@ fallimento, più run contemporanei con conservazione del testo durante gli
 aggiornamenti, replay idempotente e rifiuto di versioni superate. Questi test
 usano il simulatore locale. Un ulteriore test del client HTTP con risposte
 intercettate verifica la conservazione della chiave dopo un errore di rete,
-la gestione di 409 senza retry automatico e il recupero degli ID dopo refresh.
+la gestione di 409 senza retry automatico e la ripartenza pulita dopo refresh.
 Non attestano la qualità del modello o la connettività con un backend reale. La finalizzazione round_limit viene predisposta sul
 contratto ma non è prodotta dai tre scenari dimostrativi iniziali.
 
@@ -211,9 +212,21 @@ contratto ma non è prodotta dai tre scenari dimostrativi iniziali.
 
 Il workspace occupa `100dvh`, senza scorrimento della pagina. Il critico occupa
 il pannello superiore; analista, operations e finance restano visibili in tre
-colonne affiancate, anche su schermi stretti. Ogni pannello mostra direttamente
-`content.explanation`, la spiegazione pubblica del turno, e lo stato reale del
-ruolo. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
+colonne affiancate, anche su schermi stretti. Ogni pannello mostra una sintesi
+breve di `content.text` (prima o prime due frasi), le affermazioni con la loro base
+(Dato/Stima/Ipotesi) e i chip della fonte citata; il testo completo e
+`content.explanation` restano in “Testo completo”. Una barra dei turni
+(Analista → Operations → Finance → Critico → Tu) e lo stato del pannello derivano
+solo da `state`, `next_role`, ciclo/round e messaggi del round corrente: il ruolo
+in `next_role` è evidenziato, gli altri sono attenuati mentre lavora.
+
+Le chiamate agli strumenti (`tool_activity`) sono mostrate nel pannello del ruolo
+che le ha richieste: nome leggibile, nome tecnico, parametri sintetici, stato
+(in coda/in corso/riuscita/fallita), risultato riassunto e pulsante “dati ↗” verso
+l’artefatto. Il dialogo “Strumenti e prove” elenca tutte le chiamate per ciclo.
+Le etichette dei tool charging stanno in `frontend/examples/charging.ts`; un tool
+sconosciuto mostra il proprio nome. Nel simulatore locale i run charging
+producono chiamate, obiezione e risoluzione scriptate, marcate come simulate. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
 il backend continua a orchestrare i turni in sequenza. Le frecce consentono di
 consultare turni precedenti. Testi lunghi scorrono solo dentro il pannello.
 

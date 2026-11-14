@@ -12,6 +12,12 @@
   --line: #dfe2d9;
   --muted: #777d70;
   --accent: #4e6840;
+  --analyst: #2f6fde;
+  --operations: #0f8f78;
+  --finance: #b7791f;
+  --critic: #c2185b;
+  --operator: #e8590c;
+  --ok: #2f8f4e;
 }
 * {
   box-sizing: border-box;
@@ -235,13 +241,23 @@ button.secondary,
   overflow: hidden;
 }
 .agent-panel.critic {
-  flex: 0 1 24%;
-  min-height: 104px;
-  background: #f0f3e9;
-  border-color: #d7dfca;
+  flex: 0 1 26%;
+  min-height: 112px;
 }
-.agent-panel.is-working {
-  border-color: #91a77b;
+.agent-panel.critic .agent-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 0 18px;
+  align-content: start;
+}
+.agent-panel.critic .live-line,
+.agent-panel.critic .placeholder {
+  grid-column: 1 / -1;
+}
+.agent-panel.critic .objections {
+  margin-top: 10px;
+  padding-left: 14px;
+  border-left: 1px solid var(--line);
 }
 .agent-panel > header {
   display: flex;
@@ -829,4 +845,550 @@ button.secondary,
   .agent-body p {
     line-height: 1.5;
   }
+}
+
+/* ---- Agent identity, active / idle state ---- */
+.agent-panel {
+  --role: var(--muted);
+  border-top: 3px solid var(--role);
+  transition:
+    opacity 0.25s,
+    filter 0.25s,
+    box-shadow 0.25s,
+    border-color 0.25s;
+}
+.agent-panel.analyst,
+.step.analyst,
+.role-tag.analyst {
+  --role: var(--analyst);
+}
+.agent-panel.operations,
+.step.operations,
+.role-tag.operations {
+  --role: var(--operations);
+}
+.agent-panel.finance,
+.step.finance,
+.role-tag.finance {
+  --role: var(--finance);
+}
+.agent-panel.critic,
+.step.critic,
+.role-tag.critic {
+  --role: var(--critic);
+}
+.step.operator {
+  --role: var(--operator);
+}
+.role-icon {
+  background: var(--role);
+  color: white;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12px;
+}
+.role-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.role-name small {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.role-state {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: #f1f2ee;
+  font-weight: 500;
+}
+.agent-panel.is-working {
+  border-color: var(--role);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--role) 25%, transparent),
+    0 6px 20px color-mix(in srgb, var(--role) 18%, transparent);
+}
+.agent-panel.is-working .role-state {
+  background: var(--role);
+  color: white;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.agent-panel.is-idle {
+  opacity: 0.55;
+  filter: saturate(0.35);
+}
+.agent-panel.is-idle:hover,
+.agent-panel.is-idle:focus-within {
+  opacity: 1;
+  filter: none;
+}
+.state-objected .role-state,
+.state-failed .role-state {
+  background: #fde7ef;
+  color: var(--critic);
+}
+.state-done .role-state {
+  background: #e7f4ec;
+  color: var(--ok);
+}
+.state-skipped .role-state {
+  background: #f1f2ee;
+  color: var(--muted);
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.65;
+  }
+}
+.live-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--role);
+}
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+.dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--role);
+  animation: bounce 1s infinite;
+}
+.dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dots i,
+  .agent-panel.is-working .role-state,
+  .tool-call.running .tool-dot {
+    animation: none;
+  }
+}
+.message.previous {
+  opacity: 0.5;
+}
+.msg-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.msg-meta small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.kind {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--role);
+}
+.kind.objection {
+  color: var(--critic);
+}
+.kind.not_applicable {
+  color: var(--muted);
+}
+.agent-body p.headline {
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #23261f;
+  margin: 8px 0;
+  white-space: normal;
+}
+.claims,
+.raised,
+.objections,
+.tool-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.claims li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.claims li > span:nth-child(2) {
+  flex: 1 1 60%;
+}
+.basis {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.basis.supported {
+  background: #e7f4ec;
+  color: var(--ok);
+}
+.basis.estimate {
+  background: #fdf3e1;
+  color: #9a6412;
+}
+.basis.assumption {
+  background: #f1f2ee;
+  color: #6b6f66;
+}
+.chip {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: #eef3fd;
+  color: var(--analyst);
+  border: 1px solid #d5e1f8;
+  white-space: nowrap;
+}
+.chip.plain {
+  background: #f6f1e9;
+  color: #8a5a1c;
+  border-color: #eadcc6;
+}
+.raised li {
+  font-size: 12px;
+  color: #9a6412;
+}
+.raised li.blocking {
+  color: var(--critic);
+  font-weight: 600;
+}
+.objections li {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  align-items: baseline;
+}
+.objections li small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+.obj-state {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #fdf3e1;
+  color: #9a6412;
+  flex-shrink: 0;
+}
+.objections .blocking.open .obj-state {
+  background: var(--critic);
+  color: white;
+}
+.objections .resolved .obj-state {
+  background: #e7f4ec;
+  color: var(--ok);
+}
+.objections .resolved > span:last-child {
+  text-decoration: line-through;
+  text-decoration-color: #b7bcb0;
+}
+.objections .resolved small {
+  text-decoration: none;
+}
+.agent-body details {
+  margin: 6px 0 12px;
+  font-size: 11px;
+}
+.agent-body details summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+.agent-body details p {
+  font-size: 12px;
+}
+
+/* ---- Tool calls ---- */
+.tool-call {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "dot main btn"
+    ". result btn";
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 8px;
+  border: 1px solid #e6e8e1;
+  border-left: 3px solid var(--muted);
+  border-radius: 6px;
+  background: #f8f9f6;
+  font-size: 11px;
+}
+.tool-call.running,
+.tool-call.queued {
+  border-left-color: var(--operator);
+  background: #fff6ef;
+}
+.tool-call.succeeded {
+  border-left-color: var(--ok);
+}
+.tool-call.failed {
+  border-left-color: var(--critic);
+  background: #fdf0f4;
+}
+.tool-dot {
+  grid-area: dot;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.tool-call.succeeded .tool-dot {
+  background: var(--ok);
+}
+.tool-call.failed .tool-dot {
+  background: var(--critic);
+}
+.tool-call.running .tool-dot,
+.tool-call.queued .tool-dot {
+  background: var(--operator);
+  animation: pulse 0.8s infinite;
+}
+.tool-call > .chip {
+  grid-area: btn;
+}
+.tool-main {
+  grid-area: main;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.tool-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+.tool-title b {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tool-title code {
+  font-size: 10px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-args {
+  color: var(--muted);
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-args i {
+  font-style: normal;
+  color: #59614f;
+}
+.tool-result {
+  grid-area: result;
+  font-weight: 600;
+  color: #30332e;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-call.running .tool-result {
+  color: var(--operator);
+}
+.cache {
+  font-style: normal;
+  font-size: 9px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0 3px;
+}
+.role-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  background: var(--role);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.tool-list.log .tool-call {
+  font-size: 12px;
+  grid-template-columns: 10px minmax(0, 1fr) minmax(0, 34%) auto;
+  grid-template-areas: "dot main result btn";
+}
+.tools-button {
+  color: var(--operator) !important;
+  font-weight: 600;
+}
+
+/* ---- Turn bar ---- */
+.turn-bar {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.turn-meta {
+  display: flex;
+  flex-direction: column;
+  padding-right: 8px;
+  border-right: 1px solid var(--line);
+  white-space: nowrap;
+}
+.turn-meta small,
+.step small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px 4px 4px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: white;
+  white-space: nowrap;
+  opacity: 0.6;
+}
+.step > span:last-child {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.step b {
+  font-size: 11px;
+  font-weight: 600;
+}
+.step-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--role);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+}
+.step.done,
+.step.objected,
+.step.skipped {
+  opacity: 1;
+}
+.step.done small {
+  color: var(--ok);
+}
+.step.objected small {
+  color: var(--critic);
+  font-weight: 600;
+}
+.step.working {
+  opacity: 1;
+  border-color: var(--role);
+  background: color-mix(in srgb, var(--role) 10%, white);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--role) 22%, transparent);
+}
+.step.working small {
+  color: var(--role);
+  font-weight: 600;
+}
+.turn-bar .arrow {
+  color: #b5baae;
+  font-size: 12px;
+}
+
+/* ---- Human escalation ---- */
+.question {
+  background: #fff6ef;
+  border: 1px solid #f5c9a8;
+  border-left: 4px solid var(--operator);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.escalation {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--operator);
+  margin-bottom: 3px;
+}
+.answer-controls > button[type="submit"] {
+  background: var(--operator);
+  border-color: var(--operator);
+}
+@media (max-width: 1150px) {
+  .role-name small,
+  .tool-title code {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .turn-bar .step small,
+  .turn-meta small {
+    display: none;
+  }
+  .agent-body p.headline {
+    font-size: 11px;
+  }
+}
+.objections .obj-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--critic);
+}
+.role-tag {
+  white-space: nowrap;
+}
+.cycle-sep {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-top: 6px;
 }

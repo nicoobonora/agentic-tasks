@@ -164,7 +164,9 @@ test("client API: retry di rete con stessa chiave e 409 senza retry automatico",
   await expect(page.getByRole("alert")).toContainText("controlla e conferma");
   expect(retryCalls).toBe(1);
   await page.reload();
-  await expect(page.locator(".failure")).toBeVisible();
+  // A refresh starts clean: the ticket is available again and nothing is restored.
+  await expect(page.locator(".failure")).toHaveCount(0);
+  await expect(page.locator('[data-start="review"]')).toBeVisible();
   expect(createKeys).toHaveLength(2);
 });
 

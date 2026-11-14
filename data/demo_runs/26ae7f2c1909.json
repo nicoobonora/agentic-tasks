@@ -1,0 +1,540 @@
+{
+ "id": "26ae7f2c1909",
+ "task": "When should we schedule maintenance on the charging stations in the Bolzano area to minimise impact on users? Propose concrete weekday/time windows backed by observed usage.",
+ "preset": "maintenance",
+ "engine": "claude",
+ "model": "sonnet",
+ "status": "ok",
+ "started_at": "2026-11-14T06:35:26.881098+00:00",
+ "markdown": "## Answer\nThe best maintenance window in the Bolzano area is early morning, 05:00-07:00 local time, on Tuesday to Friday, with Thursday the strongest candidate. Thu 05:00-07:00 shows occupancy of 6.6%, against 43.5% overall [E2]. These windows rest on only 4-5 comparable dates each, so treat them as well-supported but not certain [E2].\n\n## Key findings\n- Lowest-usage 2-hour windows: Thu 05:00-07:00 at 6.6% (5 dates), Tue 05:00-07:00 at 12.4% (4 dates) and Fri 05:00-07:00 at 14.6% (4 dates) [E2].\n- Usage rises sharply after 07:00: Wed is 41.2% at 07:00 and 63.6% at 08:00, and Thu is 66.1% at 08:00 [E2].\n- Weekday daytime from 08:00 to 19:00 mostly runs at roughly 37-66%, so daytime work would affect more users [E2].\n- Avoid the busiest windows: Wed 20:00-22:00 at 72.0%, Sat 21:00-23:00 at 65.4% and Mon 20:00-22:00 at 65.1% [E2].\n- Weekend nights are not quiet: Sat 02:00 is 82.1%, Sat 23:00 is 98.4% and Fri 23:00 is 93.8% [E2].\n- Sun 21:00-23:00 is low (0.9% at 21:00, 6.7% at 22:00), but Sun 20:00 is 63.5%, so this is only a secondary option with less support [E2].\n- Busiest sites: BZ_C_RISPARMIO_01 (66.9% occupancy, 203 starts, peak hour 08:00), BZ_P_VITTORIA (63.5%, 135 starts, peak hour 08:00) and BZ_BOEHLER_01 (57.0%, 170 starts, peak hour 05:00) [E3].\n\n## Recommendation\nSchedule routine maintenance on Thursday 05:00-07:00, using Tuesday and Friday 05:00-07:00 as backups [E2]. Finish before 07:00, because usage climbs quickly after that [E2]. For BZ_C_RISPARMIO_01 and BZ_P_VITTORIA, whose peak is 08:00, the early window should work well, but finish by 07:00 [E3]. BZ_BOEHLER_01 peaks at 05:00, so check its own hourly profile before using this window there [E3]. Keep Friday and Saturday late evenings and nights free of planned work [E2].\n\n## Limitations & unknowns\n- The lowest windows rest on only 4-5 comparable dates, and 44 grid cells fall below the 4-date minimum [E2].\n- Null night cells mean unknown, not zero. Some 0.0 values at 00:00-05:00 may reflect little observable data, so a night window is not proven quiet [E2].\n- The top three sites have low coverage: 14.7%, 8.2% and 22.7% [E3].\n- 22 sites were excluded for exposure under 24 h, and only 43 of 51 sites have data in the window [E1, E3].\n- The Bolzano area is a context bounding box, not the municipal boundary [E1].\n- Occupancy is not demand, energy, sessions or faults. No stale-flag or per-site data-quality check was run [E1, E2].\n\n## Sources\n- [E1] dataset_overview — Open Data Hub South Tyrol EChargingPlug status (echarging-plug-status-ocpi), window 2026-09-19..2026-11-14\n- [E2] hourly_profile(scope=bolzano) — Open Data Hub South Tyrol EChargingPlug status, window 2026-09-19..2026-11-14\n- [E3] rank_sites(metric=occupancy, area=bolzano) — Open Data Hub South Tyrol EChargingPlug status, window 2026-09-19..2026-11-14",
+ "evidence": [
+  {
+   "id": "E1",
+   "tool": "dataset_overview",
+   "args": {},
+   "summary": "51 sites / 183 points; 43 with data in 2026-09-19..2026-11-14 (56 days)",
+   "data": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "licence": "Open Data Hub South Tyrol open data (see opendatahub.com); attribution: NOI Techpark / Open Data Hub",
+    "sources": [
+     "Neogy",
+     "Neogy-AMPECO"
+    ],
+    "sites_by_source": {
+     "Neogy": 8,
+     "Neogy-AMPECO": 43
+    },
+    "first_observation": "2024-11-19T16:00:07.317Z",
+    "last_observation": "2026-11-14T00:22:16.057Z",
+    "analysis_window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "sites": 51,
+    "charging_points": 183,
+    "sites_in_bolzano_bbox": 51,
+    "sites_with_data_in_window": 43,
+    "gap_threshold_minutes": 120,
+    "area_rule": "Bolzano context bounding box (EPSG:4326) from config/sources.json; not the municipal boundary",
+    "units": {
+     "occupancy_fraction": "share of operational point-time occupied (0..1)",
+     "exposure_hours": "hours with fully known operational state",
+     "observed_starts": "observed AVAILABLE→CHARGING transitions (not official sessions)",
+     "coverage": "exposure / window hours (0..1)",
+     "full_fraction": "share of exposure with all operational points occupied (0..1)"
+    },
+    "semantics": "Status observations measure occupancy only; not energy, sessions, demand or faults. Unknown = NULL.",
+    "weekday_convention": "0=Monday..6=Sunday, Europe/Rome local time",
+    "cache_built_at": "2026-11-14T06:16:01.690739Z"
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "meta",
+     "sites",
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  },
+  {
+   "id": "E2",
+   "tool": "hourly_profile",
+   "args": {
+    "scope": "bolzano",
+    "weekday": null
+   },
+   "summary": "bolzano: lowest Thu 05:00-07:00 0.066, Tue 05:00-07:00 0.124, Fri 05:00-07:00 0.146",
+   "data": {
+    "scope": "bolzano",
+    "scope_name": "bolzano",
+    "weekday": null,
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "timezone": "Europe/Rome",
+    "overall_occupancy_fraction": 0.435,
+    "occupancy_grid": {
+     "Mon": [
+      0.302,
+      0.029,
+      null,
+      0.0,
+      null,
+      0.0,
+      0.217,
+      0.268,
+      0.497,
+      0.4,
+      0.368,
+      0.474,
+      0.516,
+      0.431,
+      0.422,
+      0.23,
+      0.278,
+      0.392,
+      0.364,
+      0.562,
+      0.618,
+      0.727,
+      0.0,
+      0.439
+     ],
+     "Tue": [
+      0.0,
+      0.011,
+      null,
+      null,
+      null,
+      0.0,
+      0.161,
+      0.237,
+      0.554,
+      0.513,
+      0.437,
+      0.583,
+      0.478,
+      0.418,
+      0.37,
+      0.487,
+      0.58,
+      0.423,
+      0.473,
+      0.53,
+      0.468,
+      0.398,
+      0.456,
+      0.759
+     ],
+     "Wed": [
+      0.162,
+      0.043,
+      0.151,
+      0.001,
+      0.0,
+      0.0,
+      0.232,
+      0.412,
+      0.636,
+      0.576,
+      0.533,
+      0.532,
+      0.529,
+      0.28,
+      0.393,
+      0.35,
+      0.479,
+      0.47,
+      0.418,
+      0.502,
+      0.728,
+      0.705,
+      0.752,
+      0.0
+     ],
+     "Thu": [
+      0.0,
+      0.0,
+      0.0,
+      null,
+      0.0,
+      0.0,
+      0.08,
+      0.26,
+      0.661,
+      0.55,
+      0.49,
+      0.519,
+      0.472,
+      0.392,
+      0.394,
+      0.538,
+      0.465,
+      0.411,
+      0.486,
+      0.5,
+      0.757,
+      0.507,
+      0.345,
+      0.0
+     ],
+     "Fri": [
+      0.0,
+      null,
+      null,
+      null,
+      0.0,
+      0.009,
+      0.227,
+      0.403,
+      0.51,
+      0.484,
+      0.465,
+      0.507,
+      0.452,
+      0.507,
+      0.491,
+      0.372,
+      0.429,
+      0.452,
+      0.472,
+      0.54,
+      0.561,
+      0.506,
+      0.608,
+      0.938
+     ],
+     "Sat": [
+      0.691,
+      0.301,
+      0.821,
+      0.0,
+      0.498,
+      0.479,
+      0.258,
+      0.434,
+      0.66,
+      0.584,
+      0.542,
+      0.604,
+      0.515,
+      0.43,
+      0.437,
+      0.476,
+      0.599,
+      0.544,
+      0.425,
+      0.38,
+      0.585,
+      0.646,
+      0.675,
+      0.984
+     ],
+     "Sun": [
+      0.0,
+      0.0,
+      0.214,
+      0.0,
+      0.205,
+      0.226,
+      0.0,
+      0.0,
+      0.497,
+      0.39,
+      0.264,
+      0.425,
+      0.51,
+      0.412,
+      0.42,
+      0.492,
+      0.636,
+      0.53,
+      0.486,
+      0.489,
+      0.635,
+      0.009,
+      0.067,
+      0.0
+     ]
+    },
+    "grid_note": "occupancy fraction per local hour 0..23; null = no observable data",
+    "cells_below_min_dates": 44,
+    "min_comparable_dates": 4,
+    "lowest_usage_2h_windows": [
+     {
+      "weekday": 3,
+      "day": "Thu",
+      "start_hour": 5,
+      "end_hour": 7,
+      "label": "Thu 05:00-07:00",
+      "occupancy_fraction": 0.066,
+      "comparable_dates": 5
+     },
+     {
+      "weekday": 1,
+      "day": "Tue",
+      "start_hour": 5,
+      "end_hour": 7,
+      "label": "Tue 05:00-07:00",
+      "occupancy_fraction": 0.124,
+      "comparable_dates": 4
+     },
+     {
+      "weekday": 4,
+      "day": "Fri",
+      "start_hour": 5,
+      "end_hour": 7,
+      "label": "Fri 05:00-07:00",
+      "occupancy_fraction": 0.146,
+      "comparable_dates": 4
+     }
+    ],
+    "busiest_2h_windows": [
+     {
+      "weekday": 2,
+      "day": "Wed",
+      "start_hour": 20,
+      "end_hour": 22,
+      "label": "Wed 20:00-22:00",
+      "occupancy_fraction": 0.72,
+      "comparable_dates": 6
+     },
+     {
+      "weekday": 5,
+      "day": "Sat",
+      "start_hour": 21,
+      "end_hour": 23,
+      "label": "Sat 21:00-23:00",
+      "occupancy_fraction": 0.654,
+      "comparable_dates": 5
+     },
+     {
+      "weekday": 0,
+      "day": "Mon",
+      "start_hour": 20,
+      "end_hour": 22,
+      "label": "Mon 20:00-22:00",
+      "occupancy_fraction": 0.651,
+      "comparable_dates": 4
+     }
+    ]
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "area_hourly",
+     "site_hourly"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  },
+  {
+   "id": "E3",
+   "tool": "rank_sites",
+   "args": {
+    "metric": "occupancy",
+    "area": "bolzano",
+    "top_n": 5,
+    "order": "desc"
+   },
+   "summary": "top 5 by occupancy (desc): BZ_C_RISPARMIO_01 0.669, BZ_P_VITTORIA 0.635, BZ_BOEHLER_01 0.57",
+   "data": {
+    "metric": "occupancy",
+    "area": "bolzano",
+    "order": "desc",
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "min_exposure_hours": 24,
+    "excluded_low_exposure": 22,
+    "ranked": {
+     "columns": [
+      "rank",
+      "site_id",
+      "name",
+      "points",
+      "occupancy_fraction",
+      "full_time_fraction",
+      "observed_starts",
+      "exposure_hours",
+      "coverage",
+      "peak_local_hour"
+     ],
+     "rows": [
+      [
+       1,
+       "Neogy-AMPECO:78226",
+       "BZ_C_RISPARMIO_01",
+       2,
+       0.669,
+       0.462,
+       203,
+       197.89,
+       0.147,
+       8
+      ],
+      [
+       2,
+       "Neogy-AMPECO:77436",
+       "BZ_P_VITTORIA",
+       3,
+       0.635,
+       0.277,
+       135,
+       110.55,
+       0.082,
+       8
+      ],
+      [
+       3,
+       "Neogy-AMPECO:78215",
+       "BZ_BOEHLER_01",
+       1,
+       0.57,
+       0.57,
+       170,
+       305.59,
+       0.227,
+       5
+      ],
+      [
+       4,
+       "Neogy-AMPECO:78232",
+       "BZ_C_AUGUSTA_01",
+       2,
+       0.561,
+       0.378,
+       53,
+       59.46,
+       0.044,
+       12
+      ],
+      [
+       5,
+       "Neogy-AMPECO:78220",
+       "BZ_RESSEL_01",
+       2,
+       0.522,
+       0.316,
+       46,
+       44.44,
+       0.033,
+       18
+      ]
+     ]
+    }
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  }
+ ],
+ "verification": {
+  "citations_total": 25,
+  "citations_valid": 25,
+  "numbers_checked": 83,
+  "numbers_traced": 75,
+  "untraced": [
+   {
+    "number": "05:00",
+    "text": "The best maintenance window in the Bolzano area is early morning, 05:00-07:00 local time, on Tuesday to Friday, with Thursday the strongest candidate."
+   },
+   {
+    "number": "07:00",
+    "text": "The best maintenance window in the Bolzano area is early morning, 05:00-07:00 local time, on Tuesday to Friday, with Thursday the strongest candidate."
+   },
+   {
+    "number": "08:00",
+    "text": "- Usage rises sharply after 07:00: Wed is 41.2% at 07:00 and 63.6% at 08:00, and Thu is 66.1% at 08:00 [E2]."
+   },
+   {
+    "number": "08:00",
+    "text": "- Usage rises sharply after 07:00: Wed is 41.2% at 07:00 and 63.6% at 08:00, and Thu is 66.1% at 08:00 [E2]."
+   },
+   {
+    "number": "08:00",
+    "text": "- Weekday daytime from 08:00 to 19:00 mostly runs at roughly 37-66%, so daytime work would affect more users [E2]."
+   },
+   {
+    "number": "19:00",
+    "text": "- Weekday daytime from 08:00 to 19:00 mostly runs at roughly 37-66%, so daytime work would affect more users [E2]."
+   },
+   {
+    "number": "07:00",
+    "text": "For BZ_C_RISPARMIO_01 and BZ_P_VITTORIA, whose peak is 08:00, the early window should work well, but finish by 07:00 [E3]."
+   },
+   {
+    "number": "00 may",
+    "text": "- Null night cells mean unknown, not zero. Some 0.0 values at 00:00-05:00 may reflect little observable data, so a night window is not proven quiet [E2]."
+   }
+  ],
+  "unknown_ids": []
+ },
+ "review_note": "- **Key caveat:** The 6.6% Thursday figure rests on 5 dates, and early-morning occupancy may be understated because null or 0.0 night cells mean \"no data\", not \"quiet\". Confirm with per-site data before committing.\n- **Untraced:** The citation check flagged only time-of-day labels (05:00, 07:00, 08:00, 19:00) and a \"00 may\" parsing artifact. No occupancy value is untraced.\n- **Unsupported:** the \"37-66%\" daytime range is a summary, so verify it against the profile.",
+ "timings": {
+  "researcher_started_ms": 0,
+  "first_activity_ms": 1881,
+  "researcher_done_ms": 12053,
+  "writer_started_ms": 12053,
+  "first_report_token_ms": 14245,
+  "writer_done_ms": 22262,
+  "reviewer_started_ms": 22263,
+  "reviewer_done_ms": 25898,
+  "total_ms": 25898
+ },
+ "usage": {
+  "researcher": {
+   "cost_usd": 0.0283422,
+   "turns": 4,
+   "duration_ms": 11349,
+   "input_tokens": 6,
+   "output_tokens": 1451
+  },
+  "writer": {
+   "cost_usd": 0.031752,
+   "turns": 1,
+   "duration_ms": 9493,
+   "input_tokens": 2,
+   "output_tokens": 1353
+  },
+  "reviewer": {
+   "cost_usd": 0.0130248,
+   "turns": 1,
+   "duration_ms": 2757,
+   "input_tokens": 2,
+   "output_tokens": 185
+  },
+  "total_cost_usd": 0.0731,
+  "tool_calls": 3,
+  "evidence_items": 3
+ },
+ "events": 245
+}

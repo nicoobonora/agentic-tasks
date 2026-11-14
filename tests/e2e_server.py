@@ -23,7 +23,8 @@ class ControlledProvider:
             result.turn.objections=[ObjectionDraft(target_message_id=None,concern='Feasibility remains unverified',explanation='Synthetic reviewer requests an explicit conditional revision.',blocking=False,evidence_ids=[])]
             result.turn.needs_revision=True
             return result
-        if role=='analyst' and run.cycle==1:
+        if role=='critic' and run.cycle==1:
+            # Only the critic escalates to the human.
             result.turn.question=QuestionDraft(text='Confermi unità, area e priorità?',explanation='Colonnine non equivale automaticamente a punti. Budget e permessi restano mancanti.',options=[Option(id='points',label='Punti di ricarica a Bolzano',explanation='Obiettivo aziendale da verificare'),Option(id='clarify',label='Specificare il perimetro',explanation='Fornire informazioni mancanti')])
             return result
         if role=='analyst' and not run.proposal or role=='analyst' and run.cycle>1:

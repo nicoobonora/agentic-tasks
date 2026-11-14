@@ -21,7 +21,8 @@ for (const task of ["expansion", "maintenance"]) {
     await page.goto("/");
     await page.locator(`[data-start="${task}"]`).focus();
     await page.keyboard.press("Enter");
-    await expect(page.locator(".question")).toBeVisible();
+    // The critic escalates after the full first round (all four roles).
+    await expect(page.locator(".question")).toBeVisible({ timeout: 30000 });
     expect(payloads).toHaveLength(1);
     expect(payloads[0].capability_profile).toBe("charging");
     expect(payloads[0].task.attachments).toBeUndefined();
@@ -29,7 +30,7 @@ for (const task of ["expansion", "maintenance"]) {
     await page
       .getByRole("button", { name: "Invia risposta e riprendi" })
       .click();
-    await page.getByRole("button", { name: /^Indagine e prove/ }).click();
+    await page.getByRole("button", { name: /^Strumenti e prove/ }).click();
     await expect(page.locator(".investigation")).toContainText(
       "charging.discover_sites",
     );
@@ -53,12 +54,21 @@ for (const task of ["expansion", "maintenance"]) {
         })
         .toBe(200);
     }
-    await page.reload();
+    // No reload: the page keeps no run registry, it reconnects via SSE/polling.
+    await page.getByRole("button", { name: "Chiudi dettagli" }).click();
+    // With one round per cycle the critic's revision request goes to the operator.
+    await expect(page.locator(".question")).toContainText("Limite di round", {
+      timeout: 45000,
+    });
+    await page.getByLabel("Scelta").selectOption("retain_uncertainty");
+    await page
+      .getByRole("button", { name: "Invia risposta e riprendi" })
+      .click();
     await expect(
       page.getByRole("button", { name: "Rivedi e approva" }),
     ).toBeVisible({ timeout: 45000 });
     expect(payloads).toHaveLength(1);
-    await page.getByRole("button", { name: /^Indagine e prove/ }).click();
+    await page.getByRole("button", { name: /^Strumenti e prove/ }).click();
     await page.locator(".investigation details summary").first().click();
     const evidence = page.locator(".investigation [data-evidence]").first();
     await evidence.click();

@@ -48,7 +48,7 @@ def step(run_id,provider=None):
                 protocol.append(output(db,run,call));put(db,'turn_protocol',p.token,protocol)
             p.pending_job_id=None
             engine.save(db,run)
-        if p.provider_requests>=limit('ACS_PROVIDER_REQUESTS',10,10) or (engine.now()-p.started_at).total_seconds()>1800:
+        if p.provider_requests>=limit('ACS_PROVIDER_REQUESTS',5,10) or (engine.now()-p.started_at).total_seconds()>1800:
             engine.apply_turn(run,p.role,recover(run,p.role,'Limite di tempo o richieste raggiunto'))
             run.turn_progress=None
             engine.save(db,run);return True

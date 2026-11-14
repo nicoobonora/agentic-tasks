@@ -190,7 +190,8 @@ def apply_turn(run, role, result):
     for resolution in turn.resolutions:
         obj = next(o for o in run.objections if o.id == resolution.objection_id)
         obj.status, obj.resolution, obj.resolved_by_message_id = 'resolved', resolution, msg.id
-    if turn.question:
+    # Only the critic interrupts the human; other roles' questions stay in their message for the critic to weigh.
+    if turn.question and role == 'critic':
         ask(run, turn.question, 'agent_request')
         return
     if role != 'critic':

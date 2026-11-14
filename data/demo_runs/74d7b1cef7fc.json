@@ -1,0 +1,523 @@
+{
+ "id": "74d7b1cef7fc",
+ "task": "We want to add 20 charging points by 1 March 2027. Using the observed usage data, which existing sites/areas show the highest saturation and are the best candidates? Give a ranked shortlist with the data behind it.",
+ "preset": "expansion",
+ "engine": "claude",
+ "model": "sonnet",
+ "status": "ok",
+ "started_at": "2026-11-14T06:44:50.367784+00:00",
+ "markdown": "## Answer\nBZ_C_RISPARMIO_01 is the most saturated site, with occupancy of 66.9% and all points busy 46.2% of the time [E2]. BZ_BOEHLER_01 and the BZ_C_RISPARMIO_02 site next to it are the strongest follow-ups once evidence strength is considered [E2, E3]. The data cannot say how many of the 20 new points each site could absorb.\n\n## Key findings\n- BZ_C_RISPARMIO_01 (2 points) ranks 1 on occupancy at 66.9%, with full_time 46.2%, 203 observed_starts and coverage 0.147 [E2].\n- BZ_P_VITTORIA (3 points) has occupancy of 63.5% but only 0.082 coverage and 110.55 h exposure, so it is less certain [E2].\n- BZ_BOEHLER_01 (1 point) has occupancy and full_time of 57.0%, ranking 1 on full_time. This is partly because it has a single point. It also has the best coverage of the top 5 at 0.227, with 305.59 h exposure [E2, E3].\n- BZ_C_RISPARMIO_02 has occupancy of 51.9% and the most observed_starts in the top 8 at 261, with coverage 0.167 [E2].\n- BZ_PIAVE_01 has occupancy of 50.8%, 212 observed_starts and coverage 0.16. Its peak hour is 23:00 [E2].\n- BZ_C_AUGUSTA_01 (occupancy 56.1%, 53 starts, coverage 0.044) and BZ_RESSEL_01 (occupancy 52.2%, 46 starts, coverage 0.033) look saturated but rest on very little observed time [E2].\n- Both RISPARMIO sites peak around local morning, with RISPARMIO_01 at 08:00 and RISPARMIO_02 at 09:00 [E2].\n\n## Recommendation\nShortlist, ranked by saturation weighted by evidence strength:\n1. BZ_C_RISPARMIO_01\n2. BZ_BOEHLER_01\n3. BZ_C_RISPARMIO_02\n4. BZ_PIAVE_01\n5. BZ_P_VITTORIA\n\nThe two RISPARMIO sites suggest a possible area cluster, which is an inference from the names and not a tested finding [E2]. Before committing, verify demand and grid or space capacity on site. Treat BZ_C_AUGUSTA_01 and BZ_RESSEL_01 as watch-list sites until better coverage exists.\n\n## Limitations & unknowns\n- Coverage is low everywhere, ranging from 0.044 to 0.227 among the top 5, so all figures rest on a small share of the 56-day window [E2, E4].\n- Among five checked sites, gaps over 120 min range from 196 at BZ_BOEHLER_01 to 757 at BZ_P_VITTORIA. No gap data were retrieved for BZ_PIAVE_01 or BZ_RESSEL_01 [E4].\n- Of the 51 sites, 43 have data in the window, and 22 were excluded for under 24 h of exposure, so some candidates may be missing [E1, E2].\n- The top 8 are all small sites of 1 to 3 points [E2].\n- Occupancy is not energy, official sessions, demand or faults [E1].\n- Per-site capacity for the 20 new points is unavailable in the data.\n\n## Sources\n- [E1] dataset_overview — Open Data Hub EChargingPlug status (OCPI), window 2026-09-19..2026-11-14\n- [E2] rank_sites(metric=occupancy) — Open Data Hub EChargingPlug status (OCPI), window 2026-09-19..2026-11-14\n- [E3] rank_sites(metric=full_time) — Open Data Hub EChargingPlug status (OCPI), window 2026-09-19..2026-11-14\n- [E4] data_quality — Open Data Hub EChargingPlug status (OCPI), window 2026-09-19..2026-11-14",
+ "evidence": [
+  {
+   "id": "E1",
+   "tool": "dataset_overview",
+   "args": {},
+   "summary": "51 sites / 183 points; 43 with data in 2026-09-19..2026-11-14 (56 days)",
+   "data": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "licence": "Open Data Hub South Tyrol open data (see opendatahub.com); attribution: NOI Techpark / Open Data Hub",
+    "sources": [
+     "Neogy",
+     "Neogy-AMPECO"
+    ],
+    "sites_by_source": {
+     "Neogy": 8,
+     "Neogy-AMPECO": 43
+    },
+    "first_observation": "2024-11-19T16:00:07.317Z",
+    "last_observation": "2026-11-14T00:22:16.057Z",
+    "analysis_window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "sites": 51,
+    "charging_points": 183,
+    "sites_in_bolzano_bbox": 51,
+    "sites_with_data_in_window": 43,
+    "gap_threshold_minutes": 120,
+    "area_rule": "Bolzano context bounding box (EPSG:4326) from config/sources.json; not the municipal boundary",
+    "units": {
+     "occupancy_fraction": "share of operational point-time occupied (0..1)",
+     "exposure_hours": "hours with fully known operational state",
+     "observed_starts": "observed AVAILABLE→CHARGING transitions (not official sessions)",
+     "coverage": "exposure / window hours (0..1)",
+     "full_fraction": "share of exposure with all operational points occupied (0..1)"
+    },
+    "semantics": "Status observations measure occupancy only; not energy, sessions, demand or faults. Unknown = NULL.",
+    "weekday_convention": "0=Monday..6=Sunday, Europe/Rome local time",
+    "cache_built_at": "2026-11-14T06:16:01.690739Z"
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "meta",
+     "sites",
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  },
+  {
+   "id": "E2",
+   "tool": "rank_sites",
+   "args": {
+    "metric": "occupancy",
+    "area": "bolzano",
+    "top_n": 8,
+    "order": "desc"
+   },
+   "summary": "top 8 by occupancy (desc): BZ_C_RISPARMIO_01 0.669, BZ_P_VITTORIA 0.635, BZ_BOEHLER_01 0.57",
+   "data": {
+    "metric": "occupancy",
+    "area": "bolzano",
+    "order": "desc",
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "min_exposure_hours": 24,
+    "excluded_low_exposure": 22,
+    "ranked": {
+     "columns": [
+      "rank",
+      "site_id",
+      "name",
+      "points",
+      "occupancy_fraction",
+      "full_time_fraction",
+      "observed_starts",
+      "exposure_hours",
+      "coverage",
+      "peak_local_hour"
+     ],
+     "rows": [
+      [
+       1,
+       "Neogy-AMPECO:78226",
+       "BZ_C_RISPARMIO_01",
+       2,
+       0.669,
+       0.462,
+       203,
+       197.89,
+       0.147,
+       8
+      ],
+      [
+       2,
+       "Neogy-AMPECO:77436",
+       "BZ_P_VITTORIA",
+       3,
+       0.635,
+       0.277,
+       135,
+       110.55,
+       0.082,
+       8
+      ],
+      [
+       3,
+       "Neogy-AMPECO:78215",
+       "BZ_BOEHLER_01",
+       1,
+       0.57,
+       0.57,
+       170,
+       305.59,
+       0.227,
+       5
+      ],
+      [
+       4,
+       "Neogy-AMPECO:78232",
+       "BZ_C_AUGUSTA_01",
+       2,
+       0.561,
+       0.378,
+       53,
+       59.46,
+       0.044,
+       12
+      ],
+      [
+       5,
+       "Neogy-AMPECO:78220",
+       "BZ_RESSEL_01",
+       2,
+       0.522,
+       0.316,
+       46,
+       44.44,
+       0.033,
+       18
+      ],
+      [
+       6,
+       "Neogy-AMPECO:78230",
+       "BZ_C_RISPARMIO_02",
+       2,
+       0.519,
+       0.301,
+       261,
+       223.8,
+       0.167,
+       9
+      ],
+      [
+       7,
+       "Neogy-AMPECO:78218",
+       "BZ_PIAVE_01",
+       2,
+       0.508,
+       0.299,
+       212,
+       214.48,
+       0.16,
+       23
+      ],
+      [
+       8,
+       "Neogy-AMPECO:77824",
+       "PALAONDA_03",
+       2,
+       0.475,
+       0.289,
+       27,
+       34.94,
+       0.026,
+       8
+      ]
+     ]
+    }
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  },
+  {
+   "id": "E3",
+   "tool": "rank_sites",
+   "args": {
+    "metric": "full_time",
+    "area": "bolzano",
+    "top_n": 8,
+    "order": "desc"
+   },
+   "summary": "top 8 by full_time (desc): BZ_BOEHLER_01 0.57, BZ_C_RISPARMIO_01 0.462, BZ_C_AUGUSTA_01 0.378",
+   "data": {
+    "metric": "full_time",
+    "area": "bolzano",
+    "order": "desc",
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "min_exposure_hours": 24,
+    "excluded_low_exposure": 22,
+    "ranked": {
+     "columns": [
+      "rank",
+      "site_id",
+      "name",
+      "points",
+      "occupancy_fraction",
+      "full_time_fraction",
+      "observed_starts",
+      "exposure_hours",
+      "coverage",
+      "peak_local_hour"
+     ],
+     "rows": [
+      [
+       1,
+       "Neogy-AMPECO:78215",
+       "BZ_BOEHLER_01",
+       1,
+       0.57,
+       0.57,
+       170,
+       305.59,
+       0.227,
+       5
+      ],
+      [
+       2,
+       "Neogy-AMPECO:78226",
+       "BZ_C_RISPARMIO_01",
+       2,
+       0.669,
+       0.462,
+       203,
+       197.89,
+       0.147,
+       8
+      ],
+      [
+       3,
+       "Neogy-AMPECO:78232",
+       "BZ_C_AUGUSTA_01",
+       2,
+       0.561,
+       0.378,
+       53,
+       59.46,
+       0.044,
+       12
+      ],
+      [
+       4,
+       "Neogy-AMPECO:78220",
+       "BZ_RESSEL_01",
+       2,
+       0.522,
+       0.316,
+       46,
+       44.44,
+       0.033,
+       18
+      ],
+      [
+       5,
+       "Neogy-AMPECO:78230",
+       "BZ_C_RISPARMIO_02",
+       2,
+       0.519,
+       0.301,
+       261,
+       223.8,
+       0.167,
+       9
+      ],
+      [
+       6,
+       "Neogy-AMPECO:78218",
+       "BZ_PIAVE_01",
+       2,
+       0.508,
+       0.299,
+       212,
+       214.48,
+       0.16,
+       23
+      ],
+      [
+       7,
+       "Neogy-AMPECO:77824",
+       "PALAONDA_03",
+       2,
+       0.475,
+       0.289,
+       27,
+       34.94,
+       0.026,
+       8
+      ],
+      [
+       8,
+       "Neogy-AMPECO:77436",
+       "BZ_P_VITTORIA",
+       3,
+       0.635,
+       0.277,
+       135,
+       110.55,
+       0.082,
+       8
+      ]
+     ]
+    }
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  },
+  {
+   "id": "E4",
+   "tool": "data_quality",
+   "args": {
+    "site_ids": [
+     "Neogy-AMPECO:78226",
+     "Neogy-AMPECO:77436",
+     "Neogy-AMPECO:78215",
+     "Neogy-AMPECO:78232",
+     "Neogy-AMPECO:78230"
+    ]
+   },
+   "summary": "quality for 5 sites; 0 stale",
+   "data": {
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z",
+     "days": 56,
+     "timezone": "Europe/Rome"
+    },
+    "sites": {
+     "columns": [
+      "site_id",
+      "name",
+      "points",
+      "points_reporting",
+      "observations",
+      "gaps_over_120_min",
+      "median_cadence_minutes",
+      "latest_observation",
+      "coverage",
+      "stale"
+     ],
+     "rows": [
+      [
+       "Neogy-AMPECO:78226",
+       "BZ_C_RISPARMIO_01",
+       2,
+       2,
+       3031,
+       437,
+       0.94,
+       "2026-11-13T23:14:04.252000Z",
+       0.147,
+       false
+      ],
+      [
+       "Neogy-AMPECO:77436",
+       "BZ_P_VITTORIA",
+       3,
+       3,
+       4511,
+       757,
+       2.0,
+       "2026-11-13T23:15:37.048000Z",
+       0.082,
+       false
+      ],
+      [
+       "Neogy-AMPECO:78215",
+       "BZ_BOEHLER_01",
+       1,
+       1,
+       1120,
+       196,
+       3.62,
+       "2026-11-13T21:30:04.337000Z",
+       0.227,
+       false
+      ],
+      [
+       "Neogy-AMPECO:78232",
+       "BZ_C_AUGUSTA_01",
+       2,
+       2,
+       1989,
+       438,
+       0.4,
+       "2026-11-13T23:53:08.649000Z",
+       0.044,
+       false
+      ],
+      [
+       "Neogy-AMPECO:78230",
+       "BZ_C_RISPARMIO_02",
+       2,
+       2,
+       3570,
+       431,
+       0.91,
+       "2026-11-13T23:59:56.716000Z",
+       0.167,
+       false
+      ]
+     ]
+    },
+    "unknown_site_refs": []
+   },
+   "source": {
+    "dataset": "Open Data Hub South Tyrol — e-mobility charging point status (EChargingPlug, echarging-plug-status-ocpi)",
+    "tables": [
+     "quality",
+     "site_stats"
+    ],
+    "window": {
+     "start": "2026-09-19T00:00:00Z",
+     "end": "2026-11-14T00:00:00Z"
+    },
+    "cache_built_at": "2026-11-14T06:16:01.690739Z",
+    "db_fingerprint": "ed9b4bd6b5df093b35bff3180659e75f488f0872484647572e8fa706462ae4fe"
+   }
+  }
+ ],
+ "verification": {
+  "citations_total": 23,
+  "citations_valid": 23,
+  "numbers_checked": 44,
+  "numbers_traced": 44,
+  "untraced": [],
+  "unknown_ids": []
+ },
+ "review_note": "- **Main caveat:** Coverage is only 0.033–0.227 across the sites cited, so every occupancy figure (e.g., 66.9%, 46.2%) rests on a small slice of the 56-day window. Rankings could shift with more data, and occupancy is not demand or capacity.\n- **Numbers:** All 44 checked numbers traced; none are untraced.\n- **Gap:** The report gives no basis for splitting the 20 new points, and the RISPARMIO cluster is an inference from the site names.",
+ "timings": {
+  "researcher_started_ms": 0,
+  "first_activity_ms": 1876,
+  "researcher_done_ms": 13227,
+  "writer_started_ms": 13228,
+  "first_report_token_ms": 18945,
+  "writer_done_ms": 27438,
+  "reviewer_started_ms": 27438,
+  "reviewer_done_ms": 31262,
+  "total_ms": 31262
+ },
+ "usage": {
+  "researcher": {
+   "cost_usd": 0.0176225,
+   "turns": 5,
+   "duration_ms": 12411,
+   "input_tokens": 8,
+   "output_tokens": 1568
+  },
+  "writer": {
+   "cost_usd": 0.0376274,
+   "turns": 1,
+   "duration_ms": 13513,
+   "input_tokens": 2,
+   "output_tokens": 1937
+  },
+  "reviewer": {
+   "cost_usd": 0.0106449,
+   "turns": 1,
+   "duration_ms": 2906,
+   "input_tokens": 2,
+   "output_tokens": 172
+  },
+  "total_cost_usd": 0.0659,
+  "tool_calls": 4,
+  "evidence_items": 4
+ },
+ "events": 261
+}
