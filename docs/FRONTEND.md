@@ -60,7 +60,7 @@ if (current.question) {
 
 Non fissare le opzioni nell'interfaccia: leggere ID, label ed explanation dalla domanda. Il testo libero è sempre disponibile; inviare almeno un'opzione o testo non vuoto. Il server registra la risposta come prova, invalida i vecchi messaggi/approvazioni e riparte dall'analista in un nuovo ciclo limitato.
 
-Quando `question.reason=round_limit`, il server offre anche di mantenere visibili i disaccordi. `finalize_with_unresolved: true` consente una proposta condizionata senza altro ciclo, solo se esiste già una bozza. Non significa risolvere un'obiezione o certificare un fatto. Una proposta con obiezioni bloccanti aperte non è approvabile.
+Quando `question.reason=round_limit`, il server offre anche di mantenere visibili i disaccordi. `finalize_with_unresolved: true` consente una proposta condizionata senza altro ciclo, solo se esiste già una bozza. Non significa risolvere un'obiezione o certificare un fatto. Confermare esplicitamente le ipotesi al limite round rende le obiezioni non bloccanti per il documento; restano aperte e non verificate. Senza tale conferma, le obiezioni bloccanti impediscono l’approvazione.
 
 ## Endpoint
 
@@ -207,17 +207,27 @@ la gestione di 409 senza retry automatico e il recupero degli ID dopo refresh.
 Non attestano la qualità del modello o la connettività con un backend reale. La finalizzazione round_limit viene predisposta sul
 contratto ma non è prodotta dai tre scenari dimostrativi iniziali.
 
-### Interfaccia essenziale
+### Workspace a singola schermata
 
-Il workspace occupa tutta la finestra, senza barra superiore o inferiore. A sinistra
-compaiono solo i ticket (titolo, maniglia e pulsante accessibile “Avvia task”).
-Il centro accoglie il trascinamento, le discussioni e le richieste umane; le schede
-permettono di cambiare task. Le proposte da approvare rimangono al centro, mentre
-la colonna “Completati” contiene solo proposte approvate, non azioni eseguite.
-Modalità mock/model resta visibile nella colonna agenti. Contesto, fonti, notice,
-metadati e motivazioni con ipotesi sono consultabili in sezioni espandibili;
-le obiezioni rimangono esplicite. Su schermi piccoli le tre aree si impilano e
-il pulsante sul ticket offre un’alternativa al trascinamento.
+Il workspace occupa `100dvh`, senza scorrimento della pagina. Il critico occupa
+il pannello superiore; analista, operations e finance restano visibili in tre
+colonne affiancate, anche su schermi stretti. Ogni pannello mostra direttamente
+`content.explanation`, la spiegazione pubblica del turno, e lo stato reale del
+ruolo. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
+il backend continua a orchestrare i turni in sequenza. Le frecce consentono di
+consultare turni precedenti. Testi lunghi scorrono solo dentro il pannello.
+
+Domanda e selettore restano sotto i ruoli. L'invio richiede un gesto esplicito;
+selezionare “Scrivi una risposta…” apre il campo libero. La spiegazione della
+domanda, le motivazioni delle opzioni e l'identità sono nel pulsante dettagli.
+La barra del piano apre la proposta completa e l'approvazione. Cronologia,
+obiezioni, contesto, prove e versioni sono consultabili in un dialogo con focus
+confinato, chiusura Escape e scorrimento indipendente. Nessun contenuto viene
+eliminato per farlo entrare nella schermata. Modalità mock/model resta visibile.
+
+Su mobile ticket e completati diventano barre compatte sopra e sotto il
+workspace. Le tre valutazioni rimangono affiancate. SSE conserva testo libero,
+scelta, posizione dei pannelli e dettaglio aperto; non reinvia le operazioni.
 
 ## Indagine charging
 

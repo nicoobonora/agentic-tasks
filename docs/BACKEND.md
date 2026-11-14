@@ -61,11 +61,11 @@ L'analista propone/rivede la bozza. Operations valuta fattibilità e dipendenze.
 
 Tutti producono `AgentTurn`, con tipo messaggio, applicabilità, spiegazione pubblica, riferimenti alle prove, claim, obiezioni, eventuali risoluzioni, bozza o domanda. Il programma assegna ID, tempi, versione e collegamenti. Non vengono richiesti ragionamenti privati. Il prompt distingue gli input del task dalle istruzioni di ruolo.
 
-Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il run diventa failed; il retry è una scelta esplicita. Rifiuti, errori di rete e risposte incomplete non generano un loop automatico. Per run generici: al massimo `4 * max_rounds * 2` richieste modello per ciclo. Per charging: al massimo `4 * max_rounds * 10`, incluse correzioni e riprese; default tre round = 120 richieste, massimo sei = 240. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
+Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il sistema conserva il contenuto interpretabile come ipotesi esplicite, rimuove le citazioni inesistenti e i riferimenti numerici invalidi, apre un’obiezione e prosegue con il ruolo successivo fino al critico. Rifiuti, errori di rete e risposte incomplete producono un turno di indisponibilità dichiarata, senza inventare risultati e senza passare al mock. Se manca una bozza utilizzabile, il sistema propone soltanto la verifica degli input e della fattibilità. Per run generici: al massimo `4 * max_rounds * 2` richieste modello per ciclo. Per charging: al massimo `4 * max_rounds * 10`, incluse correzioni e riprese; default tre round = 120 richieste, massimo sei = 240. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
 
 Se restano obiezioni o richieste di revisione, riparte l'analista nel round successivo. Al limite il run si ferma con una domanda che include i disaccordi effettivi. Se il modello richiede input prima del limite, si conserva la sua domanda e le opzioni dinamiche. Il server aggiunge ID e versione. La risposta viene registrata come prova e riparte dall'analista, senza perdere la conversazione.
 
-La proposta finale riporta azioni raccomandate, rischi, questioni irrisolte, versione e messaggi di provenienza. Le bozze precedenti restano in `proposals`. Il motore non riscrive in silenzio le raccomandazioni dopo il controllo del critico; aggiunge alle questioni finali i disaccordi ancora aperti. A esaurimento round, l'umano può richiedere una proposta conditional con le incertezze mantenute. Questo **non risolve** obiezioni bloccanti e non le rende approvabili. L'approvazione riguarda solo il documento, mai l'esecuzione delle azioni.
+La proposta finale riporta azioni raccomandate, rischi, questioni irrisolte, versione e messaggi di provenienza. Le bozze precedenti restano in `proposals`. Il motore non riscrive in silenzio le raccomandazioni dopo il controllo del critico; aggiunge alle questioni finali i disaccordi ancora aperti. A esaurimento round, l'umano può richiedere una proposta conditional con le incertezze mantenute. La conferma esplicita accetta le ipotesi e rende le obiezioni non bloccanti per l’approvazione del documento. Le obiezioni restano aperte, le prove restano non verificate e la proposta rimane conditional: non viene dichiarato consenso tecnico. L'approvazione riguarda solo il documento, mai l'esecuzione delle azioni.
 
 ## Persistenza, concorrenza e riavvio
 
@@ -178,8 +178,10 @@ configurabili verso il basso con ACS_TOOL_REQUESTS e ACS_PROVIDER_REQUESTS.
 Due job forecast unici al massimo per ciclo. Il contesto provider è limitato a
 300.000 caratteri, ogni output tool a 24.000; le serie complete stanno negli
 artefatti. Ogni invocazione provider ha la lease breve esistente e timeout HTTP;
-il limite complessivo del turno è 30 minuti. L'esaurimento produce failed con
-motivo esplicito, mai consenso. Il retry è umano ed esplicito.
+il limite complessivo del turno è 30 minuti. L'esaurimento produce un turno
+di valutazione incompleta con motivo esplicito e passa al ruolo successivo,
+mai consenso implicito. Dopo la revisione del critico e il limite dei round,
+le incertezze vengono sottoposte alla conferma umana per concludere il piano.
 
 Il protocollo usa function_call e function_call_output correlati per call_id;
 lo stato di continuazione è persistito separatamente. Documentazione verificata:
@@ -200,7 +202,7 @@ umane e non genera polling LLM.
 
 I riferimenti numerici specificano prova, path, valore, unità, sito e periodo.
 Tolleranza relativa 1e-6 e assoluta 1e-9. Prove inesistenti, risultati unavailable,
-unità/periodi errati e valori alterati sono respinti anche da agent_port. Questo
+unità/periodi errati e valori alterati sono respinti come fatti verificati, anche da agent_port. Nel loop automatico, dopo una correzione fallita, il contenuto viene ripresentato come ipotesi esplicita da revisionare e confermare. Questo
 controlla corrispondenze misurabili, non la verità semantica del testo; serve ancora
 la valutazione del critico e la rubric del piano.
 

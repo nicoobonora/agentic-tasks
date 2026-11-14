@@ -131,7 +131,7 @@ def test_round_limit_surfaces_disagreement_and_conditional_final(client):
     result=response.json()
     assert result['proposal']['status']=='conditional' and result['proposal']['unresolved_questions']
     approval=client.post(f'/api/v2/runs/{r.id}/approve',json={'proposal_version':result['proposal_version'],'idempotency_key':'bad','actor':'Nico'})
-    assert approval.status_code==409 and approval.json()['code']=='open_blocker'
+    assert approval.status_code==200 and approval.json()['state']=='approved'
     assert read(r.id).objections[0].status=='open'
 
 def test_sse_and_restart_resume(client):
@@ -173,11 +173,10 @@ def test_claims_cannot_cite_unknown_or_unread_evidence(client):
             return result
     p=Invalid()
     engine.step(r['id'],p)
-    assert p.calls==2 and read(r['id']).state=='failed' and read(r['id']).messages[0].actor=='system'
-    failed=read(r['id'])
-    response=client.post(f"/api/v2/runs/{r['id']}/retry",json={'proposal_version':failed.proposal_version,'idempotency_key':'retry'})
-    assert response.status_code==200
-    assert drain(r['id']).state=='awaiting_input'
+    recovered=read(r['id'])
+    assert p.calls==2 and recovered.state=='running'
+    assert recovered.messages[0].content.claims[0].basis=='assumption'
+    assert recovered.objections[0].blocking
 
 def test_invalid_output_gets_one_correction(client):
     r=create(client)
@@ -234,7 +233,10 @@ def test_provider_refusal_and_incomplete_are_visible(client,monkeypatch,body,cod
     r=create(client,mode='model')
     provider=OpenAIProvider(httpx.Client(transport=httpx.MockTransport(lambda _:httpx.Response(200,json=body))))
     engine.step(r['id'],provider)
-    assert read(r['id']).state=='failed' and read(r['id']).error.code==code
+    recovered=read(r['id'])
+    assert recovered.state=='running' and recovered.next_role=='operations'
+    assert recovered.objections[0].blocking
+    assert 'non verificata' in recovered.proposal.summary
 
 def test_background_worker_runs_after_submit(client):
     with TestClient(app) as live:
@@ -274,8 +276,10 @@ def test_empty_perspectives_do_not_invent_a_final_proposal(client):
                 resolutions=[],draft=None,question=None,needs_revision=False))
     r=create(client,max_rounds=1)
     result=drain(r['id'],NotApplicable())
-    assert result.state=='awaiting_input' and result.proposal is None
-    assert all(o.id!='retain_uncertainty' for o in result.question.options)
+    assert result.state=='awaiting_input' and result.proposal is not None
+    assert 'non verificata' in result.proposal.summary
+    assert result.proposal.recommended_actions[0].title=='Verificare le ipotesi prima di procedere'
+    assert any(o.id=='retain_uncertainty' for o in result.question.options)
 
 
 @pytest.mark.parametrize('max_rounds', [1, 2])

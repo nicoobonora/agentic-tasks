@@ -203,17 +203,56 @@ function proposal(r: Run) {
   if (!p) return "";
   return `<section class="proposal"><div class="eyebrow">${p.status === "draft" ? "Bozza" : p.status === "conditional" ? "Proposta condizionata" : "Proposta finale"} · v${p.version}${p.version !== r.proposal_version ? " · versione precedente" : ""}</div><h3>${esc(p.summary)}</h3>${p.recommended_actions.map((a) => `<div class="action"><strong>${esc(a.title)}</strong><p>${esc(a.description)}</p><small>${esc(a.rationale)}</small>${a.evidence_ids.map(evidenceLink).join(" ")}</div>`).join("")}<h4>Rischi</h4>${p.risks.length ? `<ul>${p.risks.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessun rischio segnalato.</p>"}<h4>Questioni irrisolte</h4>${p.unresolved_questions.length ? `<ul>${p.unresolved_questions.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessuna questione segnalata.</p>"}${r.state === "proposal_ready" ? `<label>Il tuo nome<input data-field="actor" maxlength="200" value="${esc(draft(r).actor)}"></label><button data-approve ${busy.has(r.id) || (r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? "disabled" : ""}>Approva proposta</button><p class="muted">L’approvazione riguarda il documento. Nessuna azione verrà eseguita.${(r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? " Prima occorre risolvere le obiezioni bloccanti." : ""}</p>` : ""}${r.approval ? `<p class="approved-note">Approvata da ${esc(r.approval.actor)} · nessuna azione eseguita.</p>` : ""}</section>`;
 }
-function detail(r: Run) {
+let drawer = "";
+const rolePages = new Map<string, number>();
+function rolePanel(r: Run, role: string) {
+  const messages = (r.messages ?? []).filter((m) => m.actor === role);
+  const index = Math.min(
+    rolePages.get(r.id + role) ?? Math.max(0, messages.length - 1),
+    Math.max(0, messages.length - 1),
+  );
+  const m = messages[index];
+  const working = r.state === "running" && r.next_role === role;
+  return `<section class="agent-panel ${role} ${working ? "is-working" : ""}" aria-label="${actors[role]}">
+    <header><span class="role-icon">${role === "critic" ? "✳" : role === "analyst" ? "a" : role === "operations" ? "o" : "f"}</span><h3>${actors[role]}</h3><span class="role-state">${working ? "Al lavoro" : m ? `Round ${m.round} · ciclo ${m.cycle}` : "In attesa"}</span></header>
+    <div class="agent-body" data-scroll="${role}" tabindex="0">${m ? `<article class="message ${role}"><p class="public-explanation">${esc(m.content.explanation || m.content.text)}</p>${m.content.applicability === "not_applicable" ? '<span class="muted">Ruolo non applicabile</span>' : ""}<div class="claim-tags">${m.content.claims.some((c) => c.basis === "assumption") ? "<span>Ipotesi presenti</span>" : ""}${m.content.claims.some((c) => c.basis === "estimate") ? "<span>Stime presenti</span>" : ""}</div></article>` : `<p class="placeholder">${working ? "Sta preparando la sua valutazione…" : role === "critic" ? "Esaminerà le proposte, le prove e le ipotesi dei tre ruoli." : "La valutazione di questo ruolo apparirà qui."}</p>`}</div>
+    <footer><button class="text-button" data-drawer="history">${m ? "Messaggi e prove ↗" : "Spiegazioni pubbliche"}</button><span class="pager"><button aria-label="Turno precedente ${actors[role]}" data-role-page="${role}" data-index="${index - 1}" ${index <= 0 ? "disabled" : ""}>‹</button><small>${messages.length ? index + 1 : 0}/${messages.length}</small><button aria-label="Turno successivo ${actors[role]}" data-role-page="${role}" data-index="${index + 1}" ${index >= messages.length - 1 ? "disabled" : ""}>›</button></span></footer>
+  </section>`;
+}
+function question(r: Run) {
   const q = r.question,
     d = draft(r);
-  return `<div class="detail-header"><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2><details data-disclosure="context"><summary>Dettagli del task e fonti</summary><p>${esc(r.task.description)}</p><p>${esc(r.task.context || "Nessun contesto aggiuntivo.")}</p><small>Modalità ${esc(r.mode)}${r.model ? " · " + esc(r.model) : ""} · ciclo ${r.cycle} · round ${r.round}/${r.max_rounds}</small><p>${esc(r.notice)}</p><p>Input forniti dall’utente, non certificazioni esterne.</p>${(r.evidence ?? []).map((e) => `<article><strong>${esc(e.name)}</strong> · ${esc(e.origin)}<p>${esc(e.text || "Riferimento non letto")}</p>${e.url ? `<p>${esc(e.url)}</p>` : ""}</article>`).join("")}</details>${remote && connection.get(r.id)?.includes("connessione") ? `<p class="muted" role="status">${esc(connection.get(r.id))}</p>` : ""}</div>
-  <div class="conversation">${(r.messages ?? []).length ? (r.messages ?? []).map((m) => `<article class="message ${m.actor}"><header><strong>${esc(actors[m.actor])}</strong></header><p>${esc(m.content.text)}</p><details data-disclosure="message-${esc(m.id)}"><summary>Motivazione e ipotesi</summary><p>${esc(m.content.explanation)}</p>${m.content.applicability === "not_applicable" ? '<p class="muted">Ruolo non applicabile a questa valutazione</p>' : ""}${m.content.claims.map((c) => `<p class="claim"><b>${{ supported: "Supportato da input · non verificato esternamente", assumption: "Ipotesi", estimate: "Stima" }[c.basis]}</b> — ${esc(c.statement)}${c.evidence_ids.length ? " · fonti: " + c.evidence_ids.map(evidenceLink).join(" ") : ""}</p>`).join("")}</details></article>`).join("") : '<p class="muted">Il task è stato preso in carico. In attesa del primo turno.</p>'}${r.state === "running" ? `<p class="working"><span></span>${esc(actors[r.next_role])} sta lavorando…</p>` : ""}</div>
-  ${(r.objections ?? []).length ? `<section class="objections"><h3>Obiezioni</h3>${(r.objections ?? []).map((o) => `<p><strong>${esc(o.concern)}</strong> · ${o.status === "open" ? "Aperta" : "Risolta"}${o.blocking ? " · bloccante" : ""}<br>${esc(o.explanation)}${o.resolution ? "<br>Risoluzione: " + esc(o.resolution.explanation) : ""}</p>`).join("")}</section>` : ""}
-  ${r.state === "awaiting_input" && q ? `<form class="question"><div class="eyebrow">Intervento richiesto · ${q.reason === "round_limit" ? "Limite round raggiunto" : "Domanda degli agenti"}</div><h3>${esc(q.text)}</h3><p>${esc(q.explanation)}</p><details data-disclosure="identity"><summary>Rispondi come ${esc(d.actor)}</summary><label>Il tuo nome<input data-field="actor" maxlength="200" required value="${esc(d.actor)}"></label></details><label>Scelta<select data-field="option"><option value="">Scrivi una risposta oppure scegli…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}</select></label>${d.option ? `<p class="option-help">${esc(q.options.find((o) => o.id === d.option)?.explanation)}</p>` : ""}<label>Risposta libera<textarea data-field="text" maxlength="10000" placeholder="Aggiungi indicazioni per gli agenti…">${esc(d.text)}</textarea></label><button type="submit" ${busy.has(r.id) ? "disabled" : ""}>Invia risposta e riprendi</button>${q.reason === "round_limit" && r.proposal ? `<button type="button" class="secondary" data-finalize ${busy.has(r.id) ? "disabled" : ""}>Finalizza mantenendo i disaccordi</button><p>Non risolve le obiezioni e non certifica le ipotesi.</p>` : ""}</form>` : ""}
-  ${r.state === "failed" ? `<section class="failure"><h3>Elaborazione interrotta</h3><p>${esc(r.error?.message || "Errore non specificato")}</p><button data-retry ${busy.has(r.id) ? "disabled" : ""}>Riprova il turno</button></section>` : ""}
-  ${investigation(r)}${proposal(r)}<details data-disclosure="versions"><summary>Versioni della proposta</summary>${(r.proposals ?? []).map((p) => `<article><b>v${p.version} · ${esc(p.status)}</b><p>${esc(p.summary)}</p></article>`).join("")}</details>`;
+  if (r.state !== "awaiting_input" || !q) return "";
+  return `<form class="question"><label class="question-text" for="answer-option">${esc(q.text)}</label><div class="answer-controls"><select id="answer-option" aria-label="Scelta" data-field="option"><option value="">Scegli una risposta…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}<option value="__custom" ${d.option === "__custom" ? "selected" : ""}>Scrivi una risposta…</option></select><button type="submit" aria-label="Invia risposta e riprendi" title="Invia risposta" ${busy.has(r.id) ? "disabled" : ""}>↑</button><button type="button" class="text-button" data-drawer="question" aria-label="Dettagli della domanda">ⓘ</button></div>${d.option === "__custom" ? `<textarea aria-label="Risposta libera" data-field="text" maxlength="10000" placeholder="La tua risposta…">${esc(d.text)}</textarea>` : ""}</form>`;
+}
+function detail(r: Run) {
+  return `<div class="detail-header"><div><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2></div><button class="text-button" data-drawer="context" aria-label="Dettagli del task e fonti">ⓘ</button></div>
+    ${rolePanel(r, "critic")}<div class="model-grid">${["analyst", "operations", "finance"].map((role) => rolePanel(r, role)).join("")}</div>
+    <div class="workspace-tools"><button class="text-button" data-drawer="investigation">Indagine e prove <span>${r.tool_activity?.length ?? 0}</span></button><button class="text-button" data-drawer="objections">Obiezioni <span>${(r.objections ?? []).filter((o) => o.status === "open").length}</span></button><button class="text-button" data-drawer="history">Cronologia</button><span class="live-status">${r.turn_progress?.pending_job_id ? "Calcolo in corso" : esc(connection.get(r.id) || `Round ${r.round}/${r.max_rounds}`)}</span></div>
+    ${question(r)}${r.state === "failed" ? `<section class="failure"><p>${esc(r.error?.message)}</p><button data-retry>Riprova il turno</button></section>` : ""}
+    <div class="proposal-strip"><span>${r.proposal ? `<b>${r.proposal.status === "conditional" ? "Piano condizionale" : "Proposta"} · v${r.proposal.version}</b><small>${esc(r.proposal.summary)}</small>` : "<small>La proposta prenderà forma con il confronto tra i ruoli.</small>"}</span><button data-drawer="proposal" ${!r.proposal ? "disabled" : ""}>${r.state === "proposal_ready" ? "Rivedi e approva ↗" : "Apri piano ↗"}</button></div>`;
+}
+function drawerContent(r: Run) {
+  if (drawer === "proposal")
+    return (
+      proposal(r) +
+      `<details><summary>Versioni della proposta</summary>${(r.proposals ?? []).map((p) => `<p>v${p.version} · ${esc(p.status)} · ${esc(p.summary)}</p>`).join("")}</details>`
+    );
+  if (drawer === "investigation") return investigation(r);
+  if (drawer === "objections")
+    return `<h2>Obiezioni</h2>${(r.objections ?? []).map((o) => `<article><h3>${esc(o.concern)}</h3><span>${o.status === "open" ? "Aperta" : "Risolta"}${o.blocking ? " · bloccante" : ""}</span><p>${esc(o.explanation)}</p>${o.resolution ? `<p>${esc(o.resolution.explanation)}</p>` : ""}</article>`).join("") || "<p>Nessuna obiezione.</p>"}`;
+  if (drawer === "question")
+    return `<h2>${esc(r.question?.text)}</h2><p>${esc(r.question?.explanation)}</p>${r.question?.options.map((o) => `<h3>${esc(o.label)}</h3><p>${esc(o.explanation)}</p>`).join("") || ""}<label>Il tuo nome<input data-field="actor" value="${esc(draft(r).actor)}" maxlength="200"></label>`;
+  if (drawer === "context")
+    return `<h2>${esc(r.task.title)}</h2><p>${esc(r.task.description)}</p><p>${esc(r.task.context)}</p><p>${esc(r.notice)}</p><p>${esc(r.mode)} · ${esc(r.model)} · ciclo ${r.cycle}</p>${(r.evidence ?? []).map((e) => `<article><h3>${esc(e.name)}</h3><small>${esc(e.origin)}</small><p>${esc(e.text || e.url)}</p></article>`).join("")}`;
+  return `<h2>Messaggi e spiegazioni pubbliche</h2>${(r.messages ?? []).map((m) => `<article class="message ${m.actor}"><h3>${esc(actors[m.actor])} · round ${m.round}</h3><p>${esc(m.content.text)}</p><p>${esc(m.content.explanation)}</p>${m.content.claims.map((c) => `<p><b>${c.basis === "supported" ? "Supportato dalle fonti citate" : c.basis === "assumption" ? "Ipotesi" : "Stima"}</b> · ${esc(c.statement)} ${c.evidence_ids.map(evidenceLink).join(" ")}</p>`).join("")}</article>`).join("")}`;
 }
 function render() {
+  const scrollPositions = new Map(
+    Array.from(root.querySelectorAll<HTMLElement>("[data-scroll]")).map(
+      (el) => [el.dataset.scroll, el.scrollTop],
+    ),
+  );
   const oldDetail = root.querySelector(".detail");
   const scroll = oldDetail?.scrollTop ?? 0;
   const active = document.activeElement as
@@ -234,7 +273,23 @@ function render() {
       ),
     ).map((el) => el.dataset.disclosure),
   );
-  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Ticket disponibili"><div class="column-title"><h2>Ticket</h2><span>${pending.length}</span></div><p class="column-help">Trascina un ticket agli agenti.</p><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Avvia task: ${esc(t.task.title)}" title="Avvia task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">Tutti i ticket sono assegnati.</p>'}</div></aside><section class="column workspace" aria-label="Area di lavoro" data-drop><div class="workspace-heading"><h1>Agenti</h1><span class="environment">${remote ? `API · modalità ${mode}` : "Mock locale · nessuna chiamata AI"}</span></div>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Chiudi</button></div>` : ""}${activeRuns.length ? `<nav class="active-runs" aria-label="Task in lavorazione">${activeRuns.map(card).join("")}${r?.state === "awaiting_input" ? '<button class="reply-shortcut" data-reply>Rispondi ↓</button>' : ""}</nav>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assegna il primo ticket</h2><p>Trascinalo qui, oppure premi ↗ sul ticket.<br>Gli agenti ne discuteranno e ti chiederanno ciò che serve.</p><small>Demo con ticket fittizi e dialoghi simulati.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Rilascia il ticket per iniziare</div></section><aside class="column results" aria-label="Task completati"><div class="column-title"><h2>Completati</h2><span>${done.length}</span></div><p class="column-help">Proposte approvate</p>${done.map(card).join("") || '<p class="empty-small">I task completati appariranno qui.</p>'}</aside></main>`;
+  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Ticket disponibili"><div class="column-title"><h2>Ticket</h2><span>${pending.length}</span></div><p class="column-help">Trascina un ticket agli agenti.</p><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Avvia task: ${esc(t.task.title)}" title="Avvia task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">Tutti i ticket sono assegnati.</p>'}</div></aside><section class="column workspace" aria-label="Area di lavoro" data-drop><div class="workspace-heading"><h1>Agenti</h1><span class="environment">${remote ? `API · modalità ${mode}` : "Mock locale · nessuna chiamata AI"}</span></div>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Chiudi</button></div>` : ""}${activeRuns.length ? `<nav class="active-runs" aria-label="Task in lavorazione">${activeRuns.map(card).join("")}${r?.state === "awaiting_input" ? '<button class="reply-shortcut" data-reply>Rispondi</button>' : ""}</nav>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assegna il primo ticket</h2><p>Trascinalo qui, oppure premi ↗ sul ticket.<br>Gli agenti ne discuteranno e ti chiederanno ciò che serve.</p><small>Demo con ticket fittizi e dialoghi simulati.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Rilascia il ticket per iniziare</div></section><aside class="column results" aria-label="Task completati"><div class="column-title"><h2>Completati</h2><span>${done.length}</span></div><p class="column-help">Proposte approvate</p>${done.map(card).join("") || '<p class="empty-small">I task completati appariranno qui.</p>'}</aside></main>`;
+  if (drawer && r) {
+    root.insertAdjacentHTML(
+      "beforeend",
+      `<dialog aria-label="Dettagli" class="inspector"><header><span>WORKSPACE / DETTAGLI</span><button data-close-drawer aria-label="Chiudi dettagli">×</button></header><div class="inspector-body" data-scroll="drawer">${drawerContent(r)}</div></dialog>`,
+    );
+    const dialog = root.querySelector<HTMLDialogElement>("dialog")!;
+    dialog.showModal();
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      drawer = "";
+      render();
+    });
+  }
+  root.querySelectorAll<HTMLElement>("[data-scroll]").forEach((el) => {
+    el.scrollTop = scrollPositions.get(el.dataset.scroll) ?? 0;
+  });
   root
     .querySelectorAll<HTMLDetailsElement>("details[data-disclosure]")
     .forEach((el) => {
@@ -243,11 +298,17 @@ function render() {
   const panel = root.querySelector(".detail")!;
   panel.scrollTop = scroll;
   if (field) {
-    const el = root.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+    const scope = root.querySelector("dialog") || root;
+    const el = scope.querySelector<HTMLInputElement | HTMLTextAreaElement>(
       `[data-field="${field}"]`,
     );
     el?.focus({ preventScroll: true });
-    if (el && selection && selection[0] !== null && selection[1] !== null)
+    if (
+      (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) &&
+      selection &&
+      selection[0] !== null &&
+      selection[1] !== null
+    )
       el.setSelectionRange(selection[0], selection[1]);
   }
 }
@@ -263,7 +324,10 @@ function answer(finalize = false) {
   const r = selected ? runs.get(selected) : undefined;
   if (!r?.question) return;
   const d = draft(r);
-  if (!d.actor.trim() || (!d.option && !d.text.trim())) {
+  if (
+    !d.actor.trim() ||
+    ((!d.option || d.option === "__custom") && !d.text.trim())
+  ) {
     error = "Inserisci il tuo nome e scegli un’opzione o scrivi una risposta.";
     render();
     return;
@@ -272,7 +336,7 @@ function answer(finalize = false) {
     proposal_version: r.proposal_version,
     question_id: r.question.id,
     actor: d.actor.trim(),
-    option_id: d.option || null,
+    option_id: d.option === "__custom" ? null : d.option || null,
     text: d.text.trim() || null,
     finalize_with_unresolved: finalize,
   };
@@ -287,8 +351,25 @@ root.addEventListener("submit", (event) => {
 root.addEventListener("click", (event) => {
   const el = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
   if (!el || el.disabled) return;
+  if (el.dataset.drawer) {
+    drawer = el.dataset.drawer;
+    render();
+    return;
+  }
+  if (el.hasAttribute("data-close-drawer")) {
+    drawer = "";
+    render();
+    root.querySelector<HTMLButtonElement>("[data-drawer]")?.focus();
+    return;
+  }
+  if (el.dataset.rolePage && selected) {
+    rolePages.set(selected + el.dataset.rolePage, Number(el.dataset.index));
+    render();
+    return;
+  }
   if (el.dataset.start) start(el.dataset.start);
   if (el.dataset.select) {
+    drawer = "";
     selected = el.dataset.select;
     render();
     root.querySelector(".detail")!.scrollTop = 0;
@@ -312,6 +393,7 @@ root.addEventListener("click", (event) => {
       .artifact(r.id, id)
       .then((a) => {
         artifacts.set(id, a);
+        drawer = "investigation";
         render();
         const detail = root.querySelector<HTMLDetailsElement>(
           `[data-disclosure="artifact-${CSS.escape(id)}"]`,

@@ -10,6 +10,7 @@ from .models import Error
 from .providers import provider_for, ModelFailure
 from .tools import reserve, complete, attach, artifact
 from .jobs import enqueue
+from .recovery import recover
 
 def limit(name,default,maximum):return max(1,min(maximum,int(os.getenv(name,str(default)))))
 
@@ -48,7 +49,8 @@ def step(run_id,provider=None):
             p.pending_job_id=None
             engine.save(db,run)
         if p.provider_requests>=limit('ACS_PROVIDER_REQUESTS',10,10) or (engine.now()-p.started_at).total_seconds()>1800:
-            run.state='failed';run.error=Error(code='investigation_budget',message='Incomplete assessment: provider/time budget exhausted. Retry explicitly or supply a narrower goal.')
+            engine.apply_turn(run,p.role,recover(run,p.role,'Limite di tempo o richieste raggiunto'))
+            run.turn_progress=None
             engine.save(db,run);return True
         db.execute('INSERT OR REPLACE INTO discussion_leases VALUES (?,?,?)',(run_id,lease_token,time.time()+180))
         pending=get(db,'turn_requests',p.token) or []
@@ -136,7 +138,10 @@ def step(run_id,provider=None):
         if not current(db,run,p,lease_token):return False
         run=engine.load(db,run_id)
         db.execute('DELETE FROM discussion_leases WHERE run_id=?',(run_id,))
-        if failure:run.state='failed';run.error=failure
+        if failure:
+            engine.apply_turn(run,p.role,recover(run,p.role,failure.message,result))
+            run.turn_progress=None
+            run.error=None
         elif result and result.turn and not p.correction:
             engine.apply_turn(run,p.role,result);run.turn_progress=None
         else:

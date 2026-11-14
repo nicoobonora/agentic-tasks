@@ -29,6 +29,7 @@ for (const task of ["expansion", "maintenance"]) {
     await page
       .getByRole("button", { name: "Invia risposta e riprendi" })
       .click();
+    await page.getByRole("button", { name: /^Indagine e prove/ }).click();
     await expect(page.locator(".investigation")).toContainText(
       "charging.discover_sites",
     );
@@ -54,9 +55,10 @@ for (const task of ["expansion", "maintenance"]) {
     }
     await page.reload();
     await expect(
-      page.getByRole("button", { name: "Approva proposta" }),
+      page.getByRole("button", { name: "Rivedi e approva" }),
     ).toBeVisible({ timeout: 45000 });
     expect(payloads).toHaveLength(1);
+    await page.getByRole("button", { name: /^Indagine e prove/ }).click();
     await page.locator(".investigation details summary").first().click();
     const evidence = page.locator(".investigation [data-evidence]").first();
     await evidence.click();
@@ -106,6 +108,8 @@ for (const task of ["expansion", "maintenance"]) {
       path: `test-results/charging-${task}.png`,
       fullPage: true,
     });
+    await page.getByRole("button", { name: "Chiudi dettagli" }).click();
+    await page.getByRole("button", { name: "Rivedi e approva" }).click();
     await page.getByRole("button", { name: "Approva proposta" }).click();
     await expect(page.locator(".approved-note")).toContainText(
       "nessuna azione eseguita",

@@ -293,3 +293,12 @@ sono sommati conservativamente in giorni di calendario: calendari di lavoro,
 dipendenze progettuali e fattibilità fisica richiedono verifica. Il risultato
 soddisfatto/violato/sconosciuto riguarda soltanto i vincoli forniti; non certifica
 l'investimento, la domanda né l'esecuzione. Prezzi sintetici rimangono sintetici.
+
+## Conclusione con ipotesi non verificate
+
+Gli errori persistenti nelle citazioni non interrompono più la discussione: dopo
+un tentativo di correzione il turno viene marcato come ipotesi, privato dei
+riferimenti numerici non validati e sottoposto agli altri ruoli e al critico.
+Al limite dei round l’utente può confermare esplicitamente le incertezze e
+concludere con un piano condizionale. La conferma non verifica capacità,
+preventivi, permessi o altri dati mancanti e non esegue azioni esterne.
