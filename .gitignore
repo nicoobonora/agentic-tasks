@@ -8,6 +8,7 @@ data/raw/
 data/*.sqlite*
 data/exports/
 .env
+.env.local
 node_modules/
 dist/
 playwright-report/

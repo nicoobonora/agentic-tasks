@@ -4,6 +4,27 @@ Il flusso è: task → analyst → operations → finance → critic → revisio
 
 ## Configurazione e avvio
 
+All'importazione dell'app API, il server legge automaticamente `.env` e
+`.env.local` dalla radice del progetto, anche se avviato da un'altra directory.
+Precedenza: variabili già presenti nel processo > `.env.local` > `.env`.
+File assenti sono facoltativi; i valori sono letterali, senza interpolazione
+`${VAR}`. Riavviare il backend dopo una modifica. Gli script standalone non
+caricano automaticamente questi file.
+
+È possibile mettere nello stesso `.env` le impostazioni backend e Vite:
+
+```dotenv
+OPENAI_API_KEY=la-propria-chiave
+ACS_MODEL=nome-del-modello-con-structured-outputs
+VITE_DATA_SOURCE=api
+VITE_API_BASE_URL=http://localhost:8000
+VITE_RUN_MODE=model
+```
+
+Poi avviare `make api` e, in un altro terminale, `npm run dev`.
+La chiave non deve avere prefisso `VITE_`, che espone i valori al browser.
+Entrambi i file sono ignorati da Git. In alternativa restano validi gli export:
+
 ```sh
 make setup
 export OPENAI_API_KEY='...'  # impostare nel proprio ambiente; mai nel repository

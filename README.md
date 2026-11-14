@@ -24,6 +24,11 @@ curl http://localhost:8000/api/v2/runs \
 
 Il run prosegue nel worker del server. Leggere `/api/v2/runs/{id}` o gli eventi `/api/v2/runs/{id}/events`; rispondere a `/answers` quando `state=awaiting_input`. Mock è sempre etichettato come deterministico e non usa modelli.
 
+Il server carica automaticamente `.env` e `.env.local` dalla radice del progetto.
+Si possono salvare lì `OPENAI_API_KEY` e `ACS_MODEL`, senza export manuali.
+Le variabili del terminale hanno precedenza, poi `.env.local`, poi `.env`.
+Riavviare il server dopo le modifiche; non usare il prefisso `VITE_` per la chiave.
+
 ## Consegne
 
 - [Guida frontend](docs/FRONTEND.md): client generico, domande, versioni, SSE e migrazione v2.

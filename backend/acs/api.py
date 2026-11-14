@@ -9,6 +9,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 import os
+from .config import load_environment
+
+load_environment()
+
 from . import discussion as engine
 from . import models as m
 from .db import transaction
