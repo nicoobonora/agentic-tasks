@@ -215,10 +215,9 @@ il pannello superiore; analista, operations e finance restano visibili in tre
 colonne affiancate, anche su schermi stretti. Ogni pannello mostra una sintesi
 breve di `content.text` (prima o prime due frasi), le affermazioni con la loro base
 (Data/Estimate/Assumption) e i chip della fonte citata; il testo completo e
-`content.explanation` restano in “Full text”. Una barra dei turni
-(Analyst → Operations → Finance → Critic → You, senza indicatore di ciclo) e lo
-stato del pannello derivano solo da `state`, `next_role`, ciclo/round e messaggi
-del round corrente: il ruolo
+`content.explanation` restano in “Full text”. Lo stato del pannello deriva solo da `state`, `next_role`, ciclo/round e messaggi
+del round corrente (non c'è più una barra dei turni né il badge di stato sopra il
+titolo; lo stato resta nella card del run a sinistra): il ruolo
 in `next_role` è evidenziato, gli altri sono attenuati mentre lavora.
 
 Le chiamate agli strumenti (`tool_activity`) sono mostrate nel pannello del ruolo
@@ -246,9 +245,10 @@ nella colonna sinistra sotto i ticket; la colonna destra mostra solo “Complete
 il conteggio e i run approvati.
 
 Stile: tema nero piatto ispirato a iOS: sidebar, area centrale e dialoghi sono
-pannelli arrotondati a tinta unita, senza gradienti, blur o ombre. Palette
-monocromatica: nero, bianco/grigi e gradazioni di #05865d (ruoli e stati
-distinti per tonalità di verde). I titoli usano
+pannelli arrotondati a tinta unita, senza gradienti, blur o ombre. La UI è in scala
+di grigi; il verde #05865d evidenzia solo ciò che è attivo: il pannello del ruolo in
+`next_role` mentre lavora, la domanda in attesa dell'utente e, a proposta pronta o
+approvata, il pulsante del piano. I titoli usano
 Instrument Serif, il resto Glacial Indifference; entrambi (licenza SIL OFL) sono
 inclusi in `frontend/fonts/`, senza richieste a CDN esterni.
 

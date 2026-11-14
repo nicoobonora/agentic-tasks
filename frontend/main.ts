@@ -207,11 +207,11 @@ const rolePages = new Map<string, number>();
 type ToolCall = NonNullable<Run["tool_activity"]>[number];
 type Message = NonNullable<Run["messages"]>[number];
 const AGENTS = ["analyst", "operations", "finance", "critic"] as const;
-const roleMeta: Record<string, { icon: string; mandate: string }> = {
-  analyst: { icon: "A", mandate: "Proposes and revises the plan" },
-  operations: { icon: "O", mandate: "Feasibility, resources and timing" },
-  finance: { icon: "F", mandate: "Costs and trade-offs" },
-  critic: { icon: "C", mandate: "Checks evidence · can block" },
+const roleMeta: Record<string, { icon: string }> = {
+  analyst: { icon: "A" },
+  operations: { icon: "O" },
+  finance: { icon: "F" },
+  critic: { icon: "C" },
 };
 const kindLabels: Record<string, string> = {
   proposal: "Proposal",
@@ -365,24 +365,6 @@ function roleState(r: Run, role: string): RoleState {
   if (r.state === "awaiting_input") return { key: "paused", label: "Paused" };
   return { key: "idle", label: "Finished" };
 }
-function turnBar(r: Run) {
-  const steps = AGENTS.map((role) => {
-    const s = roleState(r, role);
-    return `<li class="step ${role} ${s.key}"><span class="step-icon">${roleMeta[role].icon}</span><span><b>${actors[role]}</b><small>${s.label}</small></span></li>`;
-  });
-  const human =
-    r.state === "awaiting_input"
-      ? { key: "working human", label: "Must decide" }
-      : r.state === "proposal_ready"
-        ? { key: "working human", label: "Must approve" }
-        : r.state === "approved"
-          ? { key: "done", label: "Approved" }
-          : { key: "waiting", label: "On call" };
-  steps.push(
-    `<li class="step operator ${human.key}"><span class="step-icon">●</span><span><b>You</b><small>${human.label}</small></span></li>`,
-  );
-  return `<ol class="turn-bar" aria-label="Turns">${steps.join('<li class="arrow" aria-hidden="true">→</li>')}</ol>`;
-}
 function objectionList(r: Run) {
   const list = r.objections ?? [];
   if (!list.length) return "";
@@ -426,7 +408,7 @@ function rolePanel(r: Run, role: string) {
       ? ""
       : `<p class="placeholder">${role === "critic" ? "Will check the other roles' claims and sources and can block the plan." : "Will join when its turn comes."}</p>`;
   return `<section class="agent-panel ${role} state-${state.key} ${working ? "is-working" : someoneWorking ? "is-idle" : ""}" aria-label="${actors[role]}" ${working ? 'aria-busy="true"' : ""}>
-    <header><span class="role-icon">${roleMeta[role].icon}</span><span class="role-name"><h3>${actors[role]}</h3><small>${roleMeta[role].mandate}</small></span><span class="role-state">${state.label}</span></header>
+    <header><span class="role-icon">${roleMeta[role].icon}</span><span class="role-name"><h3>${actors[role]}</h3></span></header>
     <div class="agent-body" data-scroll="${role}" tabindex="0">${live}${body}${role === "critic" ? objectionList(r) : ""}</div>
     <footer><button class="text-button" data-drawer="history">History ↗</button><span class="pager"><button aria-label="Previous turn ${actors[role]}" data-role-page="${role}" data-index="${index - 1}" ${index <= 0 ? "disabled" : ""}>‹</button><small>${messages.length ? index + 1 : 0}/${messages.length}</small><button aria-label="Next turn ${actors[role]}" data-role-page="${role}" data-index="${index + 1}" ${index >= messages.length - 1 ? "disabled" : ""}>›</button></span></footer>
   </section>`;
@@ -435,11 +417,11 @@ function question(r: Run) {
   const q = r.question,
     d = draft(r);
   if (r.state !== "awaiting_input" || !q) return "";
-  return `<form class="question"><label class="question-text" for="answer-option"><span class="escalation">${q.reason === "round_limit" ? "Round limit reached · the operator decides" : "The agents have stopped · your decision is needed"}</span>${esc(q.text)}</label><div class="answer-controls"><select id="answer-option" aria-label="Choice" data-field="option"><option value="">Choose an answer…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}<option value="__custom" ${d.option === "__custom" ? "selected" : ""}>Write an answer…</option></select><button type="submit" aria-label="Send answer and resume" title="Send answer" ${busy.has(r.id) ? "disabled" : ""}>↑</button><button type="button" class="text-button" data-drawer="question" aria-label="Question details">ⓘ</button></div>${d.option === "__custom" ? `<textarea aria-label="Free answer" data-field="text" maxlength="10000" placeholder="Your answer…">${esc(d.text)}</textarea>` : ""}</form>`;
+  return `<form class="question" data-reason="${esc(q.reason)}"><label class="question-text" for="answer-option">${esc(q.text)}</label><div class="answer-controls"><select id="answer-option" aria-label="Choice" data-field="option"><option value="">Choose an answer…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}<option value="__custom" ${d.option === "__custom" ? "selected" : ""}>Write an answer…</option></select><button type="submit" aria-label="Send answer and resume" title="Send answer" ${busy.has(r.id) ? "disabled" : ""}>Send ↑</button><button type="button" class="text-button" data-drawer="question" aria-label="Question details">ⓘ</button></div>${d.option === "__custom" ? `<textarea aria-label="Free answer" data-field="text" maxlength="10000" placeholder="Your answer…">${esc(d.text)}</textarea>` : ""}</form>`;
 }
 function detail(r: Run) {
-  return `<div class="detail-header"><div><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2></div><button class="plan-button" data-drawer="proposal" ${!r.proposal ? "disabled" : ""}>${r.state === "proposal_ready" ? "Review and approve ↗" : "Open plan ↗"}</button></div>
-    ${turnBar(r)}${rolePanel(r, "critic")}<div class="model-grid">${["analyst", "operations", "finance"].map((role) => rolePanel(r, role)).join("")}</div>
+  return `<div class="detail-header"><h2>${esc(r.task.title)}</h2><button class="plan-button ${r.state === "proposal_ready" || r.state === "approved" ? "highlight" : ""}" data-drawer="proposal" ${!r.proposal ? "disabled" : ""}>${r.state === "proposal_ready" ? "Review and approve ↗" : "Open plan ↗"}</button></div>
+    ${rolePanel(r, "critic")}<div class="model-grid">${["analyst", "operations", "finance"].map((role) => rolePanel(r, role)).join("")}</div>
     ${question(r)}${r.state === "failed" ? `<section class="failure"><p>${esc(r.error?.message)}</p><button data-retry>Retry turn</button></section>` : ""}`;
 }
 function drawerContent(r: Run) {

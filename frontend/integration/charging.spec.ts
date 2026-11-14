@@ -55,9 +55,9 @@ for (const task of ["expansion", "maintenance"]) {
     // No reload: the page keeps no run registry, it reconnects via SSE/polling.
     await page.getByRole("button", { name: "Close details" }).click();
     // With one round per cycle the critic's revision request goes to the operator.
-    await expect(page.locator(".question")).toContainText("Round limit", {
-      timeout: 45000,
-    });
+    await expect(
+      page.locator('.question[data-reason="round_limit"]'),
+    ).toBeVisible({ timeout: 45000 });
     await page.getByLabel("Choice").selectOption("retain_uncertainty");
     await page.getByRole("button", { name: "Send answer and resume" }).click();
     await expect(
