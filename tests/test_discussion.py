@@ -66,8 +66,32 @@ def test_full_flow_for_arbitrary_task_and_charging(client,charging):
     assert client.post(f'/api/v2/runs/{r.id}/execute',json={}).status_code==404
 
 def test_model_mode_requires_credentials_not_silent_mock(client):
-    r=client.post('/api/v2/runs',json={'task':UNRELATED,'idempotency_key':'missing'})
+    r=client.post('/api/v2/runs',json={'task':UNRELATED,'mode':'model','idempotency_key':'missing'})
     assert r.status_code==503 and r.json()['code']=='model_not_configured'
+
+
+@pytest.mark.parametrize('key,model', [(None,None), ('test-key',None), (None,'test-model')])
+def test_automatic_demo_and_replay_survive_configuration_change(client, monkeypatch, key, model):
+    if key:
+        monkeypatch.setenv('OPENAI_API_KEY', key)
+    if model:
+        monkeypatch.setenv('ACS_MODEL', model)
+    body = {'task': UNRELATED, 'idempotency_key': 'automatic'}
+    response = client.post('/api/v2/runs', json=body)
+    assert response.status_code == 202
+    original = response.json()
+    assert original['mode'] == 'mock' and original['model'] is None
+    assert 'MOCK' in original['notice']
+    run = drain(original['id'])
+    assert answer(client, run).status_code == 200
+    assert drain(run.id).state == 'proposal_ready'
+    monkeypatch.setenv('OPENAI_API_KEY', 'test-key')
+    monkeypatch.setenv('ACS_MODEL', 'test-model')
+    assert client.post('/api/v2/runs', json=body).json() == original
+    explicit = client.post('/api/v2/runs', json={**body, 'mode': 'model'})
+    assert explicit.status_code == 409
+    fresh = client.post('/api/v2/runs', json={**body, 'idempotency_key': 'configured'})
+    assert fresh.status_code == 202 and fresh.json()['mode'] == 'model'
 
 def test_idempotency_and_stale_question_approval(client):
     r=create(client,idempotency_key='stable')
@@ -252,3 +276,153 @@ def test_empty_perspectives_do_not_invent_a_final_proposal(client):
     result=drain(r['id'],NotApplicable())
     assert result.state=='awaiting_input' and result.proposal is None
     assert all(o.id!='retain_uncertainty' for o in result.question.options)
+
+
+@pytest.mark.parametrize('max_rounds', [1, 2])
+def test_analyst_revision_prevents_premature_finalization(client, max_rounds):
+    class Revision(MockProvider):
+        def generate(self, run, role, correction=None):
+            result = super().generate(run, role, correction)
+            result.turn.question = None
+            result.turn.objections = []
+            result.turn.needs_revision = role == 'analyst' and run.round == 1
+            return result
+    r = create(client, max_rounds=max_rounds)
+    result = drain(r['id'], Revision())
+    if max_rounds == 1:
+        assert result.state == 'awaiting_input'
+        assert result.question.reason == 'round_limit'
+    else:
+        assert result.state == 'proposal_ready'
+        assert result.round == 2
+
+
+def test_worker_continues_after_one_run_fails(monkeypatch):
+    import asyncio
+    from backend.acs import api
+    visited = []
+    def step(ident):
+        visited.append(ident)
+        if ident == 'broken':
+            raise RuntimeError('Controlled failure')
+    monkeypatch.setattr(api, 'running_ids', lambda: ['broken', 'healthy'])
+    monkeypatch.setattr(engine, 'step', step)
+    async def scenario():
+        job = asyncio.create_task(api.worker())
+        try:
+            async with asyncio.timeout(2):
+                while 'healthy' not in visited:
+                    await asyncio.sleep(.01)
+        finally:
+            job.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await job
+    asyncio.run(scenario())
+    assert {'broken', 'healthy'} <= set(visited)
+
+
+def test_status_and_sse_remain_readable_during_provider_call(client):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    entered, release = threading.Event(), threading.Event()
+    class Slow(MockProvider):
+        def generate(self, run, role, correction=None):
+            entered.set()
+            assert release.wait(5)
+            return super().generate(run, role, correction)
+    r = create(client)
+    with ThreadPoolExecutor() as pool:
+        future = pool.submit(engine.step, r['id'], Slow())
+        try:
+            assert entered.wait(2)
+            status = client.get(f"/api/v2/runs/{r['id']}")
+            assert status.status_code == 200
+            assert status.json()['state'] == 'running'
+            assert status.json()['proposal_version'] == 0
+            events = client.get(f"/api/v2/runs/{r['id']}/events?once=true")
+            assert events.status_code == 200
+            assert 'event: snapshot' in events.text
+            assert not future.done()
+        finally:
+            release.set()
+        assert future.result(timeout=2)
+
+
+def test_worker_concurrency_limit_and_graceful_shutdown(monkeypatch):
+    import asyncio
+    import threading
+    from backend.acs import api
+    release = threading.Event()
+    lock = threading.Lock()
+    entered = []
+    finished = []
+    monkeypatch.setenv('ACS_WORKER_CONCURRENCY', '2')
+    monkeypatch.setattr(api, 'running_ids', lambda: ['slow', 'other', 'queued'])
+
+    def step(ident):
+        with lock:
+            entered.append(ident)
+        assert release.wait(5)
+        with lock:
+            finished.append(ident)
+
+    monkeypatch.setattr(engine, 'step', step)
+
+    async def scenario():
+        job = asyncio.create_task(api.worker())
+        try:
+            async with asyncio.timeout(3):
+                while len(entered) < 2:
+                    await asyncio.sleep(.01)
+            await asyncio.sleep(.3)
+            assert set(entered) == {'slow', 'other'} and len(entered) == 2
+            job.cancel()
+            await asyncio.sleep(.05)
+            assert not job.done()  # Shutdown drains the threads it started.
+        finally:
+            release.set()
+            if not job.cancelling():
+                job.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await job
+        assert set(finished) == {'slow', 'other'}
+
+    asyncio.run(scenario())
+
+
+def test_concurrent_create_and_turn_are_applied_once(client):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    body = CreateRun(task=Task(**UNRELATED), mode='mock', idempotency_key='parallel-create')
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        runs = list(pool.map(lambda _: engine.create(body), range(4)))
+    assert len({r.id for r in runs}) == 1
+    entered, release = threading.Event(), threading.Event()
+
+    class Slow(MockProvider):
+        def generate(self, run, role, correction=None):
+            entered.set()
+            assert release.wait(5)
+            return super().generate(run, role, correction)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(engine.step, runs[0].id, Slow())
+        try:
+            assert entered.wait(2)
+            assert pool.submit(engine.step, runs[0].id).result(timeout=2) is False
+        finally:
+            release.set()
+        assert first.result(timeout=2)
+    assert len(read(runs[0].id).messages) == 1
+
+
+def test_scheduler_skips_other_workers_leases_and_recovers_expired(client):
+    from backend.acs.api import running_ids
+    first, second = create(client), create(client)
+    with transaction() as db:
+        db.execute('INSERT INTO discussion_leases VALUES (?,?,?)',
+                   (first['id'], 'other-worker', time.time()+180))
+    assert running_ids() == [second['id']]
+    with transaction() as db:
+        db.execute('UPDATE discussion_leases SET expires_at=0 WHERE run_id=?', (first['id'],))
+    assert set(running_ids()) == {first['id'], second['id']}

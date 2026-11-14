@@ -221,3 +221,16 @@ Per ripetere la sola verifica di inferenza sui dati esportati:
 Il report di consegna include anche una prova del backtest completo con il modello
 reale su una serie sintetica regolare, esplicitamente etichettata come test.
 Nessuno di quei dati sintetici è importato nel database di produzione.
+
+### Timeout del refresh HTTP e integrità delle prove
+
+`GET /examples/charging/api/v1/live?refresh=true` usa un solo tentativo per pagina
+con timeout HTTP di 5 secondi per operazione di rete; il downloader storico mantiene
+90 secondi e fino a quattro tentativi. Non è un limite globale di durata del refresh:
+la paginazione può richiedere più richieste. In caso di errore la risposta dichiara
+`mode=snapshot`, riporta un warning e conserva i riferimenti alle prove locali.
+Se alcune pagine sono state acquisite prima del guasto, restano nell’archivio:
+lo snapshot locale può contenere acquisizioni di tempi diversi e non è dichiarato
+un refresh live completo. In assenza di dati restituisce una lista vuota e stale,
+mai osservazioni simulate. La lettura delle prove raw verifica gzip e SHA256;
+una prova danneggiata restituisce `409 corrupt_evidence` anziché contenuto alterato.

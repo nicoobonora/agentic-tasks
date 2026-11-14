@@ -166,7 +166,7 @@ class Run(Model):
 
 class CreateRun(Model):
     task: Task
-    mode: Literal['model', 'mock'] = 'model'
+    mode: Literal['model', 'mock'] = Field(default_factory=lambda: 'model')
     max_rounds: int | None = Field(default=None, ge=1, le=6)
     idempotency_key: str = Field(min_length=1, max_length=120)
 

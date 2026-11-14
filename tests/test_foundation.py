@@ -71,6 +71,57 @@ def test_live_fallback_is_explicit(client, monkeypatch):
     assert response.json()['mode'] == 'snapshot' and response.json()['stale']
     assert response.json()['warning']
 
+
+def test_live_timeout_preserves_local_observations_and_evidence(client, monkeypatch, tmp_path):
+    from backend.acs.examples.charging import api as charging_api
+    with transaction() as db:
+        adapter = ODHClient(db, tmp_path/'raw', httpx.Client(transport=httpx.MockTransport(
+            lambda request: httpx.Response(200, json={'data': [META] if request.url.path.endswith('/EChargingPlug') else [
+                {'scode': 'p1', 'mvalidtime': '2026-10-01T00:00:00Z', 'mvalue': 'AVAILABLE'}]}))))
+        try:
+            adapter.metadata('Neogy-AMPECO')
+            adapter.observations('Neogy-AMPECO', latest=True)
+        finally:
+            adapter.client.close()
+    calls = []
+
+    def timeout(request):
+        calls.append(request)
+        raise httpx.ReadTimeout('Controlled timeout', request=request)
+
+    def live_adapter(db, **kwargs):
+        assert kwargs == {'timeout': 5, 'attempts': 1}
+        return ODHClient(db, tmp_path/'refresh', httpx.Client(transport=httpx.MockTransport(timeout)), **kwargs)
+
+    monkeypatch.setattr(charging_api, 'ODHClient', live_adapter)
+    response = client.get('/examples/charging/api/v1/live?refresh=true')
+    assert response.status_code == 200
+    data = response.json()
+    assert data['mode'] == 'snapshot' and data['stale'] and data['warning']
+    assert len(calls) == 1 and len(data['items']) == 1
+    proof = data['items'][0]['source_page_id']
+    metadata = client.get(f'/examples/charging/api/v1/evidence/{proof}').json()
+    assert metadata['origin'] == 'real'
+    assert client.get(metadata['raw_url']).json()['data'][0]['mvalue'] == 'AVAILABLE'
+
+
+@pytest.mark.parametrize('corruption', ['checksum', 'gzip'])
+def test_raw_evidence_rejects_corruption(client, tmp_path, corruption):
+    import gzip
+    import hashlib
+    raw = b'{"data": []}'
+    path = tmp_path/'proof.gz'
+    path.write_bytes(gzip.compress(b'changed' if corruption == 'checksum' else raw))
+    if corruption == 'gzip':
+        path.write_bytes(b'not gzip')
+    with transaction() as db:
+        db.execute('INSERT INTO source_pages VALUES (?,?,?,?,?,?,?)',
+                   ('proof', 'https://example.test/data', '2026-11-14T00:00:00Z',
+                    hashlib.sha256(raw).hexdigest(), str(path), 0, 'latest'))
+    response = client.get('/examples/charging/api/v1/evidence/proof/raw')
+    assert response.status_code == 409
+    assert response.json()['code'] == 'corrupt_evidence'
+
 def test_contract_export_matches_api():
     from backend.acs.db import ROOT
     assert json.loads((ROOT/'contracts/openapi.json').read_text()) == app.openapi()

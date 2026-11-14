@@ -909,8 +909,7 @@
               "model",
               "mock"
             ],
-            "title": "Mode",
-            "default": "model"
+            "title": "Mode"
           },
           "max_rounds": {
             "anyOf": [

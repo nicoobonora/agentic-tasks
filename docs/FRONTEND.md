@@ -1,6 +1,6 @@
 # Frontend — discussione generica, API v2
 
-`frontend/client.ts` usa `/api/v2`. Tipi generati da `contracts/openapi.json`; nessun sito, fornitore, ordine o alternativa di dominio compare nel contratto. Il servizio restituisce snapshot persistenti di `Run` e li trasmette tramite SSE. `make api` avvia porta 8000; `make mock` avvia un database separato su 8001, ma la modalità **va sempre scelta nel payload** (`mode: "mock"`). Il default è `model`.
+`frontend/client.ts` usa `/api/v2`. Tipi generati da `contracts/openapi.json`; nessun sito, fornitore, ordine o alternativa di dominio compare nel contratto. Il servizio restituisce snapshot persistenti di `Run` e li trasmette tramite SSE. `make api` avvia porta 8000; `make mock` avvia un database separato su 8001, e il client attuale richiede una modalità nel payload (`mode: "mock"` per la demo). Il backend accetta anche `mode` omesso: seleziona `model` solo se chiave e modello sono configurati, altrimenti `mock`. OpenAPI riflette questa selezione dinamica; i tipi frontend non sono stati modificati su richiesta dell’utente, quindi la rigenerazione per rendere `mode` opzionale nel client è rinviata.
 
 ## Inviare un task
 

@@ -12,7 +12,7 @@ export ACS_MAX_ROUNDS=3
 make api
 ```
 
-Swagger: `http://localhost:8000/docs`. Il modello è scelto esplicitamente tramite `ACS_MODEL`: nessun modello implicito e nessuna sostituzione in caso di errore. `mode=model` è il default di `POST /api/v2/runs`; senza chiave/modello risponde 503. `mode=mock` è richiesto esplicitamente per sviluppo offline. `make mock` usa porta 8001 e `data/mock.sqlite`, ma non cambia implicitamente il mode delle richieste.
+Swagger: `http://localhost:8000/docs`. Il modello è scelto esplicitamente tramite `ACS_MODEL`: nessun modello implicito e nessuna sostituzione in caso di errore. `POST /api/v2/runs` senza `mode` seleziona `model` solo quando chiave e modello sono entrambi configurati; altrimenti avvia automaticamente la demo `mock`. La risposta espone sempre la modalità effettiva in `mode` e `notice`. Una richiesta esplicita `mode=model` senza configurazione risponde 503; un errore del provider reale non passa mai al mock. `mode=mock` forza la demo anche con credenziali presenti. `make mock` usa porta 8001 e `data/mock.sqlite`; per forzare gli stub in un ambiente configurato inviare `mode=mock`.
 
 L'adapter reale chiama `https://api.openai.com/v1/responses` con schema JSON strict (`text.format`), `store=false`, massimo 5.000 token di output e timeout di 60 secondi per chiamata. Implementazione verificata sulla [documentazione ufficiale Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs). Non richiede l'SDK: riusa httpx già presente. Il modello deve supportare lo schema strict; rifiuti, risposte incomplete e errori HTTP diventano errori persistenti visibili, mai risultati mock.
 
@@ -34,7 +34,7 @@ Non c'è un framework di plugin o un workflow designer. Il tool di esempio `GET 
 
 ## Discussione e limiti
 
-Ogni ciclo ha 1–6 round, default `ACS_MAX_ROUNDS=3`, sovrascrivibile nella richiesta. Ogni round contiene quattro turni in ordine; ciascun turno legge task, prove, messaggi precedenti, bozza e obiezioni. Gli agenti non lavorano in parallelo perché devono poter reagire ai messaggi appena prodotti.
+Ogni ciclo ha 1–6 round, default `ACS_MAX_ROUNDS=3`, sovrascrivibile nella richiesta. Ogni round contiene quattro turni in ordine; ciascun turno legge task, prove, messaggi precedenti, bozza e obiezioni. Gli agenti della stessa discussione non lavorano in parallelo perché devono poter reagire ai messaggi appena prodotti. Discussioni diverse possono avanzare contemporaneamente.
 
 L'analista propone/rivede la bozza. Operations valuta fattibilità e dipendenze. Finance valuta costi se pertinenti e può dichiararsi non applicabile. Anche gli altri ruoli possono dichiararsi non applicabili con motivazione; un analista applicabile deve comunque produrre una bozza. Il critico verifica i supporti e può chiedere revisione; solo il critico può risolvere obiezioni esistenti, sempre con spiegazione.
 
@@ -57,7 +57,7 @@ Un turno segue questa sequenza:
 3. Nuova transazione: controlla token lease, scadenza, versione, stato e ruolo attesi. Se sono cambiati, scarta la risposta tardiva.
 4. Registra messaggio, nuova bozza, obiezioni e snapshot nello stesso commit; rilascia la lease.
 
-Il worker riprende automaticamente i run running quando il server riparte. Dopo un arresto nel mezzo della chiamata, la lease scade entro tre minuti e il turno può essere richiesto nuovamente. Si garantisce l'applicazione una sola volta del risultato, **non** l'addebito una sola volta della chiamata esterna. Il worker semplice serve un turno alla volta per processo; non è progettato per grandi volumi. Non eseguire migrazioni distruttive o azzerare il DB per un normale riavvio.
+Il worker riprende automaticamente i run running quando il server riparte. Dopo un arresto nel mezzo della chiamata, la lease scade entro tre minuti e il turno può essere richiesto nuovamente. Si garantisce l'applicazione una sola volta del risultato, **non** l'addebito una sola volta della chiamata esterna. Il worker serve fino a `ACS_WORKER_CONCURRENCY` turni contemporanei per processo (default 4, limitato a 1–32), sempre su discussioni diverse. Privilegia quelle aggiornate meno recentemente. Le lease proteggono anche dalla concorrenza fra processi. Non è progettato per grandi volumi. All’arresto ordinato smette di avviare turni e attende quelli già avviati: cancellare una coroutine non interromperebbe il relativo thread HTTP. Una configurazione numerica non valida impedisce l’avvio, evitando un server apparentemente sano con worker inattivo. Non eseguire migrazioni distruttive o azzerare il DB per un normale riavvio.
 
 `proposal_version` cambia su nuova bozza, risposta umana, retry e finalizzazione. Una risposta a una domanda vecchia o un'approvazione su una versione superata viene rifiutata. Il frontend deve ricaricare, non aggiornare automaticamente il token e ritentare l'approvazione. Il replay idempotente restituisce la risposta originale, anche se nel frattempo lo stato è avanzato.
 
@@ -94,3 +94,56 @@ sono descritti in [CHARGING.md](CHARGING.md#previsioni-locali-con-timestral).
 I test numerici richiedono le dipendenze opzionali; in loro assenza sono marcati
 skip esplicitamente. Il file `docs/timestral-smoke.json` documenta una chiamata
 locale reale distinta dai test con predictor controllato.
+
+## Verifica MVP v2
+
+Avvio e stato usano rispettivamente `POST /api/v2/runs` e
+`GET /api/v2/runs/{run_id}`. L'identificativo è `id`, lo stato iniziale
+è `running` e `proposal_version` parte da zero. La persistenza JSON è
+atomica tramite le transazioni SQLite; non esiste un endpoint di reset.
+Per una nuova discussione inviare un nuovo task con una nuova chiave idempotente.
+
+Le letture SQLite del worker e di SSE sono eseguite fuori dall'event loop.
+Un errore nell'elaborazione di un run viene registrato nei log senza saltare
+le altre discussioni del lotto. Le richieste di revisione di tutti i ruoli,
+compreso l'analista, impediscono la finalizzazione automatica del round.
+I test verificano anche la consultazione di stato ed eventi durante una
+chiamata provider sospesa, usando un provider controllato senza rete.
+
+## Demo, arresto e limiti della consegna
+
+Avvio offline senza chiavi: `make api`, poi inviare un task senza `mode` oppure
+con `mode=mock`. Per isolare i dati della demo: `make mock` (porta 8001).
+`GET /api/v2/health` espone `model_configured`, mai la chiave.
+Per abilitare gli LLM impostare `OPENAI_API_KEY` e `ACS_MODEL`, quindi riavviare.
+Le altre variabili sono `ACS_DB`, `ACS_MAX_ROUNDS` (1–6),
+`ACS_WORKER_CONCURRENCY` (1–32) e `ACS_CORS_ORIGINS` (origini separate da virgole).
+La modalità e il modello del run sono congelati alla creazione: configurare una
+chiave dopo la creazione non converte le discussioni demo già persistite.
+Il replay di una creazione automatica conserva il risultato originale anche se
+la configurazione cambia. Omettere `mode` e specificare `mode=model` sono richieste
+diverse e non possono condividere la stessa chiave. Per creazioni anteriori a
+questa modifica senza `mode`, il vecchio hash equivaleva a `mode=model`: un replay
+con il vecchio payload omesso può quindi restituire 409; recuperare il run esistente.
+
+Per arrestare il servizio usare Ctrl-C/SIGTERM e attendere il completamento dei
+turni in corso. Un arresto forzato conserva i documenti committati e lascia scadere
+le lease; al riavvio i run running riprendono. Non cancellare il DB mentre il server
+è attivo. Per ripartire da zero inviare un nuovo task con una nuova chiave oppure
+avviare il server con un diverso `ACS_DB`, conservando il precedente archivio.
+Questo è un arresto del servizio, **non** un kill-switch applicativo con revoca
+immediata delle chiamate già inviate. Reset e kill-switch HTTP non hanno un contratto
+nella v2 e non sono stati introdotti.
+
+Fornitori, ordini, annullamenti, distributore, ticketing, ritardi di consegna e
+switch fra fornitori non sono implementati: la specifica v2 li esclude e conserva
+solo il catalogo simulato come input alla discussione. Occorrono contratti e regole
+operative di dominio prima di aggiungerli nell’esempio opzionale; approvare una
+proposta non simula né provoca l’esecuzione di quelle operazioni.
+
+OpenAPI è rigenerato con `python -m scripts.export_contracts`. La rigenerazione
+TypeScript è stata verificata in un file temporaneo senza modificare il frontend:
+la sola differenza è `CreateRun.mode` opzionale e la rimozione del default statico.
+Il client attuale resta compatibile inviando `mode` esplicitamente; per esporre la
+selezione automatica nei suoi tipi occorre rigenerarli quando sarà autorizzato
+l’aggiornamento del frontend.
