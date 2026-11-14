@@ -43,3 +43,17 @@ make test
 ```
 
 Il test smoke invia sia il task colonnine sia un task non correlato, e simula esplicitamente le risposte dell'operatore. Con server configurato si può usare `--mode model` per chiamate reali. L'implementazione è stata verificata offline e con un trasporto HTTP controllato per l'adapter reale; una prova live richiede la propria chiave API.
+
+## Timestral per l'esempio colonnine
+
+```sh
+make forecast-setup
+make forecast
+```
+
+Inferenza locale reale Timestral-28M, backtest contro baseline settimanale,
+quantili e scenari condizionati attuale/+2/+4. Non richiede chiavi OpenAI.
+Risultati: `/examples/charging/api/v1/forecasts`, analisi collegate in `/analysis`.
+Con il dataset consegnato e le soglie conservative, la copertura non basta per
+pubblicare previsioni utilizzabili: vengono salvate le motivazioni, non valori
+simulati. [Istruzioni e limiti](docs/CHARGING.md#previsioni-locali-con-timestral).

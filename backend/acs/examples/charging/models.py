@@ -113,7 +113,7 @@ class ControlTable(Model):
     period_start: date
     period_end: date
     measure_nature: str
-    high_quantile_definition: Literal["daily_p90_curve", "historical_percentile_90"]
+    high_quantile_definition: Literal["daily_p90_curve", "historical_percentile_90", "pointwise_p90_peak"]
     operational_capacity: int = Field(ge=0)
     registry_capacity: int = Field(ge=0)
     restored_capacity: int | None = Field(default=None, ge=0)

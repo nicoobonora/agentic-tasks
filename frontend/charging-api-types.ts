@@ -208,6 +208,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/forecasts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Forecasts */
+        get: operations["forecasts_api_v1_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/forecasts/{forecast_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Forecast */
+        get: operations["forecast_api_v1_forecasts__forecast_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/task": {
         parameters: {
             query?: never;
@@ -416,7 +450,7 @@ export interface components {
              * High Quantile Definition
              * @enum {string}
              */
-            high_quantile_definition: "daily_p90_curve" | "historical_percentile_90";
+            high_quantile_definition: "daily_p90_curve" | "historical_percentile_90" | "pointwise_p90_peak";
             /** Operational Capacity */
             operational_capacity: number;
             /** Registry Capacity */
@@ -503,6 +537,87 @@ export interface components {
             /** Raw Url */
             raw_url: string;
         };
+        /** ForecastBundle */
+        ForecastBundle: {
+            /**
+             * Schema Version
+             * @default 1.0
+             * @constant
+             */
+            schema_version: "1.0";
+            /** Id */
+            id: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /**
+             * Origin
+             * @default derived
+             * @constant
+             */
+            origin: "derived";
+            /**
+             * Mode
+             * @default model
+             * @constant
+             */
+            mode: "model";
+            /** Model Name */
+            model_name: string;
+            /** Model Revision */
+            model_revision: string;
+            /** Method Version */
+            method_version: string;
+            /** Input Sha256 */
+            input_sha256: string;
+            /** Series Sha256 */
+            series_sha256: string;
+            /**
+             * Input Start
+             * Format: date-time
+             */
+            input_start: string;
+            /**
+             * Forecast Start
+             * Format: date-time
+             */
+            forecast_start: string;
+            /** Horizon Hours */
+            horizon_hours: number;
+            /** Parameters */
+            parameters: {
+                [key: string]: unknown;
+            };
+            /** Covariates */
+            covariates: string[];
+            /** Sites */
+            sites: components["schemas"]["SiteForecast"][];
+            /** Analysis Id */
+            analysis_id: string | null;
+            /** Limitations */
+            limitations: string[];
+        };
+        /** ForecastPoint */
+        ForecastPoint: {
+            /**
+             * Time
+             * Format: date-time
+             */
+            time: string;
+            /**
+             * P
+             * @enum {number}
+             */
+            p: 1 | 0.5;
+            /** P10 */
+            p10: number;
+            /** P50 */
+            p50: number;
+            /** P90 */
+            p90: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -530,6 +645,28 @@ export interface components {
             observations: number;
             /** Normalized */
             normalized: boolean;
+        };
+        /** Hour */
+        Hour: {
+            /**
+             * Time
+             * Format: date-time
+             */
+            time: string;
+            /** Exposure Hours */
+            exposure_hours: number;
+            /** Full Hours */
+            full_hours: number;
+            /** Observed Starts */
+            observed_starts: number;
+            /** Mean Occupied */
+            mean_occupied: number | null;
+            /** Mean Operational */
+            mean_operational: number | null;
+            /** Demand P1 */
+            demand_p1: number | null;
+            /** Demand P05 */
+            demand_p05: number | null;
         };
         /** LiveData */
         LiveData: {
@@ -631,6 +768,29 @@ export interface components {
             /** Dc Unavailability Validated */
             dc_unavailability_validated: boolean | null;
         };
+        /** Score */
+        Score: {
+            /**
+             * Method
+             * @enum {string}
+             */
+            method: "timestral" | "seasonal_naive";
+            /** Fold */
+            fold: number;
+            /**
+             * Cutoff
+             * Format: date-time
+             */
+            cutoff: string;
+            /** Samples */
+            samples: number;
+            /** Mae */
+            mae: number | null;
+            /** Pinball */
+            pinball: number | null;
+            /** Coverage 80 */
+            coverage_80: number | null;
+        };
         /** Site */
         Site: {
             /** Id */
@@ -652,6 +812,42 @@ export interface components {
             origin: "real";
             /** Evidence Id */
             evidence_id: string;
+        };
+        /** SiteForecast */
+        SiteForecast: {
+            /** Site Id */
+            site_id: string;
+            /** Site Name */
+            site_name: string;
+            /** Plug Ids */
+            plug_ids: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "available" | "unavailable";
+            /** Reason */
+            reason: string | null;
+            /** Selected Method */
+            selected_method: ("timestral" | "seasonal_naive") | null;
+            /** Valid Fraction */
+            valid_fraction: number;
+            /** Evidence Ids */
+            evidence_ids: string[];
+            /** Hours */
+            hours: components["schemas"]["Hour"][];
+            /** Points */
+            points: components["schemas"]["ForecastPoint"][];
+            /** Backtest */
+            backtest: components["schemas"]["Score"][];
+            /** Mean Occupancy Hours */
+            mean_occupancy_hours: number | null;
+            /** Complete Episodes */
+            complete_episodes: number;
+            /** Scenario Capacity */
+            scenario_capacity: number | null;
+            /** Limitations */
+            limitations: string[];
         };
         /** Task */
         Task: {
@@ -1069,6 +1265,86 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AnalysisBundle"][];
+                };
+            };
+        };
+    };
+    forecasts_api_v1_forecasts_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastBundle"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    forecast_api_v1_forecasts__forecast_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                forecast_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastBundle"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
                 };
             };
         };

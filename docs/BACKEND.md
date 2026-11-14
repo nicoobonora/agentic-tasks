@@ -81,3 +81,16 @@ make test
 Il test smoke tratta sia l'esempio colonnine sia una guida per volontari. Le risposte umane dello smoke sono dichiaratamente risposte automatiche di test; il programma non approva né esegue azioni. I test unitari/integrati coprono anche round limit, non-applicabilità, disaccordo, restart, idempotenza, SSE, lease scaduta, risposta tardiva, riferimenti inesistenti, correzione singola, rifiuti e assenza di credenziali. I test ODH precedenti restano separati.
 
 Migrazione intenzionale a `/api/v2`: i vecchi endpoint v1 di run/ordine sono rimossi; le API dati v1 dell'esempio sono sotto `/examples/charging/api/v1`. OpenAPI principale, OpenAPI charging e tipi TypeScript sono generati separatamente. Non modificare a mano i file generati.
+
+## Modulo numerico opzionale
+
+`make forecast-setup` installa le dipendenze separate per Timestral;
+`make forecast` esegue localmente preparazione, backtest e pubblicazione di
+forecast/analisi. Non richiede OPENAI_API_KEY e non cambia ACS_MODEL. Il server
+legge soltanto artefatti persistiti, senza importare PyTorch o caricare i pesi.
+Il modulo è isolato in `examples/charging/forecast.py`; contratti in
+`forecast_models.py`. Procedura, soglie, provenienza, limiti e risultati reali
+sono descritti in [CHARGING.md](CHARGING.md#previsioni-locali-con-timestral).
+I test numerici richiedono le dipendenze opzionali; in loro assenza sono marcati
+skip esplicitamente. Il file `docs/timestral-smoke.json` documenta una chiamata
+locale reale distinta dai test con predictor controllato.

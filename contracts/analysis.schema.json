@@ -217,7 +217,8 @@
         "high_quantile_definition": {
           "enum": [
             "daily_p90_curve",
-            "historical_percentile_90"
+            "historical_percentile_90",
+            "pointwise_p90_peak"
           ],
           "title": "High Quantile Definition",
           "type": "string"

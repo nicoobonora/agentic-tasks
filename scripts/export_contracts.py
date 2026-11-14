@@ -3,10 +3,11 @@ from backend.acs.api import app
 from backend.acs.examples.charging.api import app as charging_app
 from backend.acs.examples.charging.models import AnalysisBundle
 from backend.acs.models import StreamEvent, AgentTurn
+from backend.acs.examples.charging.forecast_models import ForecastBundle
 from backend.acs.db import ROOT
 
 def main():
-    schemas = {'openapi': app.openapi(), 'analysis.schema': AnalysisBundle.model_json_schema(),
+    schemas = {'forecast.schema': ForecastBundle.model_json_schema(), 'openapi': app.openapi(), 'analysis.schema': AnalysisBundle.model_json_schema(),
                'charging.openapi': charging_app.openapi(), 'events.schema': StreamEvent.model_json_schema(),
                'agent-turn.schema': AgentTurn.model_json_schema()}
     for name,value in schemas.items():

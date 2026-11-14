@@ -13,6 +13,8 @@ export function createChargingClient(baseUrl = 'http://localhost:8000') {
     sites: (source = 'Neogy-AMPECO') => get<S['Site'][]>(`/api/v1/sites?source=${encodeURIComponent(source)}`),
     plugs: (id: string) => get<S['Plug'][]>(`/api/v1/plugs?site_id=${encodeURIComponent(id)}`),
     quality: () => get<S['Quality'][]>('/api/v1/quality'),
+    forecasts: (limit = 1) => get<S['ForecastBundle'][]>(`/api/v1/forecasts?limit=${limit}`),
+    forecast: (id: string) => get<S['ForecastBundle']>(`/api/v1/forecasts/${encodeURIComponent(id)}`),
     analysis: () => get<S['AnalysisBundle'][]>('/api/v1/analysis'),
     live: (refresh = false) => get<S['LiveData']>(`/api/v1/live?refresh=${refresh}`),
   };

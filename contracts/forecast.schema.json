@@ -1,0 +1,452 @@
+{
+  "$defs": {
+    "ForecastPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "format": "date-time",
+          "title": "Time",
+          "type": "string"
+        },
+        "p": {
+          "enum": [
+            1.0,
+            0.5
+          ],
+          "title": "P",
+          "type": "number"
+        },
+        "p10": {
+          "minimum": 0,
+          "title": "P10",
+          "type": "number"
+        },
+        "p50": {
+          "minimum": 0,
+          "title": "P50",
+          "type": "number"
+        },
+        "p90": {
+          "minimum": 0,
+          "title": "P90",
+          "type": "number"
+        }
+      },
+      "required": [
+        "time",
+        "p",
+        "p10",
+        "p50",
+        "p90"
+      ],
+      "title": "ForecastPoint",
+      "type": "object"
+    },
+    "Hour": {
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "format": "date-time",
+          "title": "Time",
+          "type": "string"
+        },
+        "exposure_hours": {
+          "title": "Exposure Hours",
+          "type": "number"
+        },
+        "full_hours": {
+          "title": "Full Hours",
+          "type": "number"
+        },
+        "observed_starts": {
+          "title": "Observed Starts",
+          "type": "integer"
+        },
+        "mean_occupied": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mean Occupied"
+        },
+        "mean_operational": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mean Operational"
+        },
+        "demand_p1": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Demand P1"
+        },
+        "demand_p05": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Demand P05"
+        }
+      },
+      "required": [
+        "time",
+        "exposure_hours",
+        "full_hours",
+        "observed_starts",
+        "mean_occupied",
+        "mean_operational",
+        "demand_p1",
+        "demand_p05"
+      ],
+      "title": "Hour",
+      "type": "object"
+    },
+    "Score": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "enum": [
+            "timestral",
+            "seasonal_naive"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "fold": {
+          "title": "Fold",
+          "type": "integer"
+        },
+        "cutoff": {
+          "format": "date-time",
+          "title": "Cutoff",
+          "type": "string"
+        },
+        "samples": {
+          "title": "Samples",
+          "type": "integer"
+        },
+        "mae": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mae"
+        },
+        "pinball": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pinball"
+        },
+        "coverage_80": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Coverage 80"
+        }
+      },
+      "required": [
+        "method",
+        "fold",
+        "cutoff",
+        "samples",
+        "mae",
+        "pinball",
+        "coverage_80"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
+    "SiteForecast": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "title": "Site Id",
+          "type": "string"
+        },
+        "site_name": {
+          "title": "Site Name",
+          "type": "string"
+        },
+        "plug_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Plug Ids",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "available",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "selected_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "timestral",
+                "seasonal_naive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Method"
+        },
+        "valid_fraction": {
+          "title": "Valid Fraction",
+          "type": "number"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "hours": {
+          "items": {
+            "$ref": "#/$defs/Hour"
+          },
+          "title": "Hours",
+          "type": "array"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/ForecastPoint"
+          },
+          "title": "Points",
+          "type": "array"
+        },
+        "backtest": {
+          "items": {
+            "$ref": "#/$defs/Score"
+          },
+          "title": "Backtest",
+          "type": "array"
+        },
+        "mean_occupancy_hours": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mean Occupancy Hours"
+        },
+        "complete_episodes": {
+          "title": "Complete Episodes",
+          "type": "integer"
+        },
+        "scenario_capacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Scenario Capacity"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "site_id",
+        "site_name",
+        "plug_ids",
+        "status",
+        "reason",
+        "selected_method",
+        "valid_fraction",
+        "evidence_ids",
+        "hours",
+        "points",
+        "backtest",
+        "mean_occupancy_hours",
+        "complete_episodes",
+        "scenario_capacity",
+        "limitations"
+      ],
+      "title": "SiteForecast",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "origin": {
+      "const": "derived",
+      "default": "derived",
+      "title": "Origin",
+      "type": "string"
+    },
+    "mode": {
+      "const": "model",
+      "default": "model",
+      "title": "Mode",
+      "type": "string"
+    },
+    "model_name": {
+      "title": "Model Name",
+      "type": "string"
+    },
+    "model_revision": {
+      "title": "Model Revision",
+      "type": "string"
+    },
+    "method_version": {
+      "title": "Method Version",
+      "type": "string"
+    },
+    "input_sha256": {
+      "title": "Input Sha256",
+      "type": "string"
+    },
+    "series_sha256": {
+      "title": "Series Sha256",
+      "type": "string"
+    },
+    "input_start": {
+      "format": "date-time",
+      "title": "Input Start",
+      "type": "string"
+    },
+    "forecast_start": {
+      "format": "date-time",
+      "title": "Forecast Start",
+      "type": "string"
+    },
+    "horizon_hours": {
+      "title": "Horizon Hours",
+      "type": "integer"
+    },
+    "parameters": {
+      "additionalProperties": true,
+      "title": "Parameters",
+      "type": "object"
+    },
+    "covariates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Covariates",
+      "type": "array"
+    },
+    "sites": {
+      "items": {
+        "$ref": "#/$defs/SiteForecast"
+      },
+      "title": "Sites",
+      "type": "array"
+    },
+    "analysis_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Analysis Id"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "generated_at",
+    "model_name",
+    "model_revision",
+    "method_version",
+    "input_sha256",
+    "series_sha256",
+    "input_start",
+    "forecast_start",
+    "horizon_hours",
+    "parameters",
+    "covariates",
+    "sites",
+    "analysis_id",
+    "limitations"
+  ],
+  "title": "ForecastBundle",
+  "type": "object"
+}

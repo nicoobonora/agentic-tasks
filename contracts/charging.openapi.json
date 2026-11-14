@@ -563,6 +563,111 @@
         }
       }
     },
+    "/api/v1/forecasts": {
+      "get": {
+        "summary": "Forecasts",
+        "operationId": "forecasts_api_v1_forecasts_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 1,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForecastBundle"
+                  },
+                  "title": "Response Forecasts Api V1 Forecasts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/forecasts/{forecast_id}": {
+      "get": {
+        "summary": "Forecast",
+        "operationId": "forecast_api_v1_forecasts__forecast_id__get",
+        "parameters": [
+          {
+            "name": "forecast_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Forecast Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastBundle"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
     "/task": {
       "get": {
         "summary": "Example Task",
@@ -1023,7 +1128,8 @@
             "type": "string",
             "enum": [
               "daily_p90_curve",
-              "historical_percentile_90"
+              "historical_percentile_90",
+              "pointwise_p90_peak"
             ],
             "title": "High Quantile Definition"
           },
@@ -1263,6 +1369,170 @@
         ],
         "title": "Evidence"
       },
+      "ForecastBundle": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1.0",
+            "title": "Schema Version",
+            "default": "1.0"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "origin": {
+            "type": "string",
+            "const": "derived",
+            "title": "Origin",
+            "default": "derived"
+          },
+          "mode": {
+            "type": "string",
+            "const": "model",
+            "title": "Mode",
+            "default": "model"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_revision": {
+            "type": "string",
+            "title": "Model Revision"
+          },
+          "method_version": {
+            "type": "string",
+            "title": "Method Version"
+          },
+          "input_sha256": {
+            "type": "string",
+            "title": "Input Sha256"
+          },
+          "series_sha256": {
+            "type": "string",
+            "title": "Series Sha256"
+          },
+          "input_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Input Start"
+          },
+          "forecast_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Forecast Start"
+          },
+          "horizon_hours": {
+            "type": "integer",
+            "title": "Horizon Hours"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parameters"
+          },
+          "covariates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Covariates"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/SiteForecast"
+            },
+            "type": "array",
+            "title": "Sites"
+          },
+          "analysis_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Id"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "generated_at",
+          "model_name",
+          "model_revision",
+          "method_version",
+          "input_sha256",
+          "series_sha256",
+          "input_start",
+          "forecast_start",
+          "horizon_hours",
+          "parameters",
+          "covariates",
+          "sites",
+          "analysis_id",
+          "limitations"
+        ],
+        "title": "ForecastBundle"
+      },
+      "ForecastPoint": {
+        "properties": {
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Time"
+          },
+          "p": {
+            "type": "number",
+            "enum": [
+              1.0,
+              0.5
+            ],
+            "title": "P"
+          },
+          "p10": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "P10"
+          },
+          "p50": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "P50"
+          },
+          "p90": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "P90"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "time",
+          "p",
+          "p10",
+          "p50",
+          "p90"
+        ],
+        "title": "ForecastPoint"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1316,6 +1586,84 @@
           "normalized"
         ],
         "title": "Health"
+      },
+      "Hour": {
+        "properties": {
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Time"
+          },
+          "exposure_hours": {
+            "type": "number",
+            "title": "Exposure Hours"
+          },
+          "full_hours": {
+            "type": "number",
+            "title": "Full Hours"
+          },
+          "observed_starts": {
+            "type": "integer",
+            "title": "Observed Starts"
+          },
+          "mean_occupied": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Occupied"
+          },
+          "mean_operational": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Operational"
+          },
+          "demand_p1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand P1"
+          },
+          "demand_p05": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demand P05"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "time",
+          "exposure_hours",
+          "full_hours",
+          "observed_starts",
+          "mean_occupied",
+          "mean_operational",
+          "demand_p1",
+          "demand_p05"
+        ],
+        "title": "Hour"
       },
       "LiveData": {
         "properties": {
@@ -1592,6 +1940,76 @@
         ],
         "title": "Quality"
       },
+      "Score": {
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "timestral",
+              "seasonal_naive"
+            ],
+            "title": "Method"
+          },
+          "fold": {
+            "type": "integer",
+            "title": "Fold"
+          },
+          "cutoff": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Cutoff"
+          },
+          "samples": {
+            "type": "integer",
+            "title": "Samples"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "pinball": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinball"
+          },
+          "coverage_80": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage 80"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "method",
+          "fold",
+          "cutoff",
+          "samples",
+          "mae",
+          "pinball",
+          "coverage_80"
+        ],
+        "title": "Score"
+      },
       "Site": {
         "properties": {
           "id": {
@@ -1643,6 +2061,144 @@
           "evidence_id"
         ],
         "title": "Site"
+      },
+      "SiteForecast": {
+        "properties": {
+          "site_id": {
+            "type": "string",
+            "title": "Site Id"
+          },
+          "site_name": {
+            "type": "string",
+            "title": "Site Name"
+          },
+          "plug_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Plug Ids"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable"
+            ],
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "selected_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "timestral",
+                  "seasonal_naive"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Method"
+          },
+          "valid_fraction": {
+            "type": "number",
+            "title": "Valid Fraction"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence Ids"
+          },
+          "hours": {
+            "items": {
+              "$ref": "#/components/schemas/Hour"
+            },
+            "type": "array",
+            "title": "Hours"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "backtest": {
+            "items": {
+              "$ref": "#/components/schemas/Score"
+            },
+            "type": "array",
+            "title": "Backtest"
+          },
+          "mean_occupancy_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Occupancy Hours"
+          },
+          "complete_episodes": {
+            "type": "integer",
+            "title": "Complete Episodes"
+          },
+          "scenario_capacity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Capacity"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "site_id",
+          "site_name",
+          "plug_ids",
+          "status",
+          "reason",
+          "selected_method",
+          "valid_fraction",
+          "evidence_ids",
+          "hours",
+          "points",
+          "backtest",
+          "mean_occupancy_hours",
+          "complete_episodes",
+          "scenario_capacity",
+          "limitations"
+        ],
+        "title": "SiteForecast"
       },
       "Task": {
         "properties": {

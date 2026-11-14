@@ -10,6 +10,7 @@ from ...db import ROOT, transaction, documents, get
 from ...ingestion import ODHClient, now, utc, digest
 from . import models as m
 from . import catalog as catalog_data
+from .forecast_models import ForecastBundle
 
 app = FastAPI(title="ChargeCo ACS Foundation", version="1.0.0", description="Strumenti dati ODH e catalogo simulato dell’esempio opzionale; nessuna orchestrazione o esecuzione.")
 app.add_middleware(CORSMiddleware, allow_origins=os.getenv("ACS_CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173").split(","), allow_methods=["GET", "POST"], allow_headers=["Content-Type", "Last-Event-ID"])
@@ -132,6 +133,20 @@ def analysis():
         return documents(db, "analysis")
 
 
+@app.get('/api/v1/forecasts', response_model=list[ForecastBundle])
+def forecasts(limit: int = Query(1, ge=1, le=100)):
+    with transaction() as db:
+        rows=db.execute("SELECT payload FROM documents WHERE kind='forecast' ORDER BY json_extract(payload,'$.generated_at') DESC LIMIT ?", (limit,))
+        return [json.loads(r[0]) for r in rows]
+
+@app.get('/api/v1/forecasts/{forecast_id}', response_model=ForecastBundle, responses=ERRORS)
+def forecast(forecast_id: str):
+    with transaction() as db:
+        item=get(db, 'forecast', forecast_id)
+        catalog_data.require(item is not None, 'not_found', 'Previsione inesistente')
+        return item
+
+
 from ...models import Task, Attachment
 
 @app.get('/task', response_model=Task)
@@ -140,8 +155,15 @@ def example_task():
     with transaction() as db:
         sites = [json.loads(r[0]) for r in db.execute("SELECT payload FROM sites WHERE source='Neogy-AMPECO' ORDER BY name")]
         chosen = [s for s in sites if s['name'] in ('BZ_C_RISPARMIO_01','BZ_PIAVE_01','RENON_01')]
-        payload = {'sites': chosen, 'analysis': documents(db, 'analysis'),
-                   'notes': 'Metadata only unless analysis bundles are present. No hourly capacity or demand forecast is inferred here.'}
+        analyses = sorted(documents(db, 'analysis'), key=lambda a: a['generated_at'], reverse=True)[:1]
+        latest = db.execute("SELECT payload FROM documents WHERE kind='forecast' ORDER BY json_extract(payload,'$.generated_at') DESC LIMIT 1").fetchone()
+        forecast_summary = None
+        if latest:
+            f = json.loads(latest[0])
+            forecast_summary = {k: f[k] for k in ('id','generated_at','forecast_start','horizon_hours','model_name','model_revision','analysis_id','limitations')}
+            forecast_summary['sites'] = [{k: s[k] for k in ('site_name','status','reason','valid_fraction','selected_method','backtest')} for s in f['sites']]
+        payload = {'sites': chosen, 'analysis': analyses, 'forecast': forecast_summary,
+                   'notes': 'Forecasts and capacity scenarios are conditional estimates with coverage limits; check dates and limitations. Missing results are not zero.'}
     return Task(title='Valutare un ampliamento della rete di ricarica',
         description='Proporre come valutare la richiesta di 12 nuovi punti in tre siti. Contestare le capacità non verificate, confrontare fattibilità e costi e identificare le decisioni da chiedere alla direzione. Non emettere ordini.',
         context='Operatore ChargeCo simulato, dati pubblici ODH. Il piano di partenza riguarda BZ_C_RISPARMIO_01, BZ_PIAVE_01 e RENON_01. Il dimensionamento non è una conclusione già verificata.',

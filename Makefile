@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup download prepare api mock test contracts
+.PHONY: setup download prepare api mock test contracts forecast-setup forecast
 setup:
 	python3 -m venv .venv
 	.venv/bin/pip install -r requirements-dev.txt
@@ -25,3 +25,9 @@ test:
 contracts:
 	$(PYTHON) -m scripts.export_contracts
 	npm run contracts:types
+
+forecast-setup:
+	.venv/bin/pip install -r requirements-forecast.txt
+
+forecast:
+	$(PYTHON) -m scripts.forecast_charging

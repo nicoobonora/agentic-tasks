@@ -71,7 +71,7 @@ Il bundle contiene tre tabelle, una per sito congelato, quattro celle per tabell
 
 Le `evidence_ids` devono essere ID di `source_pages` esistenti. `input_sha256` è SHA256 del JSON canonico della lista ordinata e deduplicata `{id,sha256}` delle prove citate: usare `analysis_contract.input_fingerprint(db, ids)`. L'importatore controlla schema, prove, impronta, probabilità Erlang, capacità minima e incremento. Uno stesso ID di analisi è immutabile. Il controllo numerico non certifica la bontà dello stimatore o della previsione.
 
-Il modulo da sviluppare deve includere nel bundle: soglie di bonifica, parametri E/F/A e dei due p, soglia 10 minuti, minimo quattro giorni comparabili, quota imputata, versione modello, covariate e backtest di tutti i candidati. Restano sue responsabilità:
+Per un’analisi conforme integralmente al piano, il modulo analitico deve includere nel bundle: soglie di bonifica, parametri E/F/A e dei due p, soglia 10 minuti, minimo quattro giorni comparabili, quota imputata, versione modello, covariate e backtest di tutti i candidati. Le responsabilità del modulo analitico sono:
 
 - capacità operativa per gruppo e ora, separazione DC gemello, esposizione E e tempo pieno F;
 - decensura `A*E/(E-F)`, correzione `A+p*(stima-A)`, profili supportati e giornate mancanti/imputate;
@@ -79,9 +79,145 @@ Il modulo da sviluppare deve includere nel bundle: soglie di bonifica, parametri
 - Timestral/ingenue, backtest, selezione metodo e calendario ufficiale di festività/vacanze per le covariate;
 - raccomandazione minima robusta in tutte le celle, verifica economica a livello di rete, ripristino prima dell'ampliamento.
 
-La base non fabbrica celle numeriche per riempire questi spazi. `/examples/charging/api/v1/analysis` rimane vuoto prima dell'importazione. Le note in `contracts/examples/analysis.unavailable.json` mostrano soltanto il formato, con prove segnaposto che l'importatore rifiuta finché non vengono sostituite.
+La base non fabbrica celle numeriche per riempire questi spazi. `/examples/charging/api/v1/analysis` rimane vuoto prima dell’importazione o dell’esecuzione della pipeline Timestral descritta sotto. Le note in `contracts/examples/analysis.unavailable.json` mostrano soltanto il formato, con prove segnaposto che l'importatore rifiuta finché non vengono sostituite.
 
 
 ## Condivisione offline
 
 `python -m scripts.export_snapshot` produce un archivio SQLite e raw. Estrarlo solo a server fermo, in una checkout senza dati da preservare. Il vecchio adapter di ordini e fornitori è stato rimosso: il catalogo resta una fonte di assunzioni per discutere la proposta. Non esiste un endpoint di esecuzione.
+
+## Previsioni locali con Timestral
+
+Il modulo `backend/acs/examples/charging/forecast.py` implementa inferenza reale con
+[Timestral ufficiale](https://github.com/mistralai/timestral), confronto con una
+baseline settimanale e scenari condizionati di capacità. Non usa `ACS_MODEL`,
+OpenAI o una modalità mock. Le dipendenze numeriche sono opzionali per il server.
+
+```sh
+make forecast-setup   # installa anche PyTorch; prima esecuzione scarica pesi ~111 MB
+make forecast         # storico 56 giorni, origine ora UTC corrente, orizzonte 168 ore
+# Riproduzione sul dataset consegnato:
+.venv/bin/python -m scripts.forecast_charging --end 2026-11-14T00:00:00Z
+# Dopo il primo download dei pesi, anche senza rete:
+.venv/bin/python -m scripts.forecast_charging --end 2026-11-14T00:00:00Z --offline
+```
+
+Modello: `mistralai/Timestral-28M`, revisione
+`49b26409ac87b5935539a5d8ffe7f397b720db47`; libreria fissata al commit
+`a534bdbd244d64f3d9d743f46c7bf6fc330ed4ff`. CPU, quattro thread, nessun fine-tuning.
+La cache dei pesi è quella di Hugging Face. Il codice upstream è Apache 2.0,
+i pesi hanno la licenza Modified MIT indicata nel repository ufficiale.
+
+Il comando legge SQLite, calcola fuori dalle transazioni e salva atomicamente
+un documento `forecast` e il relativo `analysis`. Ogni esecuzione ha nuovi ID;
+i risultati precedenti rimangono consultabili. Esporta anche
+`data/exports/forecast-latest.json`, sovrascritto a ogni esecuzione. Non aggiorna
+ODH automaticamente: usare prima gli script di download se serve uno storico
+più recente. `--latest` da solo non recupera le osservazioni intermedie mancanti.
+Errori di installazione, download o inferenza interrompono il comando senza
+pubblicare risultati parziali e senza sostituire il modello con dati simulati.
+
+### Cosa viene stimato
+
+Si selezionano soltanto le prese del feed corrente con connettori AC <=22 kW.
+La serie è oraria UTC; il calendario di input usa ora e giorno della settimana
+in Europe/Rome, anche ai cambi dell'ora legale. Non si uniscono fonti storiche e
+attuali e non si presume l'indipendenza dei connettori DC.
+
+La ricostruzione usa intervalli esatti fra osservazioni consecutive, soltanto
+quando distano al massimo 120 minuti. Per contribuire a un'ora devono essere noti
+gli stati di tutte le prese selezionate. Sono registrati:
+
+- `E`: ore osservabili con capacità operativa maggiore di zero;
+- `F`: parte di E durante cui tutte le prese operative sono occupate;
+- `A`: transizioni osservate AVAILABLE → CHARGING in condizioni osservabili;
+- occupazione media e capacità operativa media sul tempo E.
+
+I due target sono `A/E + p*(A/(E-F)-A/E)`, per p=1 e p=0.5, in richieste/ora.
+Sono **stime sotto ipotesi**, non conteggi reali delle persone respinte.
+Si richiedono almeno 10 minuti sia di E sia di E-F. Altrimenti il target è null,
+passato al modello come NaN; nessun riempimento con zero. Capacità zero e ore
+interamente sature non producono una domanda nulla. Le ore osservate senza
+arrivi possono invece avere valore zero. Nessuna estensione oltre l'ultimo
+segnale, nessuna imputazione preventiva.
+
+### Backtest e soglie
+
+Default: due finestre temporali consecutive di sette giorni; almeno 14 giorni
+prima della prima finestra. Per ciascuna finestra la serie di training viene
+ricostruita da capo, escludendo osservazioni e revisioni successive al cutoff.
+Non si utilizza il primo segnale futuro per estendere l'ultimo stato del training.
+L'anagrafica disponibile resta uno snapshot corrente: la sua stabilità è
+un'ipotesi dichiarata, non una verifica della configurazione storica.
+
+Timestral è confrontato con la stessa ora UTC della settimana precedente,
+con intervalli della baseline stimati dai soli residui di training. I punteggi
+MAE, pinball loss e copertura p10–p90 usano esattamente gli stessi target osservati
+per i due metodi. Si conservano cutoff e numerosità di ogni confronto. Vince la
+pinball loss media ponderata per numero di campioni; il metodo deve anche poter
+produrre tutti i valori futuri. Una baseline vincente è dichiarata
+`selected_method=seasonal_naive`, mai spacciata per Timestral.
+
+Le soglie tecniche della demo sono configurabili e registrate nell'artefatto:
+`--gap-minutes`, `--minimum-exposure-minutes`, `--minimum-valid-fraction` (default
+25%), `--history-days`, `--horizon-hours` (1..168), `--folds` (1..4).
+Servono inoltre almeno quattro date osservate per ogni combinazione giorno della
+settimana/ora locale futura, sia nel training di ciascun backtest sia nel contesto
+finale; ore utilizzabili nell'ultimo giorno e almeno il 25% dei target
+della finestra (minimo 24) comuni al backtest. Queste soglie non certificano la
+qualità statistica. Non vengono allentate automaticamente. Il modello può
+comunque emettere numeri su serie insufficienti: ciò non li rende pubblicabili.
+
+`parameters.model_inference_calls` distingue una pipeline fermata dai controlli
+preliminari da una che ha effettivamente eseguito il modello. `status=unavailable`
+e `reason` indicano perché non sono pubblicati punti di previsione.
+
+### Scenari di capacità e limiti rispetto al piano
+
+Per ogni sito disponibile, le quattro celle p × quantile usano il massimo dei
+valori orari p50 o p90 nell'orizzonte. La nuova definizione
+`high_quantile_definition=pointwise_p90_peak` evita di chiamarlo percentile del
+massimo giornaliero: **non è una banda simultanea**.
+
+La durata è la media degli episodi completi fra 120 secondi e 48 ore; ne servono
+almeno 20. Per la capacità corrente servono almeno 24 ore recenti con copertura
+>=90% e capacità intera stabile nel >=90% di queste ore. La capacità futura è
+assunta costante. Se uno di questi requisiti manca, le celle rimangono unavailable.
+Il valore zero di `operational_capacity` nelle tabelle unavailable è un segnaposto
+richiesto dal contratto v1, non una diagnosi di impianto fermo: consultare anche
+`scenario_capacity=null` nel forecast e la motivazione delle celle.
+
+Erlang-B calcola accesso immediato attuale/+2/+4, capacità minima per soglia 90%
+e scenario di ripristino per Renon. Si assumono arrivi Poisson stazionari,
+indipendenza e assenza di coda. I risultati sono scenari esplorativi: non
+certificano quelle ipotesi, non correggono il bias delle durate censurate e non
+sono una raccomandazione economica. Il massimo incremento considerato è quattro;
+null significa che nessuno degli incrementi 0/2/4 basta. La ricerca della capacità
+totale è limitata a 1000, oltre i quali la cella è unavailable.
+
+Restano da validare per applicare integralmente il piano: identità e capacità
+storica, calendario ufficiale di festività/vacanze, trattamento più robusto delle durate censurate, candidato
+seasonal-naive-trend, backtest della domanda non osservabile e valutazione
+economica di rete. L'integrazione Timestral non certifica queste parti.
+
+### Risultato verificato sui dati locali
+
+Con origine 14 novembre 2026 ore 00 UTC e parametri predefiniti, le ore con target
+utilizzabile sono 12,6% per BZ_C_RISPARMIO_01, 16,2% per BZ_PIAVE_01 e 0% per
+RENON_01: i tre siti risultano unavailable. Il database contiene quindi un
+risultato persistito che spiega l'insufficienza, non previsioni inventate.
+L'adapter ha anche eseguito realmente Timestral sui dati numerici del primo sito
+per verificare download, caricamento e output: `docs/timestral-smoke.json`.
+Quella prova tecnica non supera le soglie e non viene pubblicata come previsione
+utilizzabile. I test con dati controllati verificano invece il flusso completo,
+la selezione, gli scenari, la persistenza e le API.
+
+Per ripetere la sola verifica di inferenza sui dati esportati:
+
+```sh
+.venv/bin/python -m scripts.smoke_timestral --offline
+```
+
+Il report di consegna include anche una prova del backtest completo con il modello
+reale su una serie sintetica regolare, esplicitamente etichettata come test.
+Nessuno di quei dati sintetici è importato nel database di produzione.

@@ -1,0 +1,7 @@
+-r requirements.txt
+# Optional numerical pipeline, isolated from the generic discussion service.
+timestral @ git+https://github.com/mistralai/timestral.git@a534bdbd244d64f3d9d743f46c7bf6fc330ed4ff
+numpy==2.5.4
+torch==2.15.0
+safetensors==0.8.0
+huggingface_hub==2.4.0

@@ -92,3 +92,28 @@ const chargingRun = await api.createRun({ task, mode: 'mock', idempotency_key: c
 ```
 
 Le API dati e i tipi specifici sono separati, sotto `/examples/charging`. Il flusso di discussione e la UI rimangono identici. Le vecchie API v1 di orchestrazione sono state rimosse; i record preesistenti restano nel database senza essere convertiti in task generici.
+
+### Previsioni dell'esempio colonnine
+
+`createChargingClient().forecasts()` legge l'ultimo artefatto (parametro opzionale
+limit); `.forecast(id)` ne legge uno specifico. Endpoint GET:
+`/examples/charging/api/v1/forecasts?limit=1` e `/forecasts/{id}`.
+Il tipo generato è `ForecastBundle`, schema anche in `contracts/forecast.schema.json`.
+I calcoli sono avviati offline con `make forecast`, mai durante una GET HTTP.
+
+Mostrare modello/revisione, data di generazione, origine e orizzonte della
+previsione, copertura e metodo effettivamente selezionato per sito. `status` e
+`reason` governano la visualizzazione: unavailable non è una curva a zero.
+`hours` contiene osservazioni derivate e null per ore insufficienti; `points`
+contiene p10/p50/p90 orari per ciascuna ipotesi p=1 e p=0.5 (richieste/ora stimate).
+`backtest` espone MAE, pinball, copertura dell'intervallo e numerosità per finestra.
+Le bande sono quantili puntuali, non garanzie sul massimo dell'intero periodo.
+
+Le quattro celle di capacità sono nel bundle analysis collegato da `analysis_id`.
+Filtrare `.analysis()` per quell'ID, non associare risultati di esecuzioni diverse.
+Sono scenari condizionati, non raccomandazioni certificate. Mostrare le limitations
+anche quando le celle sono disponibili. `GET /examples/charging/task` include un
+riepilogo dell'ultima previsione e dell'ultima analisi per la discussione; i task
+precedenti conservano il proprio snapshot e non si aggiornano in silenzio.
+Non confondere la data di generazione con l'origine del forecast: un esperimento
+ricalcolato oggi su un cutoff passato non è una previsione sul periodo attuale.

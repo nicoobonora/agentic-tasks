@@ -1,0 +1,67 @@
+{
+  "model": "mistralai/Timestral-28M",
+  "revision": "49b26409ac87b5935539a5d8ffe7f397b720db47",
+  "live_model_verified": true,
+  "input": "real ODH hourly reconstructed series, BZ_C_RISPARMIO_01",
+  "input_forecast_id": "forecast:1151f56e-4301-4439-ba14-0a49f8629727",
+  "valid_fraction": 0.12574404761904762,
+  "shape": [
+    2,
+    168,
+    3
+  ],
+  "seconds": 0.58,
+  "first_hour_p1_quantiles": [
+    0.0,
+    2.0348644256591797,
+    5.050838470458984
+  ],
+  "published_as_usable_forecast": false,
+  "reason": "Adapter smoke only. This command does not override coverage or backtest requirements.",
+  "full_pipeline_controlled_series": {
+    "input": "synthetic half-hour states, explicitly a test fixture",
+    "real_model": true,
+    "persisted_in_production": false,
+    "status": "available",
+    "selected_method": "timestral",
+    "forecast_points": 336,
+    "backtest": [
+      {
+        "method": "timestral",
+        "fold": 0,
+        "cutoff": "2026-09-29T00:00:00Z",
+        "samples": 336,
+        "mae": 0.0,
+        "pinball": 0.0,
+        "coverage_80": 1.0
+      },
+      {
+        "method": "seasonal_naive",
+        "fold": 0,
+        "cutoff": "2026-09-29T00:00:00Z",
+        "samples": 336,
+        "mae": 0.0,
+        "pinball": 0.0,
+        "coverage_80": 1.0
+      },
+      {
+        "method": "timestral",
+        "fold": 1,
+        "cutoff": "2026-10-06T00:00:00Z",
+        "samples": 336,
+        "mae": 0.0,
+        "pinball": 0.0,
+        "coverage_80": 1.0
+      },
+      {
+        "method": "seasonal_naive",
+        "fold": 1,
+        "cutoff": "2026-10-06T00:00:00Z",
+        "samples": 336,
+        "mae": 0.0,
+        "pinball": 0.0,
+        "coverage_80": 1.0
+      }
+    ]
+  }
+}
