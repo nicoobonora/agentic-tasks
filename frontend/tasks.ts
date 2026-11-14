@@ -4,17 +4,17 @@ export const tasks: { id: string; task: Task }[] = [
   {
     id: "expansion",
     task: {
-      title: "Aggiungere 20 colonnine entro il 1 marzo 2027",
+      title: "Add 20 charging stations by 1 March 2027",
       description:
-        "Vogliamo aggiungere 20 colonnine entro il 1 marzo 2027. Quale piano proponete?",
+        "We want to add 20 charging stations by 1 March 2027. What plan do you propose?",
     },
   },
   {
     id: "maintenance",
     task: {
-      title: "Manutenzione delle colonnine a Bolzano",
+      title: "Charging station maintenance in Bolzano",
       description:
-        "Quando dovremmo effettuare la manutenzione delle colonnine nell’area di Bolzano?",
+        "When should we carry out maintenance on the charging stations in the Bolzano area?",
     },
   },
 ];

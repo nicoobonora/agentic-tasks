@@ -3,31 +3,29 @@ export const tasks: { id: string; task: Task; fail?: boolean }[] = [
   {
     id: "guide",
     task: {
-      title: "Accogliere nuovi volontari",
-      description:
-        "Preparare una breve guida per i nuovi volontari della biblioteca.",
+      title: "Welcome new volunteers",
+      description: "Prepare a short guide for the library's new volunteers.",
       context:
-        "Usare le risorse già disponibili. La lunghezza della guida è da concordare.",
+        "Use the resources already available. The length of the guide is still to be agreed.",
     },
   },
   {
     id: "meeting",
     task: {
-      title: "Organizzare la riunione di progetto",
+      title: "Organize the project meeting",
       description:
-        "Proporre un ordine del giorno e una checklist per una riunione di allineamento.",
-      context: "Durata e partecipanti sono da confermare.",
+        "Propose an agenda and a checklist for an alignment meeting.",
+      context: "Duration and participants are still to be confirmed.",
     },
   },
   {
     id: "review",
     fail: true,
     task: {
-      title: "Rivedere il processo di onboarding",
-      description:
-        "Preparare una proposta per rendere più chiaro il primo giorno di lavoro.",
+      title: "Review the onboarding process",
+      description: "Prepare a proposal to make the first day of work clearer.",
       context:
-        "Scenario dimostrativo: errore simulato al primo turno, recuperabile con retry.",
+        "Demo scenario: simulated error on the first turn, recoverable with retry.",
     },
   },
 ];

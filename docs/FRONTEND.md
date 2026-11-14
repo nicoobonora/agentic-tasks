@@ -145,15 +145,15 @@ endpoint o stati di orchestrazione.
 | Azione frontend | Client / endpoint | Transizione e rappresentazione |
 | --- | --- | --- |
 | Consultare la colonna sinistra | Catalogo `frontend/tasks.ts` | Catalogo locale, nessuna API catalogo prevista |
-| Trascinare al centro o premere “Avvia task” | `createRun` / POST `/runs` con task, mode esplicito, max_rounds e chiave idempotente | La card lascia il catalogo solo dopo la risposta; apertura del run al centro |
+| Trascinare al centro o premere “Start task” | `createRun` / POST `/runs` con task, mode esplicito, max_rounds e chiave idempotente | La card lascia il catalogo solo dopo la risposta; apertura del run al centro |
 | Seguire ruoli e dialogo | `subscribe` / GET `/runs/{id}/events` | Snapshot completi; running mostra ciclo, round, ruolo prossimo, messaggi pubblici e bozza |
 | Recuperare stato / riconnettersi | `run` / GET `/runs/{id}` | GET periodica ogni 5 secondi in modalità API, SSE con riconnessione nativa e deduplicazione nel client |
 | Selezionare un task avviato o un risultato | Stato locale, stessa subscription | Nessuna nuova elaborazione; apertura del dettaglio |
 | Leggere contesto e fonti | `run.evidence` nello snapshot | Mostra origine e testo; un riferimento URL non è una fonte letta |
 | Scegliere un’opzione o inviare testo libero | `answer` / POST `/runs/{id}/answers` | awaiting_input → running; ID domanda e opzioni dal server, versione corrente del run e identità utente |
 | Finalizzare con disaccordi al limite round | Stessa answer, `finalize_with_unresolved: true` | Disponibile solo per round_limit con bozza; proposta conditional, obiezioni ancora visibili |
-| Ricevere una proposta | Snapshot `proposal_ready` | Proposta nella discussione centrale, tab “Da approvare”; nessuna approvazione automatica |
-| Approvare il documento | `approve` / POST `/runs/{id}/approve` | proposal_ready → approved, colonna destra “Completati”; disabilitato con obiezioni bloccanti aperte |
+| Ricevere una proposta | Snapshot `proposal_ready` | Proposta nella discussione centrale, tab “To approve”; nessuna approvazione automatica |
+| Approvare il documento | `approve` / POST `/runs/{id}/approve` | proposal_ready → approved, colonna destra “Completed”; disabilitato con obiezioni bloccanti aperte |
 | Ritentare un turno fallito | `retry` / POST `/runs/{id}/retry` | failed → running; scelta esplicita, mai fallback a mock |
 | Gestire versione/domanda superata | 409 + GET `/runs/{id}` | Mostra errore e stato aggiornato, richiede nuova scelta; nessuna riconferma automatica |
 
@@ -214,16 +214,16 @@ Il workspace occupa `100dvh`, senza scorrimento della pagina. Il critico occupa
 il pannello superiore; analista, operations e finance restano visibili in tre
 colonne affiancate, anche su schermi stretti. Ogni pannello mostra una sintesi
 breve di `content.text` (prima o prime due frasi), le affermazioni con la loro base
-(Dato/Stima/Ipotesi) e i chip della fonte citata; il testo completo e
-`content.explanation` restano in “Testo completo”. Una barra dei turni
-(Analista → Operations → Finance → Critico → Tu) e lo stato del pannello derivano
+(Data/Estimate/Assumption) e i chip della fonte citata; il testo completo e
+`content.explanation` restano in “Full text”. Una barra dei turni
+(Analyst → Operations → Finance → Critic → You) e lo stato del pannello derivano
 solo da `state`, `next_role`, ciclo/round e messaggi del round corrente: il ruolo
 in `next_role` è evidenziato, gli altri sono attenuati mentre lavora.
 
 Le chiamate agli strumenti (`tool_activity`) sono mostrate nel pannello del ruolo
 che le ha richieste: nome leggibile, nome tecnico, parametri sintetici, stato
-(in coda/in corso/riuscita/fallita), risultato riassunto e pulsante “dati ↗” verso
-l’artefatto. Il dialogo “Strumenti e prove” elenca tutte le chiamate per ciclo.
+(queued/running/succeeded/failed), risultato riassunto e pulsante “data ↗” verso
+l’artefatto. Il dialogo “Tools and evidence” elenca tutte le chiamate per ciclo.
 Le etichette dei tool charging stanno in `frontend/examples/charging.ts`; un tool
 sconosciuto mostra il proprio nome. Nel simulatore locale i run charging
 producono chiamate, obiezione e risoluzione scriptate, marcate come simulate. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
@@ -231,7 +231,7 @@ il backend continua a orchestrare i turni in sequenza. Le frecce consentono di
 consultare turni precedenti. Testi lunghi scorrono solo dentro il pannello.
 
 Domanda e selettore restano sotto i ruoli. L'invio richiede un gesto esplicito;
-selezionare “Scrivi una risposta…” apre il campo libero. La spiegazione della
+selezionare “Write an answer…” apre il campo libero. La spiegazione della
 domanda, le motivazioni delle opzioni e l'identità sono nel pulsante dettagli.
 La barra del piano apre la proposta completa e l'approvazione. Cronologia,
 obiezioni, contesto, prove e versioni sono consultabili in un dialogo con focus

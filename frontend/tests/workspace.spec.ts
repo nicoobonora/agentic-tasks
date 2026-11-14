@@ -2,38 +2,36 @@ import { test, expect } from "@playwright/test";
 import { createMockClient } from "../mock";
 import { tasks } from "../test-tasks";
 
-test("drag, discussione, risposta umana e approvazione", async ({ page }) => {
+test("drag, discussion, human answer and approval", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await expect(
-    page.getByText("Mock locale · nessuna chiamata AI"),
-  ).toBeVisible();
+  await expect(page.getByText("Local mock · no AI calls")).toBeVisible();
   await page.locator('[data-task="guide"]').dragTo(page.locator("[data-drop]"));
   await expect(page.locator('.backlog [data-task="guide"]')).toHaveCount(0);
   await expect(page.locator(".question")).toBeVisible({ timeout: 10000 });
   await expect(page.locator(".message")).toHaveCount(4);
-  await page.getByRole("button", { name: "Rispondi" }).click();
-  await expect(page.getByLabel("Scelta")).toBeFocused();
-  await page.getByLabel("Scelta").selectOption("__custom");
+  await page.getByRole("button", { name: "Reply" }).click();
+  await expect(page.getByLabel("Choice")).toBeFocused();
+  await page.getByLabel("Choice").selectOption("__custom");
   await page
-    .getByLabel("Risposta libera")
-    .fill("Inserire anche i contatti del coordinatore.");
-  await page.getByRole("button", { name: "Invia risposta e riprendi" }).click();
+    .getByLabel("Free answer")
+    .fill("Also include the coordinator's contacts.");
+  await page.getByRole("button", { name: "Send answer and resume" }).click();
   await expect(page.locator(".question")).toHaveCount(0);
   await expect(page.locator(".active-runs .proposal_ready")).toHaveCount(1, {
     timeout: 10000,
   });
-  await page.getByRole("button", { name: "Cronologia", exact: true }).click();
+  await page.getByRole("button", { name: "History", exact: true }).click();
   await expect(page.locator(".message.operator")).toContainText(
-    "Inserire anche i contatti",
+    "Also include the coordinator",
   );
-  await page.getByRole("button", { name: "Chiudi dettagli" }).click();
-  await page.getByRole("button", { name: "Rivedi e approva" }).click();
-  await page.getByRole("button", { name: "Approva proposta" }).click();
+  await page.getByRole("button", { name: "Close details" }).click();
+  await page.getByRole("button", { name: "Review and approve" }).click();
+  await page.getByRole("button", { name: "Approve proposal" }).click();
   await expect(page.locator(".results .approved")).toHaveCount(1);
   await expect(page.locator(".approved-note")).toContainText(
-    "nessuna azione eseguita",
+    "no action executed",
   );
   expect(errors).toEqual([]);
   await page.screenshot({
@@ -42,49 +40,45 @@ test("drag, discussione, risposta umana e approvazione", async ({ page }) => {
   });
 });
 
-test("retry esplicito dopo errore simulato e risposta libera", async ({
+test("explicit retry after simulated error and free answer", async ({
   page,
 }) => {
   await page.goto("/");
   await page.locator('[data-task="review"]').getByRole("button").click();
   await expect(page.locator(".failure")).toContainText(
-    "Errore di connessione simulato",
+    "Simulated connection error",
   );
-  await page.getByRole("button", { name: "Riprova il turno" }).click();
+  await page.getByRole("button", { name: "Retry turn" }).click();
   await expect(page.locator(".question")).toBeVisible({ timeout: 10000 });
-  await page.getByRole("button", { name: "Invia risposta e riprendi" }).click();
-  await expect(page.getByRole("alert")).toContainText("scegli un’opzione");
-  await page.getByLabel("Scelta").selectOption("__custom");
-  await page.getByLabel("Risposta libera").fill("Solo una pagina.");
-  await page.getByRole("button", { name: "Invia risposta e riprendi" }).click();
+  await page.getByRole("button", { name: "Send answer and resume" }).click();
+  await expect(page.getByRole("alert")).toContainText("choose an option");
+  await page.getByLabel("Choice").selectOption("__custom");
+  await page.getByLabel("Free answer").fill("Just one page.");
+  await page.getByRole("button", { name: "Send answer and resume" }).click();
   await expect(page.locator(".active-runs .proposal_ready")).toHaveCount(1, {
     timeout: 10000,
   });
 });
 
-test("run concorrenti preservano la risposta durante gli aggiornamenti", async ({
-  page,
-}) => {
+test("concurrent runs preserve the answer during updates", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-start="guide"]').click();
   await expect(page.locator(".question")).toBeVisible({ timeout: 10000 });
   await page.locator('[data-start="meeting"]').click();
   await page
     .locator(".active-runs [data-select]")
-    .filter({ hasText: "Accogliere" })
+    .filter({ hasText: "Welcome" })
     .click();
-  await page.getByLabel("Scelta").selectOption("__custom");
-  await page.getByLabel("Risposta libera").fill("Testo ancora da inviare");
+  await page.getByLabel("Choice").selectOption("__custom");
+  await page.getByLabel("Free answer").fill("Text not yet sent");
   await expect(page.locator(".active-runs .awaiting_input")).toHaveCount(2, {
     timeout: 10000,
   });
-  await expect(page.getByLabel("Risposta libera")).toHaveValue(
-    "Testo ancora da inviare",
-  );
+  await expect(page.getByLabel("Free answer")).toHaveValue("Text not yet sent");
   await expect(page.locator(".active-runs .run-card")).toHaveCount(2);
 });
 
-test("simulatore: replay idempotente e versione superata", async () => {
+test("simulator: idempotent replay and stale version", async () => {
   const api = createMockClient(5);
   const payload = {
     task: tasks[2].task,
@@ -108,7 +102,7 @@ test("simulatore: replay idempotente e versione superata", async () => {
   ).rejects.toMatchObject({ status: 409, payload: { code: "stale_version" } });
 });
 
-test("client API: retry di rete con stessa chiave e 409 senza retry automatico", async ({
+test("API client: network retry with same key and 409 without automatic retry", async ({
   page,
 }) => {
   const simulator = createMockClient();
@@ -146,7 +140,7 @@ test("client API: retry di rete con stessa chiave e 409 senza retry automatico",
       run.updated_at = new Date(Date.now() + 1000).toISOString();
       await route.fulfill({
         status: 409,
-        json: { code: "stale_version", message: "Versione superata." },
+        json: { code: "stale_version", message: "Stale version." },
       });
       return;
     }
@@ -159,9 +153,9 @@ test("client API: retry di rete con stessa chiave e 409 senza retry automatico",
   await expect(page.locator(".failure")).toBeVisible();
   expect(createKeys).toHaveLength(2);
   expect(createKeys[0]).toBe(createKeys[1]);
-  await page.getByRole("button", { name: "Riprova il turno" }).click();
-  await expect(page.getByRole("alert")).toContainText("Versione superata");
-  await expect(page.getByRole("alert")).toContainText("controlla e conferma");
+  await page.getByRole("button", { name: "Retry turn" }).click();
+  await expect(page.getByRole("alert")).toContainText("Stale version");
+  await expect(page.getByRole("alert")).toContainText("check and confirm");
   expect(retryCalls).toBe(1);
   await page.reload();
   // A refresh starts clean: the ticket is available again and nothing is restored.
@@ -214,7 +208,7 @@ for (const viewport of [
     await page.screenshot({
       path: `test-results/viewport-${viewport.width}.png`,
     });
-    await page.getByRole("button", { name: "Cronologia", exact: true }).click();
+    await page.getByRole("button", { name: "History", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toHaveCount(0);

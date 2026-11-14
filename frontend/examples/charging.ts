@@ -31,39 +31,39 @@ export const chargingToolLabels: Record<
   { label: string; source: string }
 > = {
   "charging.discover_sites": {
-    label: "Cerca siti di ricarica",
+    label: "Find charging sites",
     source: "Open Data Hub · e-charging",
   },
   "charging.get_inventory": {
-    label: "Inventario prese",
+    label: "Plug inventory",
     source: "Open Data Hub · e-charging",
   },
   "charging.get_data_quality": {
-    label: "Qualità e copertura dati",
-    source: "Archivio osservazioni",
+    label: "Data quality and coverage",
+    source: "Observation archive",
   },
   "charging.get_usage_summary": {
-    label: "Utilizzo osservato",
-    source: "Archivio osservazioni",
+    label: "Observed usage",
+    source: "Observation archive",
   },
   "charging.compare_maintenance_windows": {
-    label: "Confronta finestre di manutenzione",
-    source: "Metrica derivata",
+    label: "Compare maintenance windows",
+    source: "Derived metric",
   },
   "charging.request_forecast": {
-    label: "Previsione domanda",
-    source: "Modello di forecast",
+    label: "Demand forecast",
+    source: "Forecast model",
   },
   "charging.get_operational_inputs": {
-    label: "Input operativi",
-    source: "Dati aziendali simulati",
+    label: "Operational inputs",
+    source: "Simulated business data",
   },
   "charging.assess_expansion": {
-    label: "Valuta espansione",
-    source: "Metrica derivata",
+    label: "Assess expansion",
+    source: "Derived metric",
   },
   "charging.get_evidence": {
-    label: "Rilegge una prova",
-    source: "Registro prove",
+    label: "Re-read evidence",
+    source: "Evidence log",
   },
 };

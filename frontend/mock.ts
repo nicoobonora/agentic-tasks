@@ -42,11 +42,11 @@ function chargingScript(role: Role, cycle: number, answer?: string): Script {
     return {
       tool: "charging.discover_sites",
       args: { area: "Bolzano", source: "Neogy-AMPECO", limit: 100 },
-      result: "23 siti trovati nell’area di Bolzano",
+      result: "23 sites found in the Bolzano area",
       data: { count: 23, sites: SITES },
-      text: "Propongo di partire dai 23 siti di Bolzano e scegliere le finestre di minor utilizzo.",
+      text: "I propose starting from the 23 Bolzano sites and choosing the lowest-usage windows.",
       claim: {
-        statement: "Nell’area ci sono 23 siti attivi.",
+        statement: "There are 23 active sites in the area.",
         basis: "supported",
       },
     };
@@ -54,11 +54,11 @@ function chargingScript(role: Role, cycle: number, answer?: string): Script {
     return {
       tool: "charging.compare_maintenance_windows",
       args: { site_ids: SITES, ...period, duration_hours: 2 },
-      result: "Finestra migliore: martedì 02:00–04:00",
+      result: "Best window: Tuesday 02:00–04:00",
       data: { best_window: "Tue 02:00-04:00", occupancy_p50: 0.04 },
-      text: `Ripianifico con la tua indicazione (${answer ?? "risposta registrata"}): manutenzione il martedì 02:00–04:00.`,
+      text: `Replanning with your input (${answer ?? "answer recorded"}): maintenance on Tuesday 02:00–04:00.`,
       claim: {
-        statement: "Martedì 02:00–04:00 ha l’occupazione più bassa (4%).",
+        statement: "Tuesday 02:00–04:00 has the lowest occupancy (4%).",
         basis: "supported",
       },
     };
@@ -68,15 +68,15 @@ function chargingScript(role: Role, cycle: number, answer?: string): Script {
       args: { site_ids: SITES, ...period, gap_minutes: 120 },
       result:
         cycle === 1
-          ? "Copertura 71% · 4 siti sotto soglia"
-          : "Copertura 71% · siti esclusi confermati",
+          ? "Coverage 71% · 4 sites below threshold"
+          : "Coverage 71% · excluded sites confirmed",
       data: { coverage: 0.71, below_threshold: 4 },
       text:
         cycle === 1
-          ? "Fattibile, ma 4 siti hanno dati troppo scarsi per pianificare."
-          : "Con i 4 siti esclusi, la sequenza è eseguibile da una squadra in 3 notti.",
+          ? "Feasible, but 4 sites have too little data to plan."
+          : "With the 4 sites excluded, one crew can complete the sequence in 3 nights.",
       claim: {
-        statement: "4 siti hanno copertura dati sotto il 25%.",
+        statement: "4 sites have data coverage below 25%.",
         basis: "supported",
       },
     };
@@ -84,26 +84,25 @@ function chargingScript(role: Role, cycle: number, answer?: string): Script {
     return {
       tool: "charging.get_operational_inputs",
       args: { kind: "maintenance_cost" },
-      result: "Costo orario squadra: dato simulato",
+      result: "Crew hourly cost: simulated data",
       data: { crew_cost_hour_eur: 85, origin: "simulated_business" },
-      text: "Il turno notturno costa di più, ma evita mancati ricavi nelle ore di punta.",
+      text: "The night shift costs more, but avoids lost revenue at peak hours.",
       claim: {
-        statement:
-          "La maggiorazione notturna è compensata dalla minore domanda persa.",
+        statement: "The night premium is offset by less lost demand.",
         basis: "estimate",
       },
     };
   return {
     tool: "charging.get_evidence",
     args: { evidence: "data_quality" },
-    result: "Fonti verificate: 2 di 3",
+    result: "Sources verified: 2 of 3",
     data: { verified: 2, total: 3 },
     text:
       cycle === 1
-        ? "Blocco: la proposta copre anche siti senza dati sufficienti. Serve una decisione umana."
-        : "Obiezione risolta: i siti senza dati sono esclusi. Il piano è difendibile.",
+        ? "Blocking: the proposal also covers sites without sufficient data. A human decision is needed."
+        : "Objection resolved: sites without data are excluded. The plan is defensible.",
     claim: {
-      statement: "Le affermazioni numeriche citano un risultato di strumento.",
+      statement: "Numerical claims cite a tool result.",
       basis: "supported",
     },
   };
@@ -118,7 +117,7 @@ export function createMockClient(delay = 1000): Client {
     if (!r)
       throw new ApiError(404, {
         code: "not_found",
-        message: "Run non trovato.",
+        message: "Run not found.",
       });
     return r;
   }
@@ -134,7 +133,7 @@ export function createMockClient(delay = 1000): Client {
       if (previous.payload !== serialized)
         throw new ApiError(409, {
           code: "idempotency_conflict",
-          message: "Chiave già utilizzata.",
+          message: "Key already used.",
         });
       return copy(previous.run);
     }
@@ -146,7 +145,7 @@ export function createMockClient(delay = 1000): Client {
     if (r.proposal_version !== v)
       throw new ApiError(409, {
         code: "stale_version",
-        message: "Versione cambiata. Controlla lo stato aggiornato.",
+        message: "Version changed. Check the updated state.",
       });
   }
   function message(
@@ -172,12 +171,12 @@ export function createMockClient(delay = 1000): Client {
               : "review",
         text,
         explanation:
-          "Contenuto dimostrativo locale: nessuna chiamata a un modello e nessuna verifica esterna.",
+          "Local demo content: no model calls and no external verification.",
         claims:
           actor === "analyst"
             ? [
                 {
-                  statement: "Una checklist breve può semplificare il lavoro.",
+                  statement: "A short checklist can simplify the work.",
                   basis: "assumption",
                   evidence_ids: [],
                 },
@@ -251,9 +250,7 @@ export function createMockClient(delay = 1000): Client {
           status: "available",
           summary: script.result,
           data: script.data,
-          limitations: [
-            "Risultato del simulatore locale: nessuna query reale è stata eseguita.",
-          ],
+          limitations: ["Local simulator result: no real query was executed."],
           origin: "simulated_business",
           source_fingerprint: "mock",
           method: "mock-script",
@@ -293,15 +290,15 @@ export function createMockClient(delay = 1000): Client {
       if (r.state !== "running") return;
       const role = r.next_role;
       const texts = {
-        analyst: `Propongo una prima struttura per: ${r.task.title}.`,
+        analyst: `I propose a first structure for: ${r.task.title}.`,
         operations:
-          "Per rendere la proposta utilizzabile serve concordare il livello di dettaglio.",
+          "To make the proposal usable we need to agree on the level of detail.",
         finance:
-          "Non sono disponibili dati economici pertinenti: la valutazione dei costi non è applicabile.",
+          "No relevant financial data is available: the cost assessment is not applicable.",
         critic:
           r.cycle === 1
-            ? "Prima di chiudere la proposta chiedo una preferenza all’utente."
-            : "La proposta incorpora la risposta umana. La fattibilità rimane da verificare.",
+            ? "Before closing the proposal I am asking the user for a preference."
+            : "The proposal incorporates the human answer. Feasibility remains to be verified.",
       };
       const answer =
         r.evidence.filter((e) => e.origin === "human_answer").at(-1)?.text ??
@@ -322,7 +319,7 @@ export function createMockClient(delay = 1000): Client {
               ? "objection"
               : "review";
         m.content.explanation =
-          "Dialogo simulato: dati e risultati sono dimostrativi.";
+          "Simulated dialogue: data and results are for demonstration only.";
         m.content.claims = [
           { ...script.claim, evidence_ids: artifactId ? [artifactId] : [] },
         ];
@@ -333,9 +330,9 @@ export function createMockClient(delay = 1000): Client {
               r.messages.find(
                 (x) => x.actor === "analyst" && x.cycle === r.cycle,
               )?.id ?? null,
-            concern: "Siti senza dati sufficienti inclusi nel piano",
+            concern: "Sites without sufficient data included in the plan",
             explanation:
-              "4 siti hanno copertura sotto soglia: la finestra proposta non è verificabile per loro.",
+              "4 sites have coverage below threshold: the proposed window cannot be verified for them.",
             blocking: true,
             evidence_ids: artifactId ? [artifactId] : [],
           };
@@ -359,7 +356,7 @@ export function createMockClient(delay = 1000): Client {
             o.resolution = {
               objection_id: o.id,
               explanation:
-                "Risolta: l’operatore ha deciso di escludere i siti senza dati.",
+                "Resolved: the operator decided to exclude the sites without data.",
               evidence_ids: human ? [human.id] : [],
             };
             m.content.resolutions.push(o.resolution);
@@ -375,13 +372,13 @@ export function createMockClient(delay = 1000): Client {
           status: "draft",
           summary: script
             ? r.cycle > 1
-              ? "Manutenzione martedì 02:00–04:00 su 19 siti; 4 siti esclusi per dati insufficienti (simulato)."
-              : "Manutenzione nelle ore di minor utilizzo sui 23 siti di Bolzano (bozza simulata)."
-            : `Prima proposta: ${r.task.title}. ${r.cycle > 1 ? "Preferenza ricevuta: " + r.evidence.at(-1)?.text : "In attesa di concordare il dettaglio."}`,
+              ? "Maintenance Tuesday 02:00–04:00 on 19 sites; 4 sites excluded for insufficient data (simulated)."
+              : "Maintenance during the lowest-usage hours on the 23 Bolzano sites (simulated draft)."
+            : `First proposal: ${r.task.title}. ${r.cycle > 1 ? "Preference received: " + r.evidence.at(-1)?.text : "Waiting to agree on the level of detail."}`,
           recommended_actions: script
             ? [
                 {
-                  title: "Finestra di manutenzione",
+                  title: "Maintenance window",
                   description: script.text,
                   rationale: script.claim.statement,
                   evidence_ids: m.content.evidence_ids,
@@ -389,17 +386,16 @@ export function createMockClient(delay = 1000): Client {
               ]
             : [
                 {
-                  title: "Preparare una prima versione",
+                  title: "Prepare a first version",
                   description:
-                    "Raccogliere le informazioni disponibili in una checklist e sottoporla ai partecipanti.",
-                  rationale:
-                    "Consentire una revisione prima di adottare il documento.",
+                    "Gather the available information into a checklist and share it with the participants.",
+                  rationale: "Allow a review before adopting the document.",
                   evidence_ids: [],
                 },
               ],
-          risks: ["Tempi e disponibilità delle persone non verificati."],
+          risks: ["Timing and people's availability not verified."],
           unresolved_questions: [
-            "Chi verificherà il documento prima dell’utilizzo?",
+            "Who will review the document before it is used?",
           ],
           evidence_ids: m.content.evidence_ids,
           source_message_ids: [m.id],
@@ -413,24 +409,24 @@ export function createMockClient(delay = 1000): Client {
           proposal_version: r.proposal_version,
           reason: "agent_request",
           text: r.capability_profile
-            ? "4 siti non hanno dati sufficienti. Come procediamo?"
-            : "Quanto deve essere dettagliata la prima versione?",
-          explanation: "La risposta guiderà la revisione della proposta.",
+            ? "4 sites do not have sufficient data. How do we proceed?"
+            : "How detailed should the first version be?",
+          explanation: "The answer will guide the revision of the proposal.",
           options: [
             {
               id: "short",
               label: r.capability_profile
-                ? "Escludili e pianifica gli altri"
-                : "Sintetica",
-              explanation: "Una checklist essenziale da rivedere insieme.",
+                ? "Exclude them and plan the others"
+                : "Concise",
+              explanation: "An essential checklist to review together.",
             },
             {
               id: "detailed",
               label: r.capability_profile
-                ? "Includili con un sopralluogo"
-                : "Dettagliata",
+                ? "Include them with a site inspection"
+                : "Detailed",
               explanation:
-                "Una bozza con istruzioni e responsabilità da validare.",
+                "A draft with instructions and responsibilities to validate.",
             },
           ],
           allow_free_text: true,
@@ -451,7 +447,7 @@ export function createMockClient(delay = 1000): Client {
       if (!a)
         throw new ApiError(404, {
           code: "not_found",
-          message: "Prova non disponibile nel simulatore.",
+          message: "Evidence not available in the simulator.",
         });
       return copy(a);
     },
@@ -468,7 +464,7 @@ export function createMockClient(delay = 1000): Client {
       const sha256 = await hash(input);
       return command(body.idempotency_key, body, () => {
         if (body.mode !== "mock")
-          throw new Error("Il simulatore supporta solo mode=mock.");
+          throw new Error("The simulator only supports mode=mock.");
         const r: Run = {
           schema_version: "2.0",
           provider_attempts: null,
@@ -481,8 +477,7 @@ export function createMockClient(delay = 1000): Client {
           task: copy(body.task),
           mode: "mock",
           model: null,
-          notice:
-            "Mock locale · dati e dialoghi simulati · nessuna chiamata AI",
+          notice: "Local mock · simulated data and dialogues · no AI calls",
           state: "running",
           proposal_version: 0,
           cycle: 1,
@@ -493,7 +488,7 @@ export function createMockClient(delay = 1000): Client {
           evidence: [
             {
               id: crypto.randomUUID(),
-              name: "Task dimostrativo",
+              name: "Demo task",
               text: input,
               url: null,
               origin: "user_provided",
@@ -514,8 +509,7 @@ export function createMockClient(delay = 1000): Client {
           r.state = "failed";
           r.error = {
             code: "simulated_error",
-            message:
-              "Errore di connessione simulato. Puoi ritentare esplicitamente.",
+            message: "Simulated connection error. You can retry explicitly.",
           };
         } else advance(r);
         return r;
@@ -544,16 +538,16 @@ export function createMockClient(delay = 1000): Client {
         if (r.state !== "awaiting_input" || r.question?.id !== body.question_id)
           throw new ApiError(409, {
             code: "stale_question",
-            message: "Domanda non più corrente.",
+            message: "Question no longer current.",
           });
         const option = r.question.options.find((o) => o.id === body.option_id);
         if ((body.option_id && !option) || (!option && !body.text?.trim()))
-          throw new Error("Scegli un’opzione o scrivi una risposta.");
+          throw new Error("Choose an option or write an answer.");
         if (
           body.finalize_with_unresolved &&
           (r.question.reason !== "round_limit" || !r.proposal)
         )
-          throw new Error("Finalizzazione non disponibile.");
+          throw new Error("Finalization not available.");
         const answer = [option?.label, body.text?.trim()]
           .filter(Boolean)
           .join(" — ");
@@ -596,7 +590,7 @@ export function createMockClient(delay = 1000): Client {
           r.state !== "proposal_ready" ||
           r.objections.some((o) => o.blocking && o.status === "open")
         )
-          throw new Error("Proposta non approvabile.");
+          throw new Error("Proposal cannot be approved.");
         r.state = "approved";
         r.approval = {
           proposal_version: body.proposal_version,
@@ -611,7 +605,7 @@ export function createMockClient(delay = 1000): Client {
         const r = get(id);
         version(r, body.proposal_version);
         if (r.state !== "failed")
-          throw new Error("Retry disponibile solo dopo un errore.");
+          throw new Error("Retry is only available after an error.");
         r.state = "running";
         r.error = null;
         r.proposal_version++;
