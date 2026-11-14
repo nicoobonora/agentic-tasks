@@ -6,6 +6,15 @@ from ...tools import artifact
 from ...db import transaction
 from ...ingestion import utc
 
+# Calendar references are not quantities: ISO dates/timestamps and clock times are removed
+# before looking for numbers that would need a structured metric reference.
+TIMESTAMP=re.compile(r'\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?')
+CLOCK=re.compile(r'(?<![\w:.])\d{1,2}:\d{2}(?::\d{2})?(?![\w:])')
+NUMBER=re.compile(r'(?<![\w])\d+(?![\w])')
+
+def has_quantity(statement):
+    return bool(NUMBER.search(CLOCK.sub('',TIMESTAMP.sub('',statement))))
+
 def validate(run,turn):
     indexed={e.id:e for e in run.evidence}
     with transaction() as db:
@@ -13,7 +22,7 @@ def validate(run,turn):
             if claim.basis=='supported':
                 observed=[indexed[e] for e in claim.evidence_ids if e in indexed and indexed[e].origin in ('observation','derived_metric','forecast')]
                 if not observed:raise ValueError('Charging factual claims require retrieved observational/analytical evidence, not human preferences')
-                if re.search(r'(?<![\w])\d+(?![\w])',re.sub(r'\d{4}-\d{2}-\d{2}', '', claim.statement)) and not claim.metric_references:
+                if has_quantity(claim.statement) and not claim.metric_references:
                     raise ValueError('Numerical supported claims require structured metric references')
             for ref in claim.metric_references:
                 if ref.evidence_id not in claim.evidence_ids or ref.evidence_id not in indexed:

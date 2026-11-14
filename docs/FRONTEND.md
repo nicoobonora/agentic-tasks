@@ -221,12 +221,15 @@ titolo; lo stato resta nella card del run a sinistra): il ruolo
 in `next_role` è evidenziato, gli altri sono attenuati mentre lavora.
 
 Le chiamate agli strumenti (`tool_activity`) sono mostrate nel pannello del ruolo
-che le ha richieste: nome leggibile, nome tecnico, parametri sintetici, stato
-(queued/running/succeeded/failed), risultato riassunto e pulsante “data ↗” verso
-l’artefatto. Il dialogo delle prove, aperto dai pulsanti “data ↗”, elenca tutte
+che le ha richieste come riga compatta: icona, frase breve (“Comparing
+maintenance windows · 1 site…” in corso, “Compared …” a fine chiamata), risultato
+riassunto e pulsante “data ↗” verso l’artefatto. Lo stato
+(queued/running/succeeded/failed) è dato dal colore del bordo e dall’icona
+pulsante; nome tecnico, parametri e fonte sono nel tooltip della riga. Il dialogo delle prove, aperto dai pulsanti “data ↗”, elenca tutte
 le chiamate per ciclo (non c'è più una barra strumenti sotto i pannelli).
-Le etichette dei tool charging stanno in `frontend/examples/charging.ts`; un tool
-sconosciuto mostra il proprio nome. Nel simulatore locale i run charging
+Le etichette dei tool charging (`label`, `icon`, `doing`, `done`, `source`)
+stanno in `frontend/examples/charging.ts`; un tool sconosciuto mostra ⚙️ e il
+proprio nome. Nel simulatore locale i run charging
 producono chiamate, obiezione e risoluzione scriptate, marcate come simulate. Non viene mostrato ragionamento privato né simulata elaborazione parallela:
 il backend continua a orchestrare i turni in sequenza. Le frecce consentono di
 consultare turni precedenti. Testi lunghi scorrono solo dentro il pannello.

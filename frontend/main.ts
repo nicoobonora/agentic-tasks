@@ -290,9 +290,29 @@ function resultLabel(c: ToolCall) {
     status === "available" ? "" : `${status.replace(/_/g, " ")} · `;
   return clip(prefix + (text || "data available"), 80);
 }
+/** Compact row: icon + one short sentence. Technical name, parameters and source live in the tooltip and the tool log. */
 function toolRow(c: ToolCall, withRole = false) {
-  const source = chargingToolLabels[c.request.name]?.source;
-  return `<li class="tool-call ${c.status}"><span class="tool-dot" aria-label="${c.status}"></span><span class="tool-main"><span class="tool-title">${withRole ? `<span class="role-tag ${esc(c.role)}">${esc(actors[c.role] ?? c.role)}</span>` : ""}<b>${esc(toolName(c.request.name))}</b><code>${esc(c.request.name)}</code></span><small class="tool-args">${esc(argsLabel(c.normalized_parameters ?? c.request.arguments))}${source ? ` · <i>${esc(source)}</i>` : ""}</small></span><span class="tool-result">${esc(resultLabel(c))}${c.cached ? ' <em class="cache">cache</em>' : ""}</span>${c.artifact_id ? `<button class="chip" data-evidence="${esc(c.artifact_id)}" title="Open the returned data">data ↗</button>` : ""}</li>`;
+  const meta = chargingToolLabels[c.request.name];
+  const active = c.status === "running" || c.status === "queued";
+  const action = meta
+    ? active
+      ? meta.doing
+      : meta.done
+    : toolName(c.request.name);
+  const sites = (c.normalized_parameters ?? c.request.arguments)?.site_ids;
+  const scope = Array.isArray(sites)
+    ? ` · ${sites.length} site${sites.length === 1 ? "" : "s"}`
+    : "";
+  const result = active ? "" : clip(resultLabel(c), 40);
+  const tooltip = [
+    c.request.name,
+    argsLabel(c.normalized_parameters ?? c.request.arguments),
+    meta?.source,
+    c.status === "failed" ? c.summary : resultLabel(c),
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return `<li class="tool-call ${c.status}" title="${esc(tooltip)}"><span class="tool-icon" aria-hidden="true">${meta?.icon ?? "⚙️"}</span><span class="tool-text">${withRole ? `<span class="role-tag ${esc(c.role)}">${esc(actors[c.role] ?? c.role)}</span> ` : ""}${esc(action + scope)}${active ? "…" : ""}${result ? ` <span class="tool-result">· ${esc(result)}</span>` : ""}${c.cached ? ' <em class="cache">cache</em>' : ""}</span>${c.artifact_id ? `<button class="chip" data-evidence="${esc(c.artifact_id)}" title="Open the returned data">data ↗</button>` : ""}</li>`;
 }
 function messageTools(r: Run, m: Message) {
   const own = (r.messages ?? []).filter((x) => x.actor === m.actor);

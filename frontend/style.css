@@ -1158,7 +1158,8 @@ button.secondary,
 }
 @media (prefers-reduced-motion: reduce) {
   .dots i,
-  .tool-call.running .tool-dot {
+  .tool-call.running .tool-icon,
+  .tool-call.queued .tool-icon {
     animation: none;
   }
 }
@@ -1338,19 +1339,16 @@ button.secondary,
 
 /* ---- Tool calls ---- */
 .tool-call {
-  display: grid;
-  grid-template-columns: 10px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "dot main btn"
-    ". result btn";
+  display: flex;
   align-items: center;
-  gap: 4px 8px;
-  padding: 6px 8px;
+  gap: 8px;
+  padding: 4px 8px;
   border: 1px solid var(--line);
   border-left: 3px solid var(--muted);
   border-radius: 6px;
   background: var(--fill-soft);
   font-size: 11px;
+  cursor: default;
 }
 
 .tool-call.running,
@@ -1368,84 +1366,37 @@ button.secondary,
   background: var(--tint-danger);
 }
 
-.tool-dot {
-  grid-area: dot;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--muted);
+.tool-icon {
+  flex: none;
+  font-size: 14px;
+  line-height: 1;
 }
 
-.tool-call.succeeded .tool-dot {
-  background: var(--ok);
-}
-
-.tool-call.failed .tool-dot {
-  background: var(--critic);
-}
-
-.tool-call.running .tool-dot,
-.tool-call.queued .tool-dot {
-  background: var(--operator);
+.tool-call.running .tool-icon,
+.tool-call.queued .tool-icon {
   animation: pulse 0.8s infinite;
 }
 
-.tool-call > .chip {
-  grid-area: btn;
-}
-
-.tool-main {
-  grid-area: main;
+.tool-text {
+  flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.tool-title {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  min-width: 0;
-}
-
-.tool-title b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 600;
-  white-space: nowrap;
-}
-
-.tool-title code {
-  font-size: 10px;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tool-args {
-  color: var(--muted);
-  font-size: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tool-args i {
-  font-style: normal;
-  color: var(--text);
 }
 
 .tool-result {
-  grid-area: result;
-  font-weight: 600;
-  color: var(--text);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 400;
+  color: var(--muted);
 }
 
-.tool-call.running .tool-result {
-  color: var(--operator);
+.tool-call.failed .tool-result {
+  color: var(--critic);
+}
+
+.tool-call > .chip {
+  flex: none;
 }
 
 .cache {
@@ -1468,8 +1419,6 @@ button.secondary,
 
 .tool-list.log .tool-call {
   font-size: 12px;
-  grid-template-columns: 10px minmax(0, 1fr) minmax(0, 34%) auto;
-  grid-template-areas: "dot main result btn";
 }
 
 .tools-button {
@@ -1491,11 +1440,6 @@ button.secondary,
   border-color: var(--operator);
 }
 
-@media (max-width: 1150px) {
-  .tool-title code {
-    display: none;
-  }
-}
 @media (max-width: 760px) {
   .agent-body p.headline {
     font-size: 11px;
