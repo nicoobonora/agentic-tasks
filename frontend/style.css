@@ -1,23 +1,81 @@
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/InstrumentSerif-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/InstrumentSerif-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Glacial Indifference";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/GlacialIndifference-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Glacial Indifference";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/GlacialIndifference-Bold.woff") format("woff");
+}
 :root {
-  font-family:
-    Inter,
+  /* iOS-inspired flat black theme: solid surfaces separated by gaps and hairlines. */
+  --font-title: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-body:
+    "Glacial Indifference",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  color: #30332e;
-  background: #eeefeb;
+  /* Monochrome: black, white/greys and grades of #05865d only. */
+  --g700: #046b4a;
+  --g500: #05865d;
+  --g400: #2ea37a;
+  --g300: #5fbf9b;
+  --g200: #9ad8bf;
+  --g100: #cdeee0;
+  --bg: #000;
+  --text: #f5f5f5;
+  --text-strong: #fff;
+  --muted: rgba(255, 255, 255, 0.58);
+  --faint: rgba(255, 255, 255, 0.3);
+  --line: rgba(255, 255, 255, 0.1);
+  --line-soft: rgba(255, 255, 255, 0.06);
+  --panel: #0f0f0f;
+  --panel-edge: #1e1e1e;
+  --surface: #181818;
+  --button: #242424;
+  --button-hover: #2e2e2e;
+  --fill: rgba(255, 255, 255, 0.12);
+  --fill-soft: rgba(255, 255, 255, 0.07);
+  --on-green: #000;
+  --accent: var(--g500);
+  --analyst: var(--g400);
+  --operations: var(--g300);
+  --finance: var(--g200);
+  --critic: var(--g100);
+  --operator: var(--g500);
+  --ok: var(--g300);
+  --warn: var(--g400);
+  --tint-ok: rgba(5, 134, 93, 0.18);
+  --tint-warn: rgba(5, 134, 93, 0.14);
+  --tint-danger: rgba(255, 255, 255, 0.1);
+  --tint-blue: rgba(5, 134, 93, 0.2);
+  color-scheme: dark;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
   font-size: 13px;
   font-synthesis: none;
-  --line: #dfe2d9;
-  --muted: #777d70;
-  --accent: #4e6840;
-  --analyst: #2f6fde;
-  --operations: #0f8f78;
-  --finance: #b7791f;
-  --critic: #c2185b;
-  --operator: #e8590c;
-  --ok: #2f8f4e;
+  -webkit-font-smoothing: antialiased;
 }
 * {
   box-sizing: border-box;
@@ -36,7 +94,7 @@ button {
   cursor: pointer;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #303b29;
+  background: var(--fill);
   color: white;
   padding: 9px 13px;
 }
@@ -48,7 +106,7 @@ button:disabled {
   cursor: default;
 }
 :focus-visible {
-  outline: 2px solid #6e8c56;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 button.secondary,
@@ -99,13 +157,13 @@ button.secondary,
   gap: 6px;
   padding: 12px 8px;
   border: 1px solid var(--line);
-  background: #fafbf7;
+  background: var(--fill-soft);
   border-radius: 8px;
   margin-bottom: 10px;
   cursor: grab;
 }
 .grip {
-  color: #aaa;
+  color: var(--faint);
 }
 .task-card h3 {
   font-size: 12px;
@@ -126,7 +184,7 @@ button.secondary,
   flex-direction: column;
   position: relative;
   padding: 0;
-  background: #fafbf8;
+  background: var(--panel);
   border-inline: 1px solid var(--line);
   overflow: hidden;
 }
@@ -152,7 +210,7 @@ button.secondary,
 .run-card {
   display: block;
   background: transparent;
-  color: #30332e;
+  color: var(--text);
   border: 1px solid var(--line);
   text-align: left;
   width: 100%;
@@ -167,8 +225,8 @@ button.secondary,
   margin-top: 4px;
 }
 .run-card.selected {
-  background: #e9edde;
-  border-color: #cbd3bf;
+  background: var(--fill);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 .active-runs .run-card {
   margin: 0;
@@ -188,7 +246,7 @@ button.secondary,
 }
 .badge.awaiting_input,
 .badge.failed {
-  color: #9b6b35;
+  color: var(--warn);
 }
 .reply-shortcut {
   background: transparent;
@@ -229,7 +287,7 @@ button.secondary,
   border-radius: 9px;
   min-height: 0;
   min-width: 0;
-  background: white;
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -258,7 +316,7 @@ button.secondary,
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
-  border-bottom: 1px solid #edf0e7;
+  border-bottom: 1px solid var(--line-soft);
   flex-shrink: 0;
 }
 .agent-panel h3 {
@@ -272,9 +330,8 @@ button.secondary,
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  background: #e9eddf;
-  font-family: Georgia, serif;
-  color: #576b45;
+  background: var(--fill);
+    color: var(--text);
   font-size: 16px;
 }
 .role-state {
@@ -300,7 +357,7 @@ button.secondary,
   margin: 12px 0;
 }
 .placeholder {
-  color: #969d90;
+  color: var(--faint);
 }
 .agent-panel footer {
   display: flex;
@@ -308,7 +365,7 @@ button.secondary,
   justify-content: space-between;
   gap: 4px;
   padding: 7px 10px;
-  border-top: 1px solid #edf0e7;
+  border-top: 1px solid var(--line-soft);
   flex-shrink: 0;
 }
 .agent-panel footer .text-button {
@@ -342,8 +399,8 @@ button.secondary,
 }
 .claim-tags span {
   font-size: 10px;
-  color: #8c6a3e;
-  background: #f8f1e5;
+  color: var(--warn);
+  background: var(--tint-warn);
   padding: 3px 6px;
   border-radius: 3px;
   margin-bottom: 8px;
@@ -358,7 +415,7 @@ button.secondary,
   font-size: 11px;
 }
 .workspace-tools button span {
-  color: #a1a696;
+  color: var(--faint);
   margin-left: 3px;
 }
 .live-status {
@@ -396,11 +453,11 @@ button.secondary,
 .answer-controls select {
   width: 100%;
   min-width: 0;
-  border: 1px solid #d2d9c8;
+  border: 1px solid var(--line);
   padding: 10px 8px;
   border-radius: 5px;
-  background: white;
-  color: #424c3a;
+  background: var(--surface);
+  color: var(--text);
 }
 .answer-controls > button {
   padding: 8px 11px;
@@ -447,8 +504,8 @@ button.secondary,
 }
 .error,
 .failure {
-  background: #fbf0e5;
-  border: 1px solid #e1c9af;
+  background: var(--tint-warn);
+  border: 1px solid rgba(5, 134, 93, 0.3);
   padding: 8px 12px;
   font-size: 12px;
   margin: 0;
@@ -477,7 +534,7 @@ button.secondary,
 }
 .empty h2 {
   font-weight: 500;
-  color: #42483b;
+  color: var(--text);
 }
 .empty p {
   line-height: 1.7;
@@ -492,8 +549,8 @@ button.secondary,
   display: none;
   position: absolute;
   inset: 8px;
-  background: #f4f7ecee;
-  border: 1px dashed #95a685;
+  background: rgba(5, 134, 93, 0.14);
+  border: 1px dashed var(--accent);
   z-index: 3;
   place-items: center;
   pointer-events: none;
@@ -507,8 +564,8 @@ button.secondary,
   border-radius: 12px;
   width: min(740px, calc(100vw - 28px));
   height: min(820px, calc(100dvh - 40px));
-  color: #30332e;
-  background: #fafbf8;
+  color: var(--text);
+  background: var(--panel);
   overflow: hidden;
 }
 .inspector[open] {
@@ -516,8 +573,7 @@ button.secondary,
   flex-direction: column;
 }
 .inspector::backdrop {
-  background: #20271d66;
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.55);
 }
 .inspector > header {
   padding: 14px 22px;
@@ -532,7 +588,7 @@ button.secondary,
 .inspector > header button {
   background: transparent;
   border: 0;
-  color: #444;
+  color: var(--text);
   font-size: 22px;
   padding: 0 6px;
 }
@@ -879,7 +935,7 @@ button.secondary,
 }
 .role-icon {
   background: var(--role);
-  color: white;
+  color: var(--on-green);
   font-family: inherit;
   font-weight: 700;
   font-size: 12px;
@@ -900,7 +956,7 @@ button.secondary,
   flex-shrink: 0;
   padding: 3px 8px;
   border-radius: 99px;
-  background: #f1f2ee;
+  background: var(--fill-soft);
   font-weight: 500;
 }
 .agent-panel.is-working {
@@ -911,7 +967,7 @@ button.secondary,
 }
 .agent-panel.is-working .role-state {
   background: var(--role);
-  color: white;
+  color: var(--on-green);
   animation: pulse 1.4s ease-in-out infinite;
 }
 .agent-panel.is-idle {
@@ -925,15 +981,15 @@ button.secondary,
 }
 .state-objected .role-state,
 .state-failed .role-state {
-  background: #fde7ef;
+  background: var(--tint-danger);
   color: var(--critic);
 }
 .state-done .role-state {
-  background: #e7f4ec;
+  background: var(--tint-ok);
   color: var(--ok);
 }
 .state-skipped .role-state {
-  background: #f1f2ee;
+  background: var(--fill-soft);
   color: var(--muted);
 }
 @keyframes pulse {
@@ -1016,7 +1072,7 @@ button.secondary,
   font-size: 14px;
   line-height: 1.5;
   font-weight: 500;
-  color: #23261f;
+  color: var(--text-strong);
   margin: 8px 0;
   white-space: normal;
 }
@@ -1051,37 +1107,37 @@ button.secondary,
   flex-shrink: 0;
 }
 .basis.supported {
-  background: #e7f4ec;
+  background: var(--tint-ok);
   color: var(--ok);
 }
 .basis.estimate {
-  background: #fdf3e1;
-  color: #9a6412;
+  background: var(--tint-warn);
+  color: var(--warn);
 }
 .basis.assumption {
-  background: #f1f2ee;
-  color: #6b6f66;
+  background: var(--fill-soft);
+  color: var(--muted);
 }
 .chip {
   font-size: 10px;
   padding: 2px 7px;
   border-radius: 99px;
-  background: #eef3fd;
+  background: var(--tint-blue);
   color: var(--analyst);
-  border: 1px solid #d5e1f8;
+  border: 1px solid rgba(5, 134, 93, 0.3);
   white-space: nowrap;
 }
 .chip.plain {
-  background: #f6f1e9;
-  color: #8a5a1c;
-  border-color: #eadcc6;
+  background: var(--tint-warn);
+  color: var(--warn);
+  border-color: rgba(5, 134, 93, 0.3);
 }
 .raised li {
   font-size: 12px;
-  color: #9a6412;
+  color: var(--warn);
 }
 .raised li.blocking {
-  color: var(--critic);
+  color: var(--text-strong);
   font-weight: 600;
 }
 .objections li {
@@ -1102,21 +1158,21 @@ button.secondary,
   text-transform: uppercase;
   padding: 2px 6px;
   border-radius: 3px;
-  background: #fdf3e1;
-  color: #9a6412;
+  background: var(--tint-warn);
+  color: var(--warn);
   flex-shrink: 0;
 }
 .objections .blocking.open .obj-state {
-  background: var(--critic);
-  color: white;
+  background: var(--text-strong);
+  color: var(--on-green);
 }
 .objections .resolved .obj-state {
-  background: #e7f4ec;
+  background: var(--tint-ok);
   color: var(--ok);
 }
 .objections .resolved > span:last-child {
   text-decoration: line-through;
-  text-decoration-color: #b7bcb0;
+  text-decoration-color: var(--faint);
 }
 .objections .resolved small {
   text-decoration: none;
@@ -1143,23 +1199,23 @@ button.secondary,
   align-items: center;
   gap: 4px 8px;
   padding: 6px 8px;
-  border: 1px solid #e6e8e1;
+  border: 1px solid var(--line);
   border-left: 3px solid var(--muted);
   border-radius: 6px;
-  background: #f8f9f6;
+  background: var(--fill-soft);
   font-size: 11px;
 }
 .tool-call.running,
 .tool-call.queued {
   border-left-color: var(--operator);
-  background: #fff6ef;
+  background: var(--tint-warn);
 }
 .tool-call.succeeded {
   border-left-color: var(--ok);
 }
 .tool-call.failed {
   border-left-color: var(--critic);
-  background: #fdf0f4;
+  background: var(--tint-danger);
 }
 .tool-dot {
   grid-area: dot;
@@ -1214,12 +1270,12 @@ button.secondary,
 }
 .tool-args i {
   font-style: normal;
-  color: #59614f;
+  color: var(--text);
 }
 .tool-result {
   grid-area: result;
   font-weight: 600;
-  color: #30332e;
+  color: var(--text);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1239,7 +1295,7 @@ button.secondary,
 .role-tag {
   font-size: 9px;
   font-weight: 700;
-  color: white;
+  color: var(--on-green);
   background: var(--role);
   border-radius: 3px;
   padding: 1px 5px;
@@ -1284,7 +1340,7 @@ button.secondary,
   padding: 4px 9px 4px 4px;
   border-radius: 99px;
   border: 1px solid var(--line);
-  background: white;
+  background: var(--surface);
   white-space: nowrap;
   opacity: 0.6;
 }
@@ -1304,7 +1360,7 @@ button.secondary,
   height: 20px;
   border-radius: 50%;
   background: var(--role);
-  color: white;
+  color: var(--on-green);
   font-size: 10px;
   font-weight: 700;
 }
@@ -1323,7 +1379,7 @@ button.secondary,
 .step.working {
   opacity: 1;
   border-color: var(--role);
-  background: color-mix(in srgb, var(--role) 10%, white);
+  background: color-mix(in srgb, var(--role) 22%, transparent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--role) 22%, transparent);
 }
 .step.working small {
@@ -1331,14 +1387,14 @@ button.secondary,
   font-weight: 600;
 }
 .turn-bar .arrow {
-  color: #b5baae;
+  color: var(--faint);
   font-size: 12px;
 }
 
 /* ---- Human escalation ---- */
 .question {
-  background: #fff6ef;
-  border: 1px solid #f5c9a8;
+  background: var(--tint-warn);
+  border: 1px solid rgba(5, 134, 93, 0.35);
   border-left: 4px solid var(--operator);
   border-radius: 8px;
   padding: 10px 12px;
@@ -1388,4 +1444,265 @@ button.secondary,
   letter-spacing: 0.5px;
   color: var(--muted);
   margin-top: 6px;
+}
+
+/* ==== Flat black theme · iOS-inspired =========================================
+   Sidebars, main tab and dialogs are solid rounded panels on pure black, with no
+   gradients, blur or shadows. Layout and behaviour rules above stay untouched. */
+body {
+  background: var(--bg);
+}
+h1,
+h2,
+h3,
+h4,
+.column-title h2,
+.detail-header h2,
+.inspector-body h2,
+.inspector-body h3,
+.empty h2 {
+  font-family: var(--font-title);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Panels */
+.board {
+  gap: 14px;
+  padding: 14px;
+}
+.column,
+.workspace {
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 28px;
+}
+.column-title h2 {
+  font-size: 24px;
+}
+.column-title > span {
+  min-width: 24px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--fill-soft);
+  text-align: center;
+  font-size: 12px;
+}
+.detail-header h2 {
+  font-size: 32px;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+.agent-panel h3 {
+  font-size: 18px;
+}
+.inspector-body h2 {
+  font-size: 30px;
+}
+.inspector-body h3 {
+  font-size: 20px;
+}
+.inspector-body h4 {
+  font-size: 19px;
+  margin: 18px 0 6px;
+}
+.empty h2 {
+  font-size: 34px;
+}
+
+/* Inner cards */
+.task-card,
+.run-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.task-card h3 {
+  font-size: 17px;
+  line-height: 1.2;
+}
+.run-card {
+  color: var(--text);
+}
+.run-card strong {
+  font-size: 13px;
+}
+.run-card.selected {
+  background: var(--button-hover);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.agent-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--role);
+  border-radius: 22px;
+}
+.agent-panel.is-working {
+  border-color: color-mix(in srgb, var(--role) 70%, transparent);
+}
+.agent-panel > header,
+.agent-panel footer {
+  border-color: var(--line-soft);
+}
+.role-icon {
+  border-radius: 9px;
+}
+.role-state {
+  background: var(--fill-soft);
+}
+.step {
+  background: var(--surface);
+  border-color: var(--line);
+}
+.question {
+  background: var(--tint-warn);
+  border: 1px solid rgba(5, 134, 93, 0.3);
+  border-left: 1px solid rgba(5, 134, 93, 0.3);
+  border-radius: 20px;
+  padding: 12px 14px;
+}
+.answer-controls select,
+.question textarea,
+.inspector-body input {
+  background: var(--fill-soft);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.error,
+.failure {
+  border-radius: 16px;
+  color: var(--text);
+}
+.drop-overlay {
+  border-radius: 24px;
+  color: var(--text);
+}
+
+/* Buttons: flat pills */
+button {
+  border-radius: 999px;
+  background: var(--button);
+  border: 1px solid transparent;
+  color: var(--text-strong);
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+button:hover:not(:disabled) {
+  filter: none;
+  background: var(--button-hover);
+}
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.plan-button {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+}
+[data-approve],
+.answer-controls > button[type="submit"] {
+  background: var(--accent);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.answer-controls > button[type="submit"] {
+  background: var(--operator);
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+[data-approve]:hover:not(:disabled),
+.answer-controls > button[type="submit"]:hover:not(:disabled) {
+  background: var(--g400);
+}
+.answer-controls > button[type="submit"]:hover:not(:disabled) {
+  background: var(--g400);
+}
+.start-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--text-strong);
+}
+/* Quiet controls: text links, pagers and the dialog close button */
+.text-button,
+.pager button,
+.inspector > header button {
+  background: transparent;
+  border: 0;
+}
+.text-button:hover:not(:disabled),
+.pager button:hover:not(:disabled) {
+  background: var(--fill-soft);
+}
+.run-card {
+  border-radius: 18px;
+}
+.run-card:hover:not(:disabled) {
+  background: var(--button);
+}
+.chip {
+  background: var(--tint-blue);
+  color: var(--g200);
+}
+
+/* Dialog */
+.inspector {
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 28px;
+}
+.inspector::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+.inspector-body summary {
+  color: var(--accent);
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+@media (max-width: 1150px) {
+  .board {
+    gap: 10px;
+    padding: 10px;
+  }
+}
+@media (max-width: 760px) {
+  .board {
+    gap: 8px;
+    padding: 8px;
+  }
+  .column,
+  .workspace {
+    border-radius: 22px;
+  }
+  .workspace {
+    border-block: 1px solid var(--panel-edge);
+  }
+  .column-title h2 {
+    font-size: 20px;
+  }
+  .detail-header h2 {
+    font-size: 24px;
+  }
+  .agent-panel h3 {
+    font-size: 15px;
+  }
+  .task-card h3 {
+    font-size: 13px;
+  }
 }

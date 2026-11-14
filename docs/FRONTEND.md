@@ -245,6 +245,13 @@ nel dialogo di contesto, aperto dai chip delle fonti. I run in corso sono elenca
 nella colonna sinistra sotto i ticket; la colonna destra mostra solo “Completed”,
 il conteggio e i run approvati.
 
+Stile: tema nero piatto ispirato a iOS: sidebar, area centrale e dialoghi sono
+pannelli arrotondati a tinta unita, senza gradienti, blur o ombre. Palette
+monocromatica: nero, bianco/grigi e gradazioni di #05865d (ruoli e stati
+distinti per tonalità di verde). I titoli usano
+Instrument Serif, il resto Glacial Indifference; entrambi (licenza SIL OFL) sono
+inclusi in `frontend/fonts/`, senza richieste a CDN esterni.
+
 Su mobile ticket e completati diventano barre compatte sopra e sotto il
 workspace. Le tre valutazioni rimangono affiancate. SSE conserva testo libero,
 scelta, posizione dei pannelli e dettaglio aperto; non reinvia le operazioni.
