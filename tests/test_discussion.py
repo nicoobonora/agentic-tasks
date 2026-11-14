@@ -236,7 +236,7 @@ def test_provider_refusal_and_incomplete_are_visible(client,monkeypatch,body,cod
     recovered=read(r['id'])
     assert recovered.state=='running' and recovered.next_role=='operations'
     assert recovered.objections[0].blocking
-    assert 'non verificata' in recovered.proposal.summary
+    assert 'Unverified' in recovered.proposal.summary
 
 def test_background_worker_runs_after_submit(client):
     with TestClient(app) as live:
@@ -277,8 +277,8 @@ def test_empty_perspectives_do_not_invent_a_final_proposal(client):
     r=create(client,max_rounds=1)
     result=drain(r['id'],NotApplicable())
     assert result.state=='awaiting_input' and result.proposal is not None
-    assert 'non verificata' in result.proposal.summary
-    assert result.proposal.recommended_actions[0].title=='Verificare le ipotesi prima di procedere'
+    assert 'Unverified' in result.proposal.summary
+    assert result.proposal.recommended_actions[0].title=='Verify assumptions before proceeding'
     assert any(o.id=='retain_uncertainty' for o in result.question.options)
 
 

@@ -49,7 +49,7 @@ def step(run_id,provider=None):
             p.pending_job_id=None
             engine.save(db,run)
         if p.provider_requests>=limit('ACS_PROVIDER_REQUESTS',5,10) or (engine.now()-p.started_at).total_seconds()>1800:
-            engine.apply_turn(run,p.role,recover(run,p.role,'Limite di tempo o richieste raggiunto'))
+            engine.apply_turn(run,p.role,recover(run,p.role,'Time or request limit reached'))
             run.turn_progress=None
             engine.save(db,run);return True
         db.execute('INSERT OR REPLACE INTO discussion_leases VALUES (?,?,?)',(run_id,lease_token,time.time()+180))

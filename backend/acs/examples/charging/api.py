@@ -107,7 +107,7 @@ def evidence_raw(evidence_id: str):
         except (OSError, EOFError, zlib.error):
             raise catalog_data.Conflict('corrupt_evidence', 'Copia raw danneggiata')
         catalog_data.require(hashlib.sha256(raw).hexdigest() == row['sha256'],
-                             'corrupt_evidence', 'Checksum della prova raw non valido')
+                             'corrupt_evidence', 'Invalid raw evidence checksum')
         return Response(raw, media_type="application/json")
 
 @app.get("/api/v1/live", response_model=m.LiveData)
@@ -172,8 +172,8 @@ def example_task():
             forecast_summary['sites'] = [{k: s[k] for k in ('site_name','status','reason','valid_fraction','selected_method','backtest')} for s in f['sites']]
         payload = {'sites': chosen, 'analysis': analyses, 'forecast': forecast_summary,
                    'notes': 'Forecasts and capacity scenarios are conditional estimates with coverage limits; check dates and limitations. Missing results are not zero.'}
-    return Task(title='Valutare un ampliamento della rete di ricarica',
-        description='Proporre come valutare la richiesta di 12 nuovi punti in tre siti. Contestare le capacità non verificate, confrontare fattibilità e costi e identificare le decisioni da chiedere alla direzione. Non emettere ordini.',
-        context='Operatore ChargeCo simulato, dati pubblici ODH. Il piano di partenza riguarda BZ_C_RISPARMIO_01, BZ_PIAVE_01 e RENON_01. Il dimensionamento non è una conclusione già verificata.',
+    return Task(title='Evaluate a charging network expansion',
+        description='Propose how to evaluate the request for 12 new charging points across three sites. Challenge unverified capacities, compare feasibility and costs, and identify the decisions to ask management for. Do not place orders.',
+        context='Simulated ChargeCo operator, public ODH data. The starting plan covers BZ_C_RISPARMIO_01, BZ_PIAVE_01 and RENON_01. The sizing is not an already verified conclusion.',
         attachments=[Attachment(name='ODH snapshot and imported analysis',text=json.dumps(payload,ensure_ascii=False)),
                      Attachment(name='Simulated internal catalog',text=json.dumps(catalog_data.CATALOG,ensure_ascii=False))])

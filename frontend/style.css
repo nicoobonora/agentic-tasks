@@ -382,7 +382,17 @@ button.secondary,
   overflow: auto;
   min-height: 0;
   flex: 1;
-  scrollbar-width: thin;
+}
+
+/* Scrollable without a visible scrollbar (wheel, touch and keyboard still work). */
+.agent-body,
+.question-text {
+  scrollbar-width: none;
+}
+
+.agent-body::-webkit-scrollbar,
+.question-text::-webkit-scrollbar {
+  display: none;
 }
 
 .agent-body p {

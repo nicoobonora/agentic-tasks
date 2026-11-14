@@ -30,7 +30,7 @@ def test_repeated_invalid_turns_reach_human_confirmation(tmp_path, monkeypatch):
     assert all(c.basis=='assumption' and not c.metric_references and not c.evidence_ids
         for m in run.messages for c in m.content.claims)
     assert '900' in run.proposal.unresolved_questions[0]
-    assert 'non verificata' in run.proposal.summary
+    assert 'Unverified' in run.proposal.summary
     run=discussion.command(run.id,'answer',Answer(proposal_version=run.proposal_version,
         question_id=run.question.id, actor='Utente',option_id='retain_uncertainty',idempotency_key='confirm'))
     assert run.state=='proposal_ready' and run.proposal.status=='conditional'
@@ -73,5 +73,5 @@ def test_exhausted_profile_budget_advances_without_more_provider_calls(tmp_path,
     run=load(run.id)
     assert run.state=='running' and run.next_role=='operations'
     assert run.turn_progress is None
-    assert 'Limite' in run.proposal.summary
+    assert 'limit reached' in run.proposal.summary
     assert run.objections[0].blocking

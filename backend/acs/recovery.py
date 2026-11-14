@@ -2,7 +2,7 @@
 from .models import AgentTurn, Draft, Action, ObjectionDraft
 from .providers import Result
 
-GUESS = 'Ipotesi non verificata da confermare'
+GUESS = 'Unverified assumption to confirm'
 
 
 def recover(run, role, reason, result=None):
@@ -23,21 +23,21 @@ def recover(run, role, reason, result=None):
         claim.statement = GUESS + ': ' + claim.statement
     turn.resolutions = []
     turn.objections = [ObjectionDraft(target_message_id=None, concern=GUESS,
-        explanation=f'Il turno {role} non è stato validato: {reason}. '
-        'Il critico deve riesaminare le affermazioni; quelle non verificate richiedono conferma umana come ipotesi, non come fatti. '
+        explanation=f'The {role} turn was not validated: {reason}. '
+        'The critic must re-examine the claims; unverified ones need human confirmation as assumptions, not facts. '
         + ' '.join(c.statement for c in turn.claims),
         blocking=True, evidence_ids=[])]
     turn.question = None  # Let all roles, including the critic, examine the result first.
     turn.needs_revision = True
-    warning = f'{GUESS}. Validazione non completata ({reason}). '
-    turn.text = warning + (turn.text or 'Nessun risultato verificato disponibile per questo turno.')
-    turn.explanation = 'Avviso aggiunto dal sistema per proseguire la revisione. ' + warning + turn.explanation
+    warning = f'{GUESS}. Validation not completed ({reason}). '
+    turn.text = warning + (turn.text or 'No verified result available for this turn.')
+    turn.explanation = 'System notice added to keep the review going. ' + warning + turn.explanation
     if role == 'analyst':
         if not turn.draft:
             turn.draft = Draft(summary=run.proposal.summary if run.proposal else run.task.title,
-                recommended_actions=[Action(title='Verificare le ipotesi prima di procedere',
-                    description='Confermare gli input mancanti e verificare la fattibilità del piano.',
-                    rationale='Il turno non ha prodotto una valutazione verificata.', evidence_ids=[])],
+                recommended_actions=[Action(title='Verify assumptions before proceeding',
+                    description='Confirm the missing inputs and verify the feasibility of the plan.',
+                    rationale='The turn did not produce a verified assessment.', evidence_ids=[])],
                 risks=[], unresolved_questions=[])
         turn.draft.summary = warning + turn.draft.summary
         turn.draft.risks.append(warning)

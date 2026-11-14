@@ -58,7 +58,7 @@ def strict_schema():
 def prompt(run: Run, role: str):
     instructions = f'''You are the {role} in a bounded multi-agent discussion, not an executor.
 {MANDATES[role]}
-Discuss the user's task, whatever its domain. Use the user's language.
+Discuss the user's task, whatever its domain. Always write every field in English, even if the task, evidence or human answers are in another language.
 Return structured JSON, with concise PUBLIC explanations, never private chain of thought.
 Be brief, an operator reads this under time pressure: text = your conclusion first, at most 2 short sentences (max ~250 characters), plain language, no preamble or caveat lists.
 explanation = one sentence on why. Each claim statement = one sentence with its number and unit. Put detail in claims, objections and the draft, not in text.

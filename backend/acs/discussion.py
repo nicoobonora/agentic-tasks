@@ -132,7 +132,7 @@ def limit_question(run):
     concerns += [m.content.text for m in run.messages if m.cycle == run.cycle and m.round == run.round and m.content.needs_revision]
     if not run.proposal:
         from .recovery import recover
-        reason = 'Nessun ruolo ha prodotto un piano verificabile; resta da confermare la raccolta degli input mancanti.'
+        reason = 'No role produced a verifiable plan; collecting the missing inputs still needs confirmation.'
         draft = recover(run, 'analyst', reason).turn.draft
         run.proposal_version += 1
         run.proposal = Proposal(**draft.model_dump(), version=run.proposal_version,
@@ -143,10 +143,10 @@ def limit_question(run):
     details = '; '.join(dict.fromkeys(concerns)) or 'The agents have not converged on the current approach.'
     options = [Option(id='clarify', label='Provide guidance and resume', explanation='Use the text answer to clarify: '+details[:1200])]
     if run.proposal:
-        options.append(Option(id='retain_uncertainty', label='Confermo le ipotesi: concludi il piano', explanation='Accetto esplicitamente le ipotesi non verificate e i punti irrisolti elencati. Concludi con una proposta condizionale; nessuna azione viene eseguita.'))
+        options.append(Option(id='retain_uncertainty', label='I confirm the assumptions: conclude the plan', explanation='I explicitly accept the listed unverified assumptions and unresolved points. Conclude with a conditional proposal; no action is executed.'))
     else:
         options.append(Option(id='provide_context', label='Provide more context', explanation='Supply the missing information so an approach can be proposed.'))
-    ask(run, QuestionDraft(text=f'Il piano per “{run.task.title}” contiene ipotesi non verificate. Le confermi per concludere?', explanation=details,
+    ask(run, QuestionDraft(text=f'The plan for “{run.task.title}” contains unverified assumptions. Do you confirm them to conclude?', explanation=details,
                            options=options), 'round_limit')
 
 
@@ -234,7 +234,7 @@ def command(run_id, action, body):
                 for objection in run.objections:
                     if objection.status == 'open':
                         objection.blocking = False
-                public_message(run, 'Ipotesi e punti irrisolti accettati esplicitamente dall’utente. Restano non verificati.', 'operator', [source.id])
+                public_message(run, 'Assumptions and unresolved points explicitly accepted by the user. They remain unverified.', 'operator', [source.id])
                 finalize(run)
             else:
                 run.proposal_version += 1  # Invalidate in-flight messages and previous approvals immediately.
