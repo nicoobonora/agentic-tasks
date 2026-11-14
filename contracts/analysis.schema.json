@@ -298,8 +298,11 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "1.0",
       "default": "1.0",
+      "enum": [
+        "1.0",
+        "1.1"
+      ],
       "title": "Schema Version",
       "type": "string"
     },
@@ -380,7 +383,7 @@
         "$ref": "#/$defs/ControlTable"
       },
       "maxItems": 3,
-      "minItems": 3,
+      "minItems": 1,
       "title": "Tables",
       "type": "array"
     }

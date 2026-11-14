@@ -51,7 +51,7 @@ In questa consegna non era configurata una chiave API. I test dell'adapter reale
 | `db.py` | Tabelle esistenti più lease dei turni |
 | `examples/charging/` | API dati, schema analitico e catalogo opzionali di dominio |
 
-Non c'è un framework di plugin o un workflow designer. Il tool di esempio `GET /examples/charging/task` costruisce un task ordinario con uno snapshot di dati locali e catalogo esplicitamente simulato. Gli agenti ricevono quei dati come allegati; non viene data loro autorità di mutare il database o richiamare endpoint operativi.
+Non c'è un framework di plugin o un workflow designer. Il tool di esempio `GET /examples/charging/task` costruisce un task ordinario con uno snapshot di dati locali e catalogo esplicitamente simulato. Questo endpoint rimane un fixture manuale precedente. Il workspace charging usa oggi capability_profile=charging e strumenti controllati di lettura/calcolo; nessuna operazione esterna è eseguita.
 
 ## Discussione e limiti
 
@@ -61,7 +61,7 @@ L'analista propone/rivede la bozza. Operations valuta fattibilità e dipendenze.
 
 Tutti producono `AgentTurn`, con tipo messaggio, applicabilità, spiegazione pubblica, riferimenti alle prove, claim, obiezioni, eventuali risoluzioni, bozza o domanda. Il programma assegna ID, tempi, versione e collegamenti. Non vengono richiesti ragionamenti privati. Il prompt distingue gli input del task dalle istruzioni di ruolo.
 
-Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il run diventa failed; il retry è una scelta esplicita. Rifiuti, errori di rete e risposte incomplete non generano un loop automatico. Limite di costo: al massimo `4 * max_rounds * 2` richieste modello per ciclo, contando le correzioni. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
+Uno schema invalido o riferimenti inesistenti concedono **un solo tentativo di correzione**. Dopo due fallimenti il run diventa failed; il retry è una scelta esplicita. Rifiuti, errori di rete e risposte incomplete non generano un loop automatico. Per run generici: al massimo `4 * max_rounds * 2` richieste modello per ciclo. Per charging: al massimo `4 * max_rounds * 10`, incluse correzioni e riprese; default tre round = 120 richieste, massimo sei = 240. Una domanda può interrompere prima il ciclo. Dopo una risposta umana inizia un nuovo ciclo con lo stesso limite; non si riaprono cicli senza un intervento umano. Il contesto modello è limitato a 250.000 caratteri, senza troncamento silenzioso.
 
 Se restano obiezioni o richieste di revisione, riparte l'analista nel round successivo. Al limite il run si ferma con una domanda che include i disaccordi effettivi. Se il modello richiede input prima del limite, si conserva la sua domanda e le opzioni dinamiche. Il server aggiunge ID e versione. La risposta viene registrata come prova e riparte dall'analista, senza perdere la conversazione.
 
@@ -107,8 +107,7 @@ Migrazione intenzionale a `/api/v2`: i vecchi endpoint v1 di run/ordine sono rim
 
 `make forecast-setup` installa le dipendenze separate per Timestral;
 `make forecast` esegue localmente preparazione, backtest e pubblicazione di
-forecast/analisi. Non richiede OPENAI_API_KEY e non cambia ACS_MODEL. Il server
-legge soltanto artefatti persistiti, senza importare PyTorch o caricare i pesi.
+forecast/analisi. Non richiede OPENAI_API_KEY e non cambia ACS_MODEL. Il processo HTTP legge artefatti persistiti senza importare PyTorch; i job on-demand usano subprocessi numerici separati.
 Il modulo è isolato in `examples/charging/forecast.py`; contratti in
 `forecast_models.py`. Procedura, soglie, provenienza, limiti e risultati reali
 sono descritti in [CHARGING.md](CHARGING.md#previsioni-locali-con-timestral).
@@ -162,9 +161,52 @@ solo il catalogo simulato come input alla discussione. Occorrono contratti e reg
 operative di dominio prima di aggiungerli nell’esempio opzionale; approvare una
 proposta non simula né provoca l’esecuzione di quelle operazioni.
 
-OpenAPI è rigenerato con `python -m scripts.export_contracts`. La rigenerazione
-TypeScript è stata verificata in un file temporaneo senza modificare il frontend:
-la sola differenza è `CreateRun.mode` opzionale e la rimozione del default statico.
-Il client attuale resta compatibile inviando `mode` esplicitamente; per esporre la
-selezione automatica nei suoi tipi occorre rigenerarli quando sarà autorizzato
-l’aggiornamento del frontend.
+## Workspace con capacità e job
+
+`CreateRun.capability_profile="charging"` seleziona il profilo server v1. Ometterlo
+mantiene la discussione generica. Profili sconosciuti sono rifiutati. La modalità
+mock resta dichiarata: il mock backend non simula indagini come risultati reali.
+
+Gli strumenti hanno schemi di argomenti controllati e risultati available,
+unavailable, needs_clarification o error. Le chiamate e gli artefatti immutabili
+sono separati dagli snapshot. GET `/api/v2/runs/{id}/tools` accetta offset/limit;
+GET `/api/v2/runs/{id}/artifacts/{artifact_id}` è limitato al run proprietario.
+Il profilo non autorizza SQL, shell, URL arbitrari, download o ordini.
+
+Ogni ruolo ha un progresso persistente: massimo 8 tool e 10 chiamate provider,
+configurabili verso il basso con ACS_TOOL_REQUESTS e ACS_PROVIDER_REQUESTS.
+Due job forecast unici al massimo per ciclo. Il contesto provider è limitato a
+300.000 caratteri, ogni output tool a 24.000; le serie complete stanno negli
+artefatti. Ogni invocazione provider ha la lease breve esistente e timeout HTTP;
+il limite complessivo del turno è 30 minuti. L'esaurimento produce failed con
+motivo esplicito, mai consenso. Il retry è umano ed esplicito.
+
+Il protocollo usa function_call e function_call_output correlati per call_id;
+lo stato di continuazione è persistito separatamente. Documentazione verificata:
+[Function calling](https://developers.openai.com/api/docs/guides/function-calling).
+Non si estraggono comandi dalla prosa. Gli errori reali non diventano mock.
+
+Il worker numerico parte nel lifespan; ACS_NUMERICAL_CONCURRENCY è 1..4, default
+1 per processo server. Ogni job ha deadline 20 minuti e heartbeat; lease default
+60 secondi, ACS_JOB_LEASE_SECONDS limitato a 5..300. Dopo crash si riacquisiscono
+job con lease scaduta. Un arresto ordinato termina i subprocessi e registra
+numerical_interrupted; un retry richiede una scelta esplicita. Job scaduti,
+dipendenze mancanti ed errori di esecuzione sono distinti da unavailable.
+I job acquisiscono un backup SQLite coerente, controllano il fingerprint richiesto
+e pubblicano forecast/analysis insieme. Cambiamenti prima della cattura producono
+errore, non un risultato attribuito allo snapshot precedente. Nessun risultato
+tardivo può cambiare ciclo, ruolo o approvazione. Attendere calcoli non crea domande
+umane e non genera polling LLM.
+
+I riferimenti numerici specificano prova, path, valore, unità, sito e periodo.
+Tolleranza relativa 1e-6 e assoluta 1e-9. Prove inesistenti, risultati unavailable,
+unità/periodi errati e valori alterati sono respinti anche da agent_port. Questo
+controlla corrispondenze misurabili, non la verità semantica del testo; serve ancora
+la valutazione del critico e la rubric del piano.
+
+Rigenerazione: `make contracts`; tipi TypeScript allineati, nessun rinvio.
+Test offline: `make test`, `npm run test:frontend`, `npm run test:integration`.
+L'ultimo target usa HTTP/SSE veri, DB temporaneo e provider/predictor controllati;
+il test browser riavvia il backend durante un job. Non prova qualità LLM.
+Validazione live esplicita: `python -m scripts.smoke_investigation`; può chiamare
+modelli a pagamento e usa un backup isolato. Report e limiti nel progress log.

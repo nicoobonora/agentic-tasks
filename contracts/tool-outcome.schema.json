@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "available",
+        "unavailable",
+        "needs_clarification",
+        "error"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "maxLength": 4000,
+      "title": "Summary",
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": true,
+      "title": "Data",
+      "type": "object"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "origin": {
+      "default": "observation",
+      "enum": [
+        "observation",
+        "derived_metric",
+        "forecast",
+        "simulated_business",
+        "human_preference"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "source_fingerprint": {
+      "title": "Source Fingerprint",
+      "type": "string"
+    },
+    "method": {
+      "title": "Method",
+      "type": "string"
+    },
+    "method_version": {
+      "default": "1",
+      "title": "Method Version",
+      "type": "string"
+    },
+    "queried_at": {
+      "format": "date-time",
+      "title": "Queried At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "summary",
+    "source_fingerprint",
+    "method",
+    "queried_at"
+  ],
+  "title": "ToolOutcome",
+  "type": "object"
+}

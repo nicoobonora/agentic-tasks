@@ -15,6 +15,7 @@ load_environment()
 
 from . import discussion as engine
 from . import models as m
+from .capabilities import ToolArtifact
 from .db import transaction
 from .errors import Conflict
 from .providers import settings
@@ -72,15 +73,15 @@ async def lifespan(app):
     # Reject malformed configuration at startup, not in a detached worker.
     concurrency = worker_concurrency()
     settings()
+    from .jobs import worker as numerical_worker
+    numerical = asyncio.create_task(numerical_worker())
     job = asyncio.create_task(worker(concurrency))
     try:
         yield
     finally:
         job.cancel()
-        try:
-            await job
-        except asyncio.CancelledError:
-            pass
+        numerical.cancel()
+        await asyncio.gather(job,numerical,return_exceptions=True)
 
 app = FastAPI(title='Task Discussion API', version='2.0.0', lifespan=lifespan,
               description='Submit any task, discuss, clarify, and deliver a versioned proposal. No execution.')
@@ -114,6 +115,21 @@ def read_run(run_id: str):
 @app.get('/api/v2/runs/{run_id}/evidence', response_model=list[m.Evidence], responses=ERRORS)
 def evidence(run_id: str):
     return read_run(run_id).evidence
+
+
+@app.get('/api/v2/runs/{run_id}/tools', response_model=list[m.ToolCall], responses=ERRORS)
+def tool_history(run_id: str, offset: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=100)):
+    from .tools import history
+    with transaction() as db:
+        engine.load(db, run_id)
+        return history(db, run_id, offset, limit)
+
+@app.get('/api/v2/runs/{run_id}/artifacts/{artifact_id}', response_model=ToolArtifact, responses=ERRORS)
+def tool_artifact(run_id: str, artifact_id: str):
+    from .tools import artifact
+    with transaction() as db:
+        engine.load(db, run_id)
+        return artifact(db, run_id, artifact_id)
 
 @app.post('/api/v2/runs/{run_id}/answers', response_model=m.Run, responses=ERRORS)
 def answer(run_id: str, body: m.Answer):

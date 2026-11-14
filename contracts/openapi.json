@@ -234,6 +234,180 @@
         }
       }
     },
+    "/api/v2/runs/{run_id}/tools": {
+      "get": {
+        "summary": "Tool History",
+        "operationId": "tool_history_api_v2_runs__run_id__tools_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ToolCall"
+                  },
+                  "title": "Response Tool History Api V2 Runs  Run Id  Tools Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/runs/{run_id}/artifacts/{artifact_id}": {
+      "get": {
+        "summary": "Tool Artifact",
+        "operationId": "tool_artifact_api_v2_runs__run_id__artifacts__artifact_id__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "artifact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolArtifact"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v2/runs/{run_id}/answers": {
       "post": {
         "summary": "Answer",
@@ -846,6 +1020,13 @@
       },
       "Claim": {
         "properties": {
+          "metric_references": {
+            "items": {
+              "$ref": "#/components/schemas/MetricReference"
+            },
+            "type": "array",
+            "title": "Metric References"
+          },
           "statement": {
             "type": "string",
             "title": "Statement"
@@ -900,6 +1081,17 @@
       },
       "CreateRun": {
         "properties": {
+          "capability_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capability Profile"
+          },
           "task": {
             "$ref": "#/components/schemas/Task"
           },
@@ -1035,13 +1227,47 @@
             "enum": [
               "user_provided",
               "reference_only",
-              "human_answer"
+              "human_answer",
+              "observation",
+              "derived_metric",
+              "forecast",
+              "human_preference",
+              "simulated_business"
             ],
             "title": "Origin"
           },
           "sha256": {
             "type": "string",
             "title": "Sha256"
+          },
+          "artifact_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artifact Id"
+          },
+          "source_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Fingerprint"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
           }
         },
         "additionalProperties": false,
@@ -1184,6 +1410,56 @@
           "content"
         ],
         "title": "Message"
+      },
+      "MetricReference": {
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "title": "Evidence Id"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Path"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Unit"
+          },
+          "site_id": {
+            "type": "string",
+            "title": "Site Id"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "evidence_id",
+          "path",
+          "value",
+          "unit",
+          "site_id",
+          "start",
+          "end"
+        ],
+        "title": "MetricReference"
       },
       "Objection": {
         "properties": {
@@ -1531,6 +1807,64 @@
       },
       "Run": {
         "properties": {
+          "provider_attempts": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Attempts"
+          },
+          "model_usage": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Model Usage"
+          },
+          "capability_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capability Profile"
+          },
+          "profile_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Version"
+          },
+          "turn_progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TurnProgress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tool_activity": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCall"
+            },
+            "type": "array",
+            "maxItems": 32,
+            "title": "Tool Activity"
+          },
           "schema_version": {
             "type": "string",
             "const": "2.0",
@@ -1744,6 +2078,328 @@
           "description"
         ],
         "title": "Task"
+      },
+      "ToolArtifact": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "tool_call_id": {
+            "type": "string",
+            "title": "Tool Call Id"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/ToolOutcome"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "run_id",
+          "tool_call_id",
+          "sha256",
+          "outcome"
+        ],
+        "title": "ToolArtifact"
+      },
+      "ToolCall": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "cycle": {
+            "type": "integer",
+            "title": "Cycle"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "turn_token": {
+            "type": "string",
+            "title": "Turn Token"
+          },
+          "request": {
+            "$ref": "#/components/schemas/ToolRequest"
+          },
+          "normalized_parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Normalized Parameters"
+          },
+          "cache_key": {
+            "type": "string",
+            "title": "Cache Key"
+          },
+          "source_fingerprint": {
+            "type": "string",
+            "title": "Source Fingerprint",
+            "default": ""
+          },
+          "method_version": {
+            "type": "string",
+            "title": "Method Version",
+            "default": "1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed"
+            ],
+            "title": "Status",
+            "default": "queued"
+          },
+          "artifact_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artifact Id"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "default": ""
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "run_id",
+          "cycle",
+          "role",
+          "turn_token",
+          "request",
+          "normalized_parameters",
+          "cache_key",
+          "created_at"
+        ],
+        "title": "ToolCall"
+      },
+      "ToolOutcome": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "unavailable",
+              "needs_clarification",
+              "error"
+            ],
+            "title": "Status"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 4000,
+            "title": "Summary"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "observation",
+              "derived_metric",
+              "forecast",
+              "simulated_business",
+              "human_preference"
+            ],
+            "title": "Origin",
+            "default": "observation"
+          },
+          "source_fingerprint": {
+            "type": "string",
+            "title": "Source Fingerprint"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "method_version": {
+            "type": "string",
+            "title": "Method Version",
+            "default": "1"
+          },
+          "queried_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Queried At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "summary",
+          "source_fingerprint",
+          "method",
+          "queried_at"
+        ],
+        "title": "ToolOutcome"
+      },
+      "ToolRequest": {
+        "properties": {
+          "call_id": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Call Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "arguments": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Arguments"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "call_id",
+          "name",
+          "arguments"
+        ],
+        "title": "ToolRequest"
+      },
+      "TurnProgress": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "cycle": {
+            "type": "integer",
+            "title": "Cycle"
+          },
+          "round": {
+            "type": "integer",
+            "title": "Round"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "proposal_version": {
+            "type": "integer",
+            "title": "Proposal Version"
+          },
+          "provider_requests": {
+            "type": "integer",
+            "title": "Provider Requests",
+            "default": 0
+          },
+          "tool_requests": {
+            "type": "integer",
+            "title": "Tool Requests",
+            "default": 0
+          },
+          "pending_job_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pending Job Id"
+          },
+          "correction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "protocol": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Protocol"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token",
+          "cycle",
+          "round",
+          "role",
+          "proposal_version",
+          "started_at"
+        ],
+        "title": "TurnProgress"
       }
     }
   }

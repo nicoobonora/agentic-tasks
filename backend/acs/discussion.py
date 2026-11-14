@@ -33,6 +33,8 @@ def save(db, run):
 
 def request_fingerprint(body):
     payload = body.model_dump(mode='json')
+    if isinstance(body, CreateRun) and body.capability_profile is None:
+        payload.pop('capability_profile', None)
     if isinstance(body, CreateRun) and 'mode' not in body.model_fields_set:
         payload.pop('mode')  # Automatic selection is distinct from explicit model.
     return fingerprint(payload)
@@ -68,7 +70,9 @@ def create(body: CreateRun):
             sources.append(evidence('context', 'Task context', body.task.context))
         sources.extend(evidence(f'attachment-{i+1}', a.name, a.text, a.url,
                        'user_provided' if a.text else 'reference_only') for i, a in enumerate(body.task.attachments))
-        run = Run(id=str(uuid4()), task=body.task, mode=mode, model=config['model'] if mode == 'model' else None,
+        from .profiles import get_profile
+        profile = get_profile(body.capability_profile)
+        run = Run(capability_profile=body.capability_profile, profile_version=profile.version if profile else None, id=str(uuid4()), task=body.task, mode=mode, model=config['model'] if mode == 'model' else None,
                   notice='MOCK: deterministic development fixture; no model calls.' if mode == 'mock' else 'Model-backed discussion. Actions are proposals only and are never executed.',
                   state='running', max_rounds=body.max_rounds or config['max_rounds'], evidence=sources,
                   created_at=now(), updated_at=now())
@@ -85,6 +89,9 @@ def public_message(run, text, actor='system', evidence_ids=None):
 
 
 def validate_turn(run, role, turn):
+    if run.capability_profile:
+        from .profiles import get_profile
+        get_profile(run.capability_profile).validate_turn(run, turn)
     available = {e.id for e in run.evidence}
     readable = {e.id for e in run.evidence if e.text and e.origin != 'reference_only'}
     refs = list(turn.evidence_ids)
@@ -240,6 +247,11 @@ def command(run_id, action, body):
 
 def step(run_id, provider=None):
     """Lease -> network without DB lock -> version/lease CAS -> commit. Restart-safe."""
+    with transaction() as db:
+        profiled = load(db, run_id).capability_profile is not None
+    if profiled:
+        from .investigation import step as investigate
+        return investigate(run_id, provider)
     token = str(uuid4())
     with transaction() as db:
         db.execute('BEGIN IMMEDIATE')

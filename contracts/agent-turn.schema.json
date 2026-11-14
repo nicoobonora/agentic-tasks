@@ -35,6 +35,13 @@
     "Claim": {
       "additionalProperties": false,
       "properties": {
+        "metric_references": {
+          "items": {
+            "$ref": "#/$defs/MetricReference"
+          },
+          "title": "Metric References",
+          "type": "array"
+        },
         "statement": {
           "title": "Statement",
           "type": "string"
@@ -102,6 +109,56 @@
         "unresolved_questions"
       ],
       "title": "Draft",
+      "type": "object"
+    },
+    "MetricReference": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        },
+        "site_id": {
+          "title": "Site Id",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "path",
+        "value",
+        "unit",
+        "site_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricReference",
       "type": "object"
     },
     "ObjectionDraft": {

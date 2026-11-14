@@ -1,0 +1,208 @@
+{
+  "classification": "live-protocol validation, not real-data analytical validation",
+  "model": "gpt-5.6-luna",
+  "generated_at": "2026-11-14T04:24:20.787898+00:00",
+  "scenarios": [
+    {
+      "scenario": "expansion",
+      "state": "awaiting_input",
+      "error": null,
+      "tool_trace": [],
+      "provider_requests_current_turn": null,
+      "public_messages": [
+        {
+          "role": "analyst",
+          "text": "Propongo di trasformare l’obiettivo in un piano di valutazione per aggiungere 20 unità di ricarica entro il 1 marzo 2027, senza considerare ancora il progetto approvato o fattibile. Prima occorre chiarire che cosa significhi “colonnine”, dove installarle, il budget, la potenza richiesta e la politica di servizio; poi verificare siti, qualità dei dati, capacità di rete, permessi, preventivi e manutenzione. Infine si potrà stimare tempi, costi, rischi e alternative entro la scadenza.",
+          "explanation": "L’unica evidenza disponibile è una dichiarazione dell’utente: è un obiettivo, non una verifica di fattibilità. La scadenza è trattata come deadline, non come orizzonte di previsione."
+        }
+      ],
+      "question": "Come devono essere interpretate le “20 colonnine” e qual è il perimetro iniziale?",
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    },
+    {
+      "scenario": "maintenance",
+      "state": "failed",
+      "error": {
+        "code": "invalid_model_output",
+        "message": "Invalid structured output twice: Unknown metric path"
+      },
+      "tool_trace": [
+        {
+          "name": "charging.discover_sites",
+          "status": "succeeded",
+          "artifact_id": "651ddbc867e95dee89acf71a0a8ddeb82c5f590238402dfd479c5b553d6904f5",
+          "parameters": {
+            "area": "Bolzano",
+            "source": "Neogy-AMPECO",
+            "offset": 0,
+            "limit": 100
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "b189bd3e0d6e29b9140bae8d4f2fbbf1e91e869a770cca6ca7f0c3a0897603e7",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:217117",
+              "Neogy-AMPECO:77436",
+              "Neogy-AMPECO:77469",
+              "Neogy-AMPECO:77558",
+              "Neogy-AMPECO:77582",
+              "Neogy-AMPECO:77594",
+              "Neogy-AMPECO:77736",
+              "Neogy-AMPECO:77816",
+              "Neogy-AMPECO:77821",
+              "Neogy-AMPECO:77824"
+            ],
+            "start": "2026-09-19T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "0fb5761ceb88146f333648a2e2479588cdc9939ed75781fa546d5a59dbc01f32",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:77873",
+              "Neogy-AMPECO:77908",
+              "Neogy-AMPECO:77959",
+              "Neogy-AMPECO:77961",
+              "Neogy-AMPECO:78048",
+              "Neogy-AMPECO:78099",
+              "Neogy-AMPECO:78145",
+              "Neogy-AMPECO:78147",
+              "Neogy-AMPECO:78196",
+              "Neogy-AMPECO:78215"
+            ],
+            "start": "2026-09-19T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.compare_maintenance_windows",
+          "status": "succeeded",
+          "artifact_id": "6b17ec79acc5c720fa50714dd69cea123699d197e2a3069229d5b732feafa46d",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:217117",
+              "Neogy-AMPECO:77436",
+              "Neogy-AMPECO:77469",
+              "Neogy-AMPECO:77558",
+              "Neogy-AMPECO:77582",
+              "Neogy-AMPECO:77594",
+              "Neogy-AMPECO:77736",
+              "Neogy-AMPECO:77816",
+              "Neogy-AMPECO:77821",
+              "Neogy-AMPECO:77824"
+            ],
+            "start": "2026-11-16T00:00:00Z",
+            "end": "2026-11-23T00:00:00Z",
+            "gap_minutes": 120,
+            "duration_hours": 2,
+            "permitted_hours": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "minimum_coverage": 0.9
+          }
+        },
+        {
+          "name": "charging.compare_maintenance_windows",
+          "status": "succeeded",
+          "artifact_id": "ffc58582f9d65e685d702172d86dbd4a398bbe0599b788340b94158faab08a51",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:77873",
+              "Neogy-AMPECO:77908",
+              "Neogy-AMPECO:77959",
+              "Neogy-AMPECO:77961",
+              "Neogy-AMPECO:78048",
+              "Neogy-AMPECO:78099",
+              "Neogy-AMPECO:78145",
+              "Neogy-AMPECO:78147",
+              "Neogy-AMPECO:78196",
+              "Neogy-AMPECO:78215"
+            ],
+            "start": "2026-11-16T00:00:00Z",
+            "end": "2026-11-23T00:00:00Z",
+            "gap_minutes": 120,
+            "duration_hours": 2,
+            "permitted_hours": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "minimum_coverage": 0.9
+          }
+        }
+      ],
+      "provider_requests_current_turn": 7,
+      "public_messages": [],
+      "question": null,
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    },
+    {
+      "scenario": "unrelated",
+      "state": "awaiting_input",
+      "error": null,
+      "tool_trace": [],
+      "provider_requests_current_turn": null,
+      "public_messages": [
+        {
+          "role": "analyst",
+          "text": "La richiesta riguarda la scrittura creativa di una poesia sulla luna, mentre questo spazio è limitato all’analisi dell’infrastruttura di ricarica per veicoli elettrici.",
+          "explanation": "Non posso sviluppare il contenuto richiesto in questo contesto. Posso invece aiutare con un’attività relativa alla ricarica, ad esempio: (A) individuare siti di ricarica, (B) analizzare utilizzo e qualità dei dati, (C) valutare un’espansione, oppure (D) confrontare finestre di manutenzione."
+        }
+      ],
+      "question": "Vuoi riformulare la richiesta in modo che riguardi l’infrastruttura di ricarica?",
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 """Domain-neutral discussion API v2. Model outputs and public messages share a schema."""
 from datetime import datetime
+from .capabilities import MetricReference, TurnProgress, ToolCall
 from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -42,8 +43,11 @@ class Evidence(Model):
     name: str
     text: str | None
     url: str | None
-    origin: Literal['user_provided', 'reference_only', 'human_answer']
+    origin: Literal['user_provided', 'reference_only', 'human_answer', 'observation', 'derived_metric', 'forecast', 'human_preference', 'simulated_business']
     sha256: str
+    artifact_id: str | None = None
+    source_fingerprint: str | None = None
+    limitations: list[str] = Field(default_factory=list)
 
 class Action(Model):
     title: str
@@ -58,6 +62,7 @@ class Draft(Model):
     unresolved_questions: list[str]
 
 class Claim(Model):
+    metric_references: list[MetricReference] = Field(default_factory=list)
     statement: str
     basis: Literal['supported', 'assumption', 'estimate']
     evidence_ids: list[str]
@@ -141,6 +146,12 @@ class ApprovalRecord(Model):
     at: datetime
 
 class Run(Model):
+    provider_attempts: int | None = None
+    model_usage: dict[str, int] = Field(default_factory=dict)
+    capability_profile: str | None = None
+    profile_version: str | None = None
+    turn_progress: TurnProgress | None = None
+    tool_activity: list[ToolCall] = Field(default_factory=list, max_length=32)
     schema_version: Literal['2.0'] = '2.0'
     id: str
     task: Task
@@ -165,6 +176,14 @@ class Run(Model):
     updated_at: datetime
 
 class CreateRun(Model):
+    capability_profile: str | None = None
+
+    @model_validator(mode='after')
+    def registered_profile(self):
+        from .profiles import get_profile
+        get_profile(self.capability_profile)
+        return self
+
     task: Task
     mode: Literal['model', 'mock'] = Field(default_factory=lambda: 'model')
     max_rounds: int | None = Field(default=None, ge=1, le=6)

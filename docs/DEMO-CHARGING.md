@@ -1,3 +1,5 @@
+> Fixture manuale precedente basato su allegati. Il workspace attuale usa i due obiettivi di frontend/tasks.ts e capability_profile=charging; non precompila questi allegati.
+
 # Due task demo basati sui dati locali
 
 `demo-charging-tasks.json` contiene due elementi con `id` e `request`.

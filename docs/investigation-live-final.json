@@ -1,0 +1,68 @@
+{
+  "classification": "live-protocol validation, not real-data analytical validation",
+  "model": "gpt-5.6-luna",
+  "generated_at": "2026-11-14T04:37:32.504777+00:00",
+  "scenarios": [
+    {
+      "scenario": "maintenance",
+      "state": "failed",
+      "error": {
+        "code": "invalid_model_output",
+        "message": "Invalid structured output twice: Numerical supported claims require structured metric references"
+      },
+      "tool_trace": [
+        {
+          "name": "charging.discover_sites",
+          "status": "succeeded",
+          "artifact_id": "artifact-6db35e1b50353e74",
+          "parameters": {
+            "area": "Bolzano",
+            "source": "Neogy-AMPECO",
+            "offset": 0,
+            "limit": 100
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "artifact-7d8d986c17d4990f",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:217117",
+              "Neogy-AMPECO:77436",
+              "Neogy-AMPECO:77469",
+              "Neogy-AMPECO:77558",
+              "Neogy-AMPECO:77582",
+              "Neogy-AMPECO:77594",
+              "Neogy-AMPECO:77736",
+              "Neogy-AMPECO:77816",
+              "Neogy-AMPECO:77821",
+              "Neogy-AMPECO:77824"
+            ],
+            "start": "2026-10-01T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_operational_inputs",
+          "status": "succeeded",
+          "artifact_id": "artifact-d74c73c495f03ba1",
+          "parameters": {
+            "record_ids": []
+          }
+        }
+      ],
+      "provider_attempts": 5,
+      "reported_successful_response_usage": {
+        "input_tokens": 74700,
+        "output_tokens": 4287,
+        "total_tokens": 78987
+      },
+      "provider_requests_current_turn": 5,
+      "public_messages": [],
+      "question": null,
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    }
+  ]
+}

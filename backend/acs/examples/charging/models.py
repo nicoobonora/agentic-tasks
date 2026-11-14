@@ -135,7 +135,7 @@ class ControlTable(Model):
         return self
 
 class AnalysisBundle(Model):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     id: str
     generated_at: datetime
     input_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
@@ -148,12 +148,14 @@ class AnalysisBundle(Model):
     model_version: str | None
     covariates: list[str]
     backtest: dict[str, Any]
-    tables: list[ControlTable] = Field(min_length=3, max_length=3)
+    tables: list[ControlTable] = Field(min_length=1, max_length=3)
 
     @model_validator(mode="after")
     def sites(self):
-        if {t.site_name for t in self.tables} != {"BZ_C_RISPARMIO_01", "BZ_PIAVE_01", "RENON_01"}:
+        if self.schema_version == "1.0" and {t.site_name for t in self.tables} != {"BZ_C_RISPARMIO_01", "BZ_PIAVE_01", "RENON_01"}:
             raise ValueError("Expected the three frozen sites")
+        if len({t.site_name for t in self.tables}) != len(self.tables):
+            raise ValueError("Duplicate site tables")
         if self.input_end <= self.input_start:
             raise ValueError("Invalid input interval")
         return self

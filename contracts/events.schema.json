@@ -201,6 +201,13 @@
     "Claim": {
       "additionalProperties": false,
       "properties": {
+        "metric_references": {
+          "items": {
+            "$ref": "#/$defs/MetricReference"
+          },
+          "title": "Metric References",
+          "type": "array"
+        },
         "statement": {
           "title": "Statement",
           "type": "string"
@@ -326,7 +333,12 @@
           "enum": [
             "user_provided",
             "reference_only",
-            "human_answer"
+            "human_answer",
+            "observation",
+            "derived_metric",
+            "forecast",
+            "human_preference",
+            "simulated_business"
           ],
           "title": "Origin",
           "type": "string"
@@ -334,6 +346,37 @@
         "sha256": {
           "title": "Sha256",
           "type": "string"
+        },
+        "artifact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "source_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Fingerprint"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
         }
       },
       "required": [
@@ -433,6 +476,56 @@
         "content"
       ],
       "title": "Message",
+      "type": "object"
+    },
+    "MetricReference": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Unit",
+          "type": "string"
+        },
+        "site_id": {
+          "title": "Site Id",
+          "type": "string"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "path",
+        "value",
+        "unit",
+        "site_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricReference",
       "type": "object"
     },
     "Objection": {
@@ -784,6 +877,68 @@
     "Run": {
       "additionalProperties": false,
       "properties": {
+        "provider_attempts": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Attempts"
+        },
+        "model_usage": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Model Usage",
+          "type": "object"
+        },
+        "capability_profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Profile"
+        },
+        "profile_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Version"
+        },
+        "turn_progress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TurnProgress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tool_activity": {
+          "items": {
+            "$ref": "#/$defs/ToolCall"
+          },
+          "maxItems": 32,
+          "title": "Tool Activity",
+          "type": "array"
+        },
         "schema_version": {
           "const": "2.0",
           "default": "2.0",
@@ -1000,6 +1155,228 @@
         "description"
       ],
       "title": "Task",
+      "type": "object"
+    },
+    "ToolCall": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "cycle": {
+          "title": "Cycle",
+          "type": "integer"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "turn_token": {
+          "title": "Turn Token",
+          "type": "string"
+        },
+        "request": {
+          "$ref": "#/$defs/ToolRequest"
+        },
+        "normalized_parameters": {
+          "additionalProperties": true,
+          "title": "Normalized Parameters",
+          "type": "object"
+        },
+        "cache_key": {
+          "title": "Cache Key",
+          "type": "string"
+        },
+        "source_fingerprint": {
+          "default": "",
+          "title": "Source Fingerprint",
+          "type": "string"
+        },
+        "method_version": {
+          "default": "1",
+          "title": "Method Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        },
+        "status": {
+          "default": "queued",
+          "enum": [
+            "queued",
+            "running",
+            "succeeded",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "artifact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "cached": {
+          "default": false,
+          "title": "Cached",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "cycle",
+        "role",
+        "turn_token",
+        "request",
+        "normalized_parameters",
+        "cache_key",
+        "created_at"
+      ],
+      "title": "ToolCall",
+      "type": "object"
+    },
+    "ToolRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "call_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Call Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        }
+      },
+      "required": [
+        "call_id",
+        "name",
+        "arguments"
+      ],
+      "title": "ToolRequest",
+      "type": "object"
+    },
+    "TurnProgress": {
+      "additionalProperties": false,
+      "properties": {
+        "token": {
+          "title": "Token",
+          "type": "string"
+        },
+        "cycle": {
+          "title": "Cycle",
+          "type": "integer"
+        },
+        "round": {
+          "title": "Round",
+          "type": "integer"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "proposal_version": {
+          "title": "Proposal Version",
+          "type": "integer"
+        },
+        "provider_requests": {
+          "default": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "tool_requests": {
+          "default": 0,
+          "title": "Tool Requests",
+          "type": "integer"
+        },
+        "pending_job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pending Job Id"
+        },
+        "correction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Correction"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "protocol": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Protocol",
+          "type": "array"
+        }
+      },
+      "required": [
+        "token",
+        "cycle",
+        "round",
+        "role",
+        "proposal_version",
+        "started_at"
+      ],
+      "title": "TurnProgress",
       "type": "object"
     }
   },

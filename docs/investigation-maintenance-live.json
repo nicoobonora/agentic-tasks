@@ -1,0 +1,185 @@
+{
+  "classification": "live-protocol validation, not real-data analytical validation",
+  "model": "gpt-5.6-luna",
+  "generated_at": "2026-11-14T04:26:38.580166+00:00",
+  "scenarios": [
+    {
+      "scenario": "maintenance",
+      "state": "failed",
+      "error": {
+        "code": "invalid_model_output",
+        "message": "Invalid structured output twice: Unavailable/error result cannot support a numerical assertion"
+      },
+      "tool_trace": [
+        {
+          "name": "charging.discover_sites",
+          "status": "succeeded",
+          "artifact_id": "8f68cbda1d1b2f280223e5174354a342a43cf0f02ec38af444a637ffc1c103d7",
+          "parameters": {
+            "area": "Bolzano",
+            "source": "Neogy-AMPECO",
+            "offset": 0,
+            "limit": 100
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "5b0f7cde88f637c3a6f726cd6e6d0e35d7f04c8fd303ca09bd51d4b713aaa6db",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:217117",
+              "Neogy-AMPECO:77436",
+              "Neogy-AMPECO:77469",
+              "Neogy-AMPECO:77558",
+              "Neogy-AMPECO:77582",
+              "Neogy-AMPECO:77594",
+              "Neogy-AMPECO:77736",
+              "Neogy-AMPECO:77816",
+              "Neogy-AMPECO:77821",
+              "Neogy-AMPECO:77824"
+            ],
+            "start": "2026-09-15T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "7f8acfeef0295ae60afac65da7cd00965dc15b28b4a7cc19abf641cb54b3be88",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:77873",
+              "Neogy-AMPECO:77908",
+              "Neogy-AMPECO:77959",
+              "Neogy-AMPECO:77961",
+              "Neogy-AMPECO:78048",
+              "Neogy-AMPECO:78099",
+              "Neogy-AMPECO:78145",
+              "Neogy-AMPECO:78147",
+              "Neogy-AMPECO:78196",
+              "Neogy-AMPECO:78215"
+            ],
+            "start": "2026-09-15T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "17d85147c441972a45b996965d3e456b9c0c82721a18f18fbee15d144d0baac4",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:78216",
+              "Neogy-AMPECO:78217",
+              "Neogy-AMPECO:78218",
+              "Neogy-AMPECO:78219",
+              "Neogy-AMPECO:78220",
+              "Neogy-AMPECO:78221",
+              "Neogy-AMPECO:78222",
+              "Neogy-AMPECO:78223",
+              "Neogy-AMPECO:78224",
+              "Neogy-AMPECO:78225"
+            ],
+            "start": "2026-09-15T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "19a00700c520bb695c69937f888fbcec834bb530a72220e48b67d627810d1245",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:78226",
+              "Neogy-AMPECO:78227",
+              "Neogy-AMPECO:78228",
+              "Neogy-AMPECO:78229",
+              "Neogy-AMPECO:78230",
+              "Neogy-AMPECO:78231",
+              "Neogy-AMPECO:78232",
+              "Neogy-AMPECO:78233",
+              "Neogy-AMPECO:78234",
+              "Neogy-AMPECO:78236"
+            ],
+            "start": "2026-09-15T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.get_data_quality",
+          "status": "succeeded",
+          "artifact_id": "0e085cc79edcd52d12153fb75c94373295225cd2f85a3d928a10bbcadda57c94",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:78248",
+              "Neogy-AMPECO:78268",
+              "Neogy-AMPECO:78290"
+            ],
+            "start": "2026-09-15T00:00:00Z",
+            "end": "2026-11-14T00:00:00Z",
+            "gap_minutes": 120
+          }
+        },
+        {
+          "name": "charging.compare_maintenance_windows",
+          "status": "succeeded",
+          "artifact_id": "2fa87710ce8c7a57a2c78f128f9ed17f6e8095f631520bccf1814e8790c5e102",
+          "parameters": {
+            "site_ids": [
+              "Neogy-AMPECO:217117",
+              "Neogy-AMPECO:77436",
+              "Neogy-AMPECO:77469",
+              "Neogy-AMPECO:77558",
+              "Neogy-AMPECO:77582",
+              "Neogy-AMPECO:77594",
+              "Neogy-AMPECO:77736",
+              "Neogy-AMPECO:77816",
+              "Neogy-AMPECO:77821",
+              "Neogy-AMPECO:77824"
+            ],
+            "start": "2026-11-15T00:00:00Z",
+            "end": "2027-02-15T00:00:00Z",
+            "gap_minutes": 120,
+            "duration_hours": 2,
+            "permitted_hours": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "minimum_coverage": 0.9
+          }
+        }
+      ],
+      "provider_requests_current_turn": 9,
+      "public_messages": [],
+      "question": null,
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    }
+  ]
+}

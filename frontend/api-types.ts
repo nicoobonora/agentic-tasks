@@ -72,6 +72,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/runs/{run_id}/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tool History */
+        get: operations["tool_history_api_v2_runs__run_id__tools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/runs/{run_id}/artifacts/{artifact_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tool Artifact */
+        get: operations["tool_artifact_api_v2_runs__run_id__artifacts__artifact_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/runs/{run_id}/answers": {
         parameters: {
             query?: never;
@@ -236,6 +270,8 @@ export interface components {
         };
         /** Claim */
         Claim: {
+            /** Metric References */
+            metric_references?: components["schemas"]["MetricReference"][];
             /** Statement */
             statement: string;
             /**
@@ -255,13 +291,14 @@ export interface components {
         };
         /** CreateRun */
         CreateRun: {
+            /** Capability Profile */
+            capability_profile?: string | null;
             task: components["schemas"]["Task"];
             /**
              * Mode
-             * @default model
              * @enum {string}
              */
-            mode: "model" | "mock";
+            mode?: "model" | "mock";
             /** Max Rounds */
             max_rounds?: number | null;
             /** Idempotency Key */
@@ -299,9 +336,15 @@ export interface components {
              * Origin
              * @enum {string}
              */
-            origin: "user_provided" | "reference_only" | "human_answer";
+            origin: "user_provided" | "reference_only" | "human_answer" | "observation" | "derived_metric" | "forecast" | "human_preference" | "simulated_business";
             /** Sha256 */
             sha256: string;
+            /** Artifact Id */
+            artifact_id?: string | null;
+            /** Source Fingerprint */
+            source_fingerprint?: string | null;
+            /** Limitations */
+            limitations?: string[];
         };
         /** Health */
         Health: {
@@ -351,6 +394,29 @@ export interface components {
             model?: string | null;
             /** Provider Response Id */
             provider_response_id?: string | null;
+        };
+        /** MetricReference */
+        MetricReference: {
+            /** Evidence Id */
+            evidence_id: string;
+            /** Path */
+            path: string;
+            /** Value */
+            value: number;
+            /** Unit */
+            unit: string;
+            /** Site Id */
+            site_id: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
         };
         /** Objection */
         Objection: {
@@ -470,6 +536,19 @@ export interface components {
         };
         /** Run */
         Run: {
+            /** Provider Attempts */
+            provider_attempts?: number | null;
+            /** Model Usage */
+            model_usage?: {
+                [key: string]: number;
+            };
+            /** Capability Profile */
+            capability_profile?: string | null;
+            /** Profile Version */
+            profile_version?: string | null;
+            turn_progress?: components["schemas"]["TurnProgress"] | null;
+            /** Tool Activity */
+            tool_activity?: components["schemas"]["ToolCall"][];
             /**
              * Schema Version
              * @default 2.0
@@ -549,6 +628,156 @@ export interface components {
             context?: string | null;
             /** Attachments */
             attachments?: components["schemas"]["Attachment"][];
+        };
+        /** ToolArtifact */
+        ToolArtifact: {
+            /** Id */
+            id: string;
+            /** Run Id */
+            run_id: string;
+            /** Tool Call Id */
+            tool_call_id: string;
+            /** Sha256 */
+            sha256: string;
+            outcome: components["schemas"]["ToolOutcome"];
+        };
+        /** ToolCall */
+        ToolCall: {
+            /** Id */
+            id: string;
+            /** Run Id */
+            run_id: string;
+            /** Cycle */
+            cycle: number;
+            /** Role */
+            role: string;
+            /** Turn Token */
+            turn_token: string;
+            request: components["schemas"]["ToolRequest"];
+            /** Normalized Parameters */
+            normalized_parameters: {
+                [key: string]: unknown;
+            };
+            /** Cache Key */
+            cache_key: string;
+            /**
+             * Source Fingerprint
+             * @default
+             */
+            source_fingerprint: string;
+            /**
+             * Method Version
+             * @default 1
+             */
+            method_version: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Completed At */
+            completed_at?: string | null;
+            /**
+             * Status
+             * @default queued
+             * @enum {string}
+             */
+            status: "queued" | "running" | "succeeded" | "failed";
+            /** Artifact Id */
+            artifact_id?: string | null;
+            /**
+             * Summary
+             * @default
+             */
+            summary: string;
+            /**
+             * Cached
+             * @default false
+             */
+            cached: boolean;
+        };
+        /** ToolOutcome */
+        ToolOutcome: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "available" | "unavailable" | "needs_clarification" | "error";
+            /** Summary */
+            summary: string;
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            };
+            /** Limitations */
+            limitations?: string[];
+            /**
+             * Origin
+             * @default observation
+             * @enum {string}
+             */
+            origin: "observation" | "derived_metric" | "forecast" | "simulated_business" | "human_preference";
+            /** Source Fingerprint */
+            source_fingerprint: string;
+            /** Method */
+            method: string;
+            /**
+             * Method Version
+             * @default 1
+             */
+            method_version: string;
+            /**
+             * Queried At
+             * Format: date-time
+             */
+            queried_at: string;
+        };
+        /** ToolRequest */
+        ToolRequest: {
+            /** Call Id */
+            call_id: string;
+            /** Name */
+            name: string;
+            /** Arguments */
+            arguments: {
+                [key: string]: unknown;
+            };
+        };
+        /** TurnProgress */
+        TurnProgress: {
+            /** Token */
+            token: string;
+            /** Cycle */
+            cycle: number;
+            /** Round */
+            round: number;
+            /** Role */
+            role: string;
+            /** Proposal Version */
+            proposal_version: number;
+            /**
+             * Provider Requests
+             * @default 0
+             */
+            provider_requests: number;
+            /**
+             * Tool Requests
+             * @default 0
+             */
+            tool_requests: number;
+            /** Pending Job Id */
+            pending_job_id?: string | null;
+            /** Correction */
+            correction?: string | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Protocol */
+            protocol?: {
+                [key: string]: unknown;
+            }[];
         };
     };
     responses: never;
@@ -715,6 +944,126 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Evidence"][];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    tool_history_api_v2_runs__run_id__tools_get: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolCall"][];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    tool_artifact_api_v2_runs__run_id__artifacts__artifact_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+                artifact_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolArtifact"];
                 };
             };
             /** @description Not Found */

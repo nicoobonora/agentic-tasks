@@ -1,6 +1,6 @@
 # Frontend — discussione generica, API v2
 
-`frontend/client.ts` usa `/api/v2`. Tipi generati da `contracts/openapi.json`; nessun sito, fornitore, ordine o alternativa di dominio compare nel contratto. Il servizio restituisce snapshot persistenti di `Run` e li trasmette tramite SSE. `make api` avvia porta 8000; `make mock` avvia un database separato su 8001, e il client attuale richiede una modalità nel payload (`mode: "mock"` per la demo). Il backend accetta anche `mode` omesso: seleziona `model` solo se chiave e modello sono configurati, altrimenti `mock`. OpenAPI riflette questa selezione dinamica; i tipi frontend non sono stati modificati su richiesta dell’utente, quindi la rigenerazione per rendere `mode` opzionale nel client è rinviata.
+`frontend/client.ts` usa `/api/v2`. Tipi generati da `contracts/openapi.json`; nessun sito, fornitore, ordine o alternativa di dominio compare nel contratto. Il servizio restituisce snapshot persistenti di `Run` e li trasmette tramite SSE. `make api` avvia porta 8000; `make mock` avvia un database separato su 8001, e il client attuale richiede una modalità nel payload (`mode: "mock"` per la demo). Il backend accetta anche `mode` omesso: seleziona `model` solo se chiave e modello sono configurati, altrimenti `mock`. OpenAPI e tipi TypeScript sono rigenerati insieme con make contracts.
 
 ## Inviare un task
 
@@ -133,8 +133,7 @@ npm run test:frontend
 
 La UI ha tre colonne: catalogo task locale, area di discussione e risultati.
 Il mock locale è il default; non effettua richieste HTTP né chiamate AI e si azzera
-al refresh. I tre task sono generici e fittizi; il terzo dimostra un errore e il
-retry esplicito. I dialoghi sono script dimostrativi, non repliche del motore
+al refresh. I due ticket charging contengono solo obiettivi: espansione entro marzo 2027 e manutenzione a Bolzano. Le vecchie fixture generiche/errore restano soltanto nei test. I dialoghi sono script dimostrativi, non repliche del motore
 backend né risultati verificati. Le fonti e le preferenze umane non sono prove
 esterne. È possibile lavorare su più task e selezionarne la discussione.
 
@@ -145,7 +144,7 @@ endpoint o stati di orchestrazione.
 
 | Azione frontend | Client / endpoint | Transizione e rappresentazione |
 | --- | --- | --- |
-| Consultare la colonna sinistra | Fixture `tasks` in `frontend/mock.ts` | Catalogo locale, nessuna API catalogo prevista |
+| Consultare la colonna sinistra | Catalogo `frontend/tasks.ts` | Catalogo locale, nessuna API catalogo prevista |
 | Trascinare al centro o premere “Avvia task” | `createRun` / POST `/runs` con task, mode esplicito, max_rounds e chiave idempotente | La card lascia il catalogo solo dopo la risposta; apertura del run al centro |
 | Seguire ruoli e dialogo | `subscribe` / GET `/runs/{id}/events` | Snapshot completi; running mostra ciclo, round, ruolo prossimo, messaggi pubblici e bozza |
 | Recuperare stato / riconnettersi | `run` / GET `/runs/{id}` | GET periodica ogni 5 secondi in modalità API, SSE con riconnessione nativa e deduplicazione nel client |
@@ -219,3 +218,23 @@ Modalità mock/model resta visibile nella colonna agenti. Contesto, fonti, notic
 metadati e motivazioni con ipotesi sono consultabili in sezioni espandibili;
 le obiezioni rimangono esplicite. Su schermi piccoli le tre aree si impilano e
 il pulsante sul ticket offre un’alternativa al trascinamento.
+
+## Indagine charging
+
+Il catalogo è separato dal simulatore. POST runs invia capability_profile=charging
+senza dataset o allegati nascosti. Il mock locale rimane uno script dichiarato e
+non effettua query; API model usa il provider reale. Nessun form di creazione è
+stato aggiunto. L'esempio attachment-based precedente rimane solo manuale.
+
+La sezione Indagine mostra tool, parametri, stati persistiti, riuso della cache e
+risultati. I pulsanti prova aprono l'artefatto esatto tramite client.artifact;
+le citazioni delle azioni e dei claim usano lo stesso riferimento. I forecast
+mostrano origine temporale distinta dalla generazione, metodo effettivamente
+selezionato, quantili, backtest e limiti. Unavailable mostra motivazioni, mai una
+curva a zero. Le versioni della proposta rimangono consultabili. Refresh e SSE
+non reinviano il task né avviano calcoli; testo/focus delle risposte restano intatti.
+
+`npm run test:frontend` verifica il simulatore e trasporto intercettato.
+`npm run test:integration` avvia Vite/Uvicorn con DB temporaneo, provider controllato
+e predictor numerico deterministico: verifica HTTP, SSE, job e riavvio reale.
+I due livelli non attestano l'affidabilità generale di un modello live.

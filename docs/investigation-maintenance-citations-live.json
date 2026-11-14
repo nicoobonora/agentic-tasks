@@ -1,0 +1,32 @@
+{
+  "classification": "live-protocol validation, not real-data analytical validation",
+  "model": "gpt-5.6-luna",
+  "generated_at": "2026-11-14T04:31:21.774742+00:00",
+  "scenarios": [
+    {
+      "scenario": "maintenance",
+      "state": "failed",
+      "error": {
+        "code": "invalid_model_output",
+        "message": "Invalid structured output twice: 1 validation error for Period\n  Value error, Use whole-hour boundaries [type=value_error, input_value={'site_ids': ['Neogy-AMPE...5Z', 'gap_minutes': 120}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      },
+      "tool_trace": [
+        {
+          "name": "charging.discover_sites",
+          "status": "succeeded",
+          "artifact_id": "artifact-5298a9523d880662",
+          "parameters": {
+            "area": "Bolzano",
+            "source": "Neogy-AMPECO",
+            "offset": 0,
+            "limit": 100
+          }
+        }
+      ],
+      "provider_requests_current_turn": 2,
+      "public_messages": [],
+      "question": null,
+      "limitation": "Smoke stops at first human decision or bounded step count; no human answers or approvals fabricated."
+    }
+  ]
+}

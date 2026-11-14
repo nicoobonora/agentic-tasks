@@ -110,6 +110,15 @@ def test_full_pipeline_persistence_api_and_analysis(tmp_path,monkeypatch):
         assert all(c.status=='available' for t in analysis.tables for c in t.cells)
         task=client.get('/examples/charging/task').json()
         assert result.id in task['attachments'][0]['text']
+    subset, paired = run(end=(START+timedelta(days=42)).isoformat(),days=42,predictor=FakePredictor(),site_ids=['s1'],service_threshold=.95,publish=False)
+    assert [s.site_id for s in subset.sites]==['s1']
+    assert paired.schema_version=='1.1' and paired.tables[0].service_threshold==.95
+    assert subset.analysis_id==paired.id
+    db=connect(path);check_bundle(db,paired);db.execute('DELETE FROM observations');db.commit();db.close()
+    monkeypatch.setattr('backend.acs.examples.charging.forecast.Timestral',lambda *a: (_ for _ in ()).throw(AssertionError('Weights loaded on unavailable input')))
+    unavailable,_=run(end=(START+timedelta(days=42)).isoformat(),days=42,site_ids=['s1'],publish=False)
+    assert unavailable.parameters['model_inference_calls']==0
+    assert unavailable.sites[0].points==[]
 
 
 def test_comparable_days_and_unavailable_never_calls_model():
@@ -122,3 +131,9 @@ def test_comparable_days_and_unavailable_never_calls_model():
     site=forecast_site({'id':'s','name':'BZ_PIAVE_01'},{'p':[]},{'e'},START,
         START+timedelta(days=42),168,2,predictor,120,10,.25)
     assert site.status=='unavailable' and site.points==[] and predictor.lengths==[]
+
+def test_request_bounds():
+    from backend.acs.examples.charging.forecast import run
+    import pytest
+    for kwargs in ({'horizon':169},{'site_ids':[]},{'service_threshold':1},{'end':'2026-11-14T00:30:00Z'}):
+        with pytest.raises(ValueError): run(**kwargs)

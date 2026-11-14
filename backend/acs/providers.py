@@ -1,7 +1,8 @@
 """One real Responses API adapter and an explicit, offline development mock."""
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from .capabilities import ToolRequest
 import httpx
 from .models import AgentTurn, Run, Draft, Action, QuestionDraft, Option
 
@@ -20,8 +21,11 @@ class ModelFailure(Exception):
 
 @dataclass
 class Result:
-    turn: AgentTurn
+    turn: AgentTurn | None = None
     response_id: str | None = None
+    requests: list[ToolRequest] = field(default_factory=list)
+    protocol: list[dict] = field(default_factory=list)
+    usage: dict[str, int] = field(default_factory=dict)
 
 
 def settings():
@@ -64,6 +68,9 @@ If the current proposal should change, set needs_revision=true. Otherwise false.
 Analyst: draft must contain recommended actions, risks and unresolved questions; on a revision account for ALL earlier perspectives.
 Critic: do not resolve an objection just because a human prefers an outcome; unsupported facts remain unsupported. Do not mark consensus if the draft still needs changes.
 '''
+    if run.capability_profile:
+        from .profiles import get_profile
+        instructions += '\n'+get_profile(run.capability_profile).instructions
     payload = {'task': run.task.model_dump(mode='json'), 'evidence': [e.model_dump(mode='json') for e in run.evidence],
                'proposal': run.proposal.model_dump(mode='json') if run.proposal else None,
                'objections': [o.model_dump(mode='json') for o in run.objections],
@@ -88,6 +95,20 @@ class OpenAIProvider:
                    'input': [{'role': 'user', 'content': content}],
                    'max_output_tokens': 5000,
                    'text': {'format': {'type': 'json_schema', 'name': 'agent_turn', 'strict': True, 'schema': strict_schema()}}}
+        if run.capability_profile:
+            from .profiles import get_profile
+            profile=get_profile(run.capability_profile)
+            payload['tools'] = [{'type':'function','name':name.replace('.', '__'), 'description':name,
+                'parameters':schema.model_json_schema(), 'strict':False} for name,schema in profile.schemas().items()]
+            payload['parallel_tool_calls'] = False
+            payload['include'] = ['reasoning.encrypted_content']
+            if run.turn_progress:
+                from .db import transaction, get
+                with transaction() as db:
+                    protocol = get(db,'turn_protocol',run.turn_progress.token) or []
+                payload['input'] += protocol
+            if len(json.dumps(payload)) > 300000:
+                raise ModelFailure('context_limit', 'Tool conversation exceeds bounded context')
         owned = self.client is None
         client = self.client or httpx.Client(timeout=60)
         try:
@@ -97,6 +118,13 @@ class OpenAIProvider:
             body = response.json()
             if body.get('status') != 'completed':
                 raise ModelFailure('model_incomplete', 'Model response did not complete; no partial output was applied.')
+            calls = [item for item in body.get('output', []) if item.get('type') == 'function_call']
+            if calls:
+                if not run.capability_profile:
+                    raise ValueError('Tool calls require an authorized capability profile')
+                requests = [ToolRequest(call_id=item['call_id'], name=item['name'].replace('__','.'),
+                    arguments=json.loads(item['arguments'])) for item in calls]
+                return Result(response_id=body.get('id'), requests=requests, protocol=body['output'], usage={k:v for k,v in body.get('usage',{}).items() if isinstance(v,int)})
             texts = []
             for item in body.get('output', []):
                 for part in item.get('content', []):
@@ -106,7 +134,7 @@ class OpenAIProvider:
                         texts.append(part['text'])
             if not texts:
                 raise ModelFailure('model_empty', 'The model returned no structured message.')
-            return Result(AgentTurn.model_validate_json(''.join(texts)), body.get('id'))
+            return Result(AgentTurn.model_validate_json(''.join(texts)), body.get('id'), usage={k:v for k,v in body.get('usage',{}).items() if isinstance(v,int)})
         except httpx.HTTPStatusError as exc:
             raise ModelFailure('model_http_error', f'Model service returned HTTP {exc.response.status_code}; retry explicitly.') from exc
         except httpx.TransportError as exc:

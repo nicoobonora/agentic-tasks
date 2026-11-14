@@ -553,3 +553,7 @@ details[open] > summary {
 .reply-shortcut:hover:not(:disabled) {
   background: #f6f3ec;
 }
+.investigation { margin-block: 1.5rem; }
+.investigation details { padding: .6rem; border-bottom: 1px solid #ddd; }
+.investigation pre { max-height: 26rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .75rem; }
+.evidence-link { font-size: .75rem; padding: .25rem .5rem; }

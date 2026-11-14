@@ -271,9 +271,9 @@ export interface components {
             /**
              * Schema Version
              * @default 1.0
-             * @constant
+             * @enum {string}
              */
-            schema_version: "1.0";
+            schema_version: "1.0" | "1.1";
             /** Id */
             id: string;
             /**

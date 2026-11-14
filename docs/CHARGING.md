@@ -234,3 +234,62 @@ lo snapshot locale può contenere acquisizioni di tempi diversi e non è dichiar
 un refresh live completo. In assenza di dati restituisce una lista vuota e stale,
 mai osservazioni simulate. La lettura delle prove raw verifica gzip e SHA256;
 una prova danneggiata restituisce `409 corrupt_evidence` anziché contenuto alterato.
+
+## Readiness riproducibile e tool di lettura
+
+`python -m scripts.charging_readiness --cutoff 2026-11-14T00:00:00Z
+--output docs/charging-readiness.json` apre SQLite in sola lettura e conserva
+separate le fonti. Il report confronta gap 60/120/240/480 minuti; non cambia il
+default 120 minuti. Distingue punti senza osservazioni, gap di acquisizione,
+esposizione insufficiente e saturazione che impedisce la stima. Il cutoff esclude
+revisioni successive. Le identità e la capacità storica restano non verificate.
+Il report conferma 12,6%, 16,2% e 0% nei tre gruppi correnti selezionati: non è
+una validazione di previsioni utilizzabili.
+
+Refresh operativo: scegliere esplicitamente intervallo UTC [start,end), usare
+`download_data --start ... --end ...` con finestre di cinque giorni e retry
+limitati già implementati. Le query storiche identiche riusano cache verificata;
+`--latest` aggiorna solo lo stato recente. Conservare manifest, gzip e checksum.
+Ricalcolare la readiness dopo l'acquisizione. Gli agenti non avviano download.
+
+## Workspace con strumenti e input operativi
+
+Profilo `charging`, versione 1: discover_sites, get_inventory, get_data_quality,
+get_evidence, get_usage_summary, compare_maintenance_windows, request_forecast,
+get_operational_inputs e assess_expansion. I nomi completi hanno prefisso
+`charging.`. Nessuna query libera o download comandato dal modello.
+
+Le aree Bolzano/Bozen usano il bounding box contestuale documentato, non un confine
+comunale certificato. Altri nomi restituiscono candidati; fonti legacy/current non
+sono unite. Periodi fino a 180 giorni, al massimo 10 siti nelle letture; limiti
+ulteriori sulle osservazioni richiedono di restringere la query. Le metriche sono
+osservate e coverage-aware; il modello riceve aggregati, profili locali e percorsi
+numerici citabili. Le finestre manutentive confrontano occupazione osservata su
+almeno quattro date comparabili e rispettano le ore consentite; restano suggerimenti
+storici, non date future garantite. Capacità zero e dati mancanti non sono periodi
+ideali. I record verificati possono fornire durata e scadenza di manutenzione;
+senza questi la necessità resta sconosciuta, mai dedotta dallo stato ODH.
+
+`request_forecast` accetta ID espliciti dei tre gruppi AC supportati, cutoff UTC,
+storico, orizzonte 1..168 ore, soglie e modalità pesi offline. Nuovi siti/DC
+richiedono una validazione separata, non sono aggiunti implicitamente. `run()`
+conserva i default CLI e permette sottoinsiemi; analysis schema 1.1 consente
+1–3 tabelle, mentre 1.0 richiede ancora i tre siti. L'obiettivo 20 colonnine entro
+marzo è un target aziendale e una deadline, non una previsione di domanda a marzo.
+La policy 90% è esplicita nel request, fingerprint e risultato; 95% è un altro
+scenario, non il default implicito del catalogo simulato.
+
+Input operativi opzionali: `python -m scripts.import_operational file.json` importa
+una lista validata di record immutabili id/version, classificati verified,
+simulated o assumed, con provenienza e date efficaci. Sono supportati preventivi,
+permessi, capacità di connessione, budget, lead time, calendari, manutenzioni,
+guasti e requisiti. Nessuna integrazione aziendale è inventata. Il read tool senza
+ID restituisce al massimo 30 record; specificare gli ID con suffisso `:vN` nei
+calcoli. Preventivi alternativi richiedono selezione esplicita. La conversione
+punti/caricatori richiede il rapporto dichiarato; siti non sono equivalenti.
+
+I costi usano Decimal, prezzi unitari IVA esclusa e aliquota dichiarata. Lead time
+sono sommati conservativamente in giorni di calendario: calendari di lavoro,
+dipendenze progettuali e fattibilità fisica richiedono verifica. Il risultato
+soddisfatto/violato/sconosciuto riguarda soltanto i vincoli forniti; non certifica
+l'investimento, la domanda né l'esecuzione. Prezzi sintetici rimangono sintetici.

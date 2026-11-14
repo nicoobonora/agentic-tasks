@@ -62,3 +62,23 @@ Risultati: `/examples/charging/api/v1/forecasts`, analisi collegate in `/analysi
 Con il dataset consegnato e le soglie conservative, la copertura non basta per
 pubblicare previsioni utilizzabili: vengono salvate le motivazioni, non valori
 simulati. [Istruzioni e limiti](docs/CHARGING.md#previsioni-locali-con-timestral).
+
+## Workspace charging con obiettivi
+
+La UI presenta due obiettivi senza allegati: aggiungere 20 colonnine entro il
+1 marzo 2027 e valutare quando fare manutenzione a Bolzano. Il profilo server
+`charging` permette agli agenti di scoprire dati, calcolare metriche, richiedere
+forecast e citare artefatti immutabili. Senza profilo restano disponibili i task
+generici. In locale mock i dialoghi sono script esplicitamente simulati.
+
+Avviare `make api` e `npm run dev`; per discussioni reali configurare chiave,
+ACS_MODEL e VITE_RUN_MODE=model. Il worker numerico separato parte con il server;
+`make forecast-setup` installa le dipendenze opzionali. I job usano pesi offline
+per default: predisporre la cache esplicitamente. Dati insufficienti producono
+unavailable; pesi/dipendenze mancanti su input eleggibile producono errore.
+
+Verifiche aggiuntive: `npm run test:integration` (HTTP/SSE, DB temporaneo,
+provider/predictor controllati, riavvio durante job). Live esplicito:
+`python -m scripts.smoke_investigation`; usa un backup isolato e chiamate reali
+potenzialmente a pagamento. Risultati e limiti in
+[IMPLEMENTATION-PROGRESS.md](docs/IMPLEMENTATION-PROGRESS.md).

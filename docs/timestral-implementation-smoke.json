@@ -1,0 +1,21 @@
+{
+  "model": "mistralai/Timestral-28M",
+  "revision": "49b26409ac87b5935539a5d8ffe7f397b720db47",
+  "live_model_verified": true,
+  "input": "real ODH hourly reconstructed series, BZ_C_RISPARMIO_01",
+  "input_forecast_id": "forecast:8f13d5ee-141b-43c7-a1d6-9ff31885d673",
+  "valid_fraction": 0.12574404761904762,
+  "shape": [
+    2,
+    168,
+    3
+  ],
+  "seconds": 1.11,
+  "first_hour_p1_quantiles": [
+    0.0,
+    2.195260524749756,
+    5.5187458992004395
+  ],
+  "published_as_usable_forecast": false,
+  "reason": "Adapter smoke only. This command does not override coverage or backtest requirements."
+}

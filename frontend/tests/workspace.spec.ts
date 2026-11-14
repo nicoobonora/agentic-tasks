@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { createMockClient, tasks } from "../mock";
+import { createMockClient } from "../mock";
+import { tasks } from "../test-tasks";
 
 test("drag, discussione, risposta umana e approvazione", async ({ page }) => {
   const errors: string[] = [];

@@ -1,0 +1,2782 @@
+{
+  "cutoff": "2026-11-14T00:00:00+00:00",
+  "history_days": 56,
+  "source_fingerprint": "32daa0bf62934d528584a94015ff76586c1e72b16763c30b6565f92a07fd210d",
+  "sites": [
+    {
+      "site_id": "Neogy:755166df62230ee6590043a99676",
+      "source": "Neogy",
+      "name": "BZ_C_RISPARMIO_02",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:5a9e699fd7494e59b8921199",
+        "Neogy:fe95d59deefe40d3b1e258a4"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:755166df629b85f2980043f062d3",
+      "source": "Neogy",
+      "name": "BZ_PIAVE_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:1d8461cc649948e782ccdc8d",
+        "Neogy:5414244331184b4db4ddabd8"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:755166df62aa56257d0043477cc7",
+      "source": "Neogy",
+      "name": "RENON_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:29050a94460348b4a04af818",
+        "Neogy:2f5ef1d6f4da4509a43fdde2"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:755166df62d456257d0043477de0",
+      "source": "Neogy",
+      "name": "RENON_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:64ec683e824d421381f98c89",
+        "Neogy:ce75b783b37540479eead0d9"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:755166df634c0ee6590043a99f2a",
+      "source": "Neogy",
+      "name": "BZ_BOEHLER_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [
+        "Neogy:fc71eacb17504caaba9ecdc6"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:755166df63880ee6590043a9a0f1",
+      "source": "Neogy",
+      "name": "CORNEDO",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:7551684968e66b28b9b40c26e1ed",
+      "source": "Neogy",
+      "name": "BZ_C_RISPARMIO_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:f11e8c8d3096450186941236",
+        "Neogy:f5f94828fcf34163a97bfcc0"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy:75516995da0855693d751451da4e",
+      "source": "Neogy",
+      "name": "BZ_PIAVE_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [
+        "Neogy:2750cf28730240f7b98f0e20",
+        "Neogy:b2dafde0289a41058358e426"
+      ],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:217117",
+      "source": "Neogy-AMPECO",
+      "name": "CORNEDO_02",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 168,
+      "cadence_median_minutes": 240.01306666666667,
+      "acquisition_gaps_over_120_minutes": 133,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 4,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.002976190476190476,
+          "positive_capacity_exposure_hours": 4.989219722222222,
+          "insufficient_exposure_hours": 1332,
+          "insufficient_nonfull_exposure_hours": 8
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 8.135618055555556,
+          "insufficient_exposure_hours": 1328,
+          "insufficient_nonfull_exposure_hours": 10
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 130,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.09672619047619048,
+          "positive_capacity_exposure_hours": 143.81347055555557,
+          "insufficient_exposure_hours": 1195,
+          "insufficient_nonfull_exposure_hours": 19
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 551,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4099702380952381,
+          "positive_capacity_exposure_hours": 564.0092586111111,
+          "insufficient_exposure_hours": 776,
+          "insufficient_nonfull_exposure_hours": 17
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77436",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_P_VITTORIA",
+      "eligible_ac_points": 3,
+      "points_without_observations": [],
+      "observations": 4511,
+      "cadence_median_minutes": 2.005866666666667,
+      "acquisition_gaps_over_120_minutes": 757,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 20,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.01488095238095238,
+          "positive_capacity_exposure_hours": 13.243926111111112,
+          "insufficient_exposure_hours": 1320,
+          "insufficient_nonfull_exposure_hours": 4
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 126,
+          "recent_usable_hours": 1,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.09375,
+          "positive_capacity_exposure_hours": 110.55477361111112,
+          "insufficient_exposure_hours": 1193,
+          "insufficient_nonfull_exposure_hours": 25
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 643,
+          "recent_usable_hours": 15,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.47842261904761907,
+          "positive_capacity_exposure_hours": 702.4208638888889,
+          "insufficient_exposure_hours": 627,
+          "insufficient_nonfull_exposure_hours": 74
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1192,
+          "recent_usable_hours": 19,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.8869047619047619,
+          "positive_capacity_exposure_hours": 1272.103931388889,
+          "insufficient_exposure_hours": 70,
+          "insufficient_nonfull_exposure_hours": 82
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77469",
+      "source": "Neogy-AMPECO",
+      "name": "OBI_BZ",
+      "eligible_ac_points": 4,
+      "points_without_observations": [],
+      "observations": 2355,
+      "cadence_median_minutes": 56.7076,
+      "acquisition_gaps_over_120_minutes": 1065,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 4,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.002976190476190476,
+          "positive_capacity_exposure_hours": 2.638210277777778,
+          "insufficient_exposure_hours": 1340,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 4.382215277777778,
+          "insufficient_exposure_hours": 1338,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 425,
+          "recent_usable_hours": 8,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.3162202380952381,
+          "positive_capacity_exposure_hours": 424.01342,
+          "insufficient_exposure_hours": 919,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1148,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.8541666666666666,
+          "positive_capacity_exposure_hours": 1147.7638586111111,
+          "insufficient_exposure_hours": 196,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77558",
+      "source": "Neogy-AMPECO",
+      "name": "HUB_FIERA_BZ",
+      "eligible_ac_points": 22,
+      "points_without_observations": [],
+      "observations": 7694,
+      "cadence_median_minutes": 239.99856666666668,
+      "acquisition_gaps_over_120_minutes": 6031,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 2,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.001488095238095238,
+          "positive_capacity_exposure_hours": 1.4081255555555556,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 4,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.002976190476190476,
+          "positive_capacity_exposure_hours": 3.016426111111111,
+          "insufficient_exposure_hours": 1340,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 385,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2864583333333333,
+          "positive_capacity_exposure_hours": 384.23770472222225,
+          "insufficient_exposure_hours": 959,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1188,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.8839285714285714,
+          "positive_capacity_exposure_hours": 1187.9941130555555,
+          "insufficient_exposure_hours": 156,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77582",
+      "source": "Neogy-AMPECO",
+      "name": "CAMPING_MOOSBAUER",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 769,
+      "cadence_median_minutes": 239.99285,
+      "acquisition_gaps_over_120_minutes": 550,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 4,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.002976190476190476,
+          "positive_capacity_exposure_hours": 2.018245,
+          "insufficient_exposure_hours": 1340,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 8,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.005952380952380952,
+          "positive_capacity_exposure_hours": 5.109184444444445,
+          "insufficient_exposure_hours": 1336,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 397,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.29538690476190477,
+          "positive_capacity_exposure_hours": 396.24347416666666,
+          "insufficient_exposure_hours": 947,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1188,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.8839285714285714,
+          "positive_capacity_exposure_hours": 1187.9941130555555,
+          "insufficient_exposure_hours": 156,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77594",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_FIERA",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 2486,
+      "cadence_median_minutes": 12.082799999999999,
+      "acquisition_gaps_over_120_minutes": 498,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 49,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.036458333333333336,
+          "positive_capacity_exposure_hours": 36.09661222222222,
+          "insufficient_exposure_hours": 1287,
+          "insufficient_nonfull_exposure_hours": 8
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 169,
+          "recent_usable_hours": 7,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.12574404761904762,
+          "positive_capacity_exposure_hours": 185.55582444444445,
+          "insufficient_exposure_hours": 1128,
+          "insufficient_nonfull_exposure_hours": 47
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 629,
+          "recent_usable_hours": 18,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4680059523809524,
+          "positive_capacity_exposure_hours": 710.1937616666667,
+          "insufficient_exposure_hours": 619,
+          "insufficient_nonfull_exposure_hours": 96
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1182,
+          "recent_usable_hours": 18,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.8794642857142857,
+          "positive_capacity_exposure_hours": 1295.212785,
+          "insufficient_exposure_hours": 48,
+          "insufficient_nonfull_exposure_hours": 114
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77736",
+      "source": "Neogy-AMPECO",
+      "name": "INCAR_BOLZANO",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 324,
+      "cadence_median_minutes": 240.00658333333334,
+      "acquisition_gaps_over_120_minutes": 271,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 5,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.003720238095238095,
+          "positive_capacity_exposure_hours": 6.384694166666667,
+          "insufficient_exposure_hours": 1334,
+          "insufficient_nonfull_exposure_hours": 5
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 10,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.00744047619047619,
+          "positive_capacity_exposure_hours": 19.16271,
+          "insufficient_exposure_hours": 1321,
+          "insufficient_nonfull_exposure_hours": 13
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 362,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2693452380952381,
+          "positive_capacity_exposure_hours": 372.23685694444447,
+          "insufficient_exposure_hours": 971,
+          "insufficient_nonfull_exposure_hours": 11
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1225,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9114583333333334,
+          "positive_capacity_exposure_hours": 1235.9912216666667,
+          "insufficient_exposure_hours": 108,
+          "insufficient_nonfull_exposure_hours": 11
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77816",
+      "source": "Neogy-AMPECO",
+      "name": "RAIFFEISEN_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 669,
+      "cadence_median_minutes": 240.00105,
+      "acquisition_gaps_over_120_minutes": 547,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 4.95694,
+          "insufficient_exposure_hours": 1338,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 23,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.01711309523809524,
+          "positive_capacity_exposure_hours": 18.742291388888887,
+          "insufficient_exposure_hours": 1321,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 389,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.28943452380952384,
+          "positive_capacity_exposure_hours": 388.2550425,
+          "insufficient_exposure_hours": 955,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1248,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9285714285714286,
+          "positive_capacity_exposure_hours": 1247.9957416666666,
+          "insufficient_exposure_hours": 96,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77821",
+      "source": "Neogy-AMPECO",
+      "name": "PALAONDA",
+      "eligible_ac_points": 4,
+      "points_without_observations": [],
+      "observations": 1493,
+      "cadence_median_minutes": 239.99798333333334,
+      "acquisition_gaps_over_120_minutes": 1088,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 2,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.001488095238095238,
+          "positive_capacity_exposure_hours": 1.5714305555555557,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 5.018498055555555,
+          "insufficient_exposure_hours": 1338,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 356,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2648809523809524,
+          "positive_capacity_exposure_hours": 354.70534583333335,
+          "insufficient_exposure_hours": 988,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1236,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9196428571428571,
+          "positive_capacity_exposure_hours": 1235.9950330555555,
+          "insufficient_exposure_hours": 108,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77824",
+      "source": "Neogy-AMPECO",
+      "name": "PALAONDA_03",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1385,
+      "cadence_median_minutes": 43.077549999999995,
+      "acquisition_gaps_over_120_minutes": 544,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 9,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.006696428571428571,
+          "positive_capacity_exposure_hours": 6.610547222222222,
+          "insufficient_exposure_hours": 1334,
+          "insufficient_nonfull_exposure_hours": 1
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 30,
+          "recent_usable_hours": 5,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.022321428571428572,
+          "positive_capacity_exposure_hours": 34.93557194444445,
+          "insufficient_exposure_hours": 1303,
+          "insufficient_nonfull_exposure_hours": 11
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 419,
+          "recent_usable_hours": 11,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.3117559523809524,
+          "positive_capacity_exposure_hours": 442.3108786111111,
+          "insufficient_exposure_hours": 898,
+          "insufficient_nonfull_exposure_hours": 27
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1221,
+          "recent_usable_hours": 15,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9084821428571429,
+          "positive_capacity_exposure_hours": 1243.2726541666666,
+          "insufficient_exposure_hours": 99,
+          "insufficient_nonfull_exposure_hours": 24
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77873",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_ASSOIMPRENDITORI",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 862,
+      "cadence_median_minutes": 239.96689999999998,
+      "acquisition_gaps_over_120_minutes": 542,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 10,
+          "recent_usable_hours": 1,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.00744047619047619,
+          "positive_capacity_exposure_hours": 7.641312777777777,
+          "insufficient_exposure_hours": 1333,
+          "insufficient_nonfull_exposure_hours": 1
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 32,
+          "recent_usable_hours": 1,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.023809523809523808,
+          "positive_capacity_exposure_hours": 26.416924444444444,
+          "insufficient_exposure_hours": 1310,
+          "insufficient_nonfull_exposure_hours": 2
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 392,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2916666666666667,
+          "positive_capacity_exposure_hours": 401.0027333333333,
+          "insufficient_exposure_hours": 942,
+          "insufficient_nonfull_exposure_hours": 10
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1232,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9166666666666666,
+          "positive_capacity_exposure_hours": 1243.9953408333333,
+          "insufficient_exposure_hours": 100,
+          "insufficient_nonfull_exposure_hours": 12
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77908",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_PONTE_RESIA",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77959",
+      "source": "Neogy-AMPECO",
+      "name": "CORNEDO",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:77961",
+      "source": "Neogy-AMPECO",
+      "name": "MEBO_RAST",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78048",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_CENTRUM",
+      "eligible_ac_points": 6,
+      "points_without_observations": [],
+      "observations": 4659,
+      "cadence_median_minutes": 20.885299999999997,
+      "acquisition_gaps_over_120_minutes": 1585,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 2,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.001488095238095238,
+          "positive_capacity_exposure_hours": 1.3711419444444444,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 4.816403333333334,
+          "insufficient_exposure_hours": 1338,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 341,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2537202380952381,
+          "positive_capacity_exposure_hours": 340.23360194444444,
+          "insufficient_exposure_hours": 1003,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1268,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9434523809523809,
+          "positive_capacity_exposure_hours": 1267.9954516666667,
+          "insufficient_exposure_hours": 76,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78099",
+      "source": "Neogy-AMPECO",
+      "name": "PARKING_MONDSHEIN",
+      "eligible_ac_points": 12,
+      "points_without_observations": [],
+      "observations": 7147,
+      "cadence_median_minutes": 79.5329,
+      "acquisition_gaps_over_120_minutes": 3285,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 2,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.001488095238095238,
+          "positive_capacity_exposure_hours": 1.2774483333333333,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 2,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.001488095238095238,
+          "positive_capacity_exposure_hours": 1.2777180555555554,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 321,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.23883928571428573,
+          "positive_capacity_exposure_hours": 320.2122086111111,
+          "insufficient_exposure_hours": 1023,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1268,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9434523809523809,
+          "positive_capacity_exposure_hours": 1267.9954516666667,
+          "insufficient_exposure_hours": 76,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78145",
+      "source": "Neogy-AMPECO",
+      "name": "APPIANO_04",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1037,
+      "cadence_median_minutes": 178.90658333333334,
+      "acquisition_gaps_over_120_minutes": 553,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 10,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.00744047619047619,
+          "positive_capacity_exposure_hours": 6.752330833333334,
+          "insufficient_exposure_hours": 1334,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 20,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.01488095238095238,
+          "positive_capacity_exposure_hours": 17.805743888888887,
+          "insufficient_exposure_hours": 1321,
+          "insufficient_nonfull_exposure_hours": 3
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 329,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.24479166666666666,
+          "positive_capacity_exposure_hours": 340.2576188888889,
+          "insufficient_exposure_hours": 1001,
+          "insufficient_nonfull_exposure_hours": 14
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 1252,
+          "recent_usable_hours": 16,
+          "comparable_calendar_supported": true,
+          "usable_fraction": 0.9315476190476191,
+          "positive_capacity_exposure_hours": 1283.3258361111111,
+          "insufficient_exposure_hours": 60,
+          "insufficient_nonfull_exposure_hours": 32
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78147",
+      "source": "Neogy-AMPECO",
+      "name": "APPIANO_03",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78196",
+      "source": "Neogy-AMPECO",
+      "name": "APPIANO_08",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78215",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_BOEHLER_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 1120,
+      "cadence_median_minutes": 3.6229666666666662,
+      "acquisition_gaps_over_120_minutes": 196,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 93,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.06919642857142858,
+          "positive_capacity_exposure_hours": 122.25787916666667,
+          "insufficient_exposure_hours": 1168,
+          "insufficient_nonfull_exposure_hours": 83
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 195,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.14508928571428573,
+          "positive_capacity_exposure_hours": 305.58531805555555,
+          "insufficient_exposure_hours": 981,
+          "insufficient_nonfull_exposure_hours": 168
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 329,
+          "recent_usable_hours": 5,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.24479166666666666,
+          "positive_capacity_exposure_hours": 612.6162038888889,
+          "insufficient_exposure_hours": 701,
+          "insufficient_nonfull_exposure_hours": 314
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 595,
+          "recent_usable_hours": 10,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4427083333333333,
+          "positive_capacity_exposure_hours": 921.1779136111111,
+          "insufficient_exposure_hours": 403,
+          "insufficient_nonfull_exposure_hours": 346
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78216",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_P_MATTEOTTI_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1822,
+      "cadence_median_minutes": 3.0907666666666667,
+      "acquisition_gaps_over_120_minutes": 422,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 31,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.023065476190476192,
+          "positive_capacity_exposure_hours": 20.254643333333334,
+          "insufficient_exposure_hours": 1311,
+          "insufficient_nonfull_exposure_hours": 2
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 109,
+          "recent_usable_hours": 6,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.08110119047619048,
+          "positive_capacity_exposure_hours": 91.24950861111111,
+          "insufficient_exposure_hours": 1218,
+          "insufficient_nonfull_exposure_hours": 17
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 392,
+          "recent_usable_hours": 11,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2916666666666667,
+          "positive_capacity_exposure_hours": 428.20116583333333,
+          "insufficient_exposure_hours": 895,
+          "insufficient_nonfull_exposure_hours": 57
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 719,
+          "recent_usable_hours": 11,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.5349702380952381,
+          "positive_capacity_exposure_hours": 789.5819941666666,
+          "insufficient_exposure_hours": 536,
+          "insufficient_nonfull_exposure_hours": 89
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78217",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_LAURIN_01",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78218",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_PIAVE_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 3084,
+      "cadence_median_minutes": 1.7634666666666667,
+      "acquisition_gaps_over_120_minutes": 431,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 53,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.03943452380952381,
+          "positive_capacity_exposure_hours": 36.73725388888889,
+          "insufficient_exposure_hours": 1280,
+          "insufficient_nonfull_exposure_hours": 11
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 218,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.16220238095238096,
+          "positive_capacity_exposure_hours": 214.476665,
+          "insufficient_exposure_hours": 1076,
+          "insufficient_nonfull_exposure_hours": 50
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 526,
+          "recent_usable_hours": 4,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.3913690476190476,
+          "positive_capacity_exposure_hours": 656.7012447222222,
+          "insufficient_exposure_hours": 655,
+          "insufficient_nonfull_exposure_hours": 163
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 791,
+          "recent_usable_hours": 12,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.5885416666666666,
+          "positive_capacity_exposure_hours": 982.7129886111111,
+          "insufficient_exposure_hours": 345,
+          "insufficient_nonfull_exposure_hours": 208
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78219",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_P_MAZZINI_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 763,
+      "cadence_median_minutes": 8.7939,
+      "acquisition_gaps_over_120_minutes": 194,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 40,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.02976190476190476,
+          "positive_capacity_exposure_hours": 62.84088361111111,
+          "insufficient_exposure_hours": 1242,
+          "insufficient_nonfull_exposure_hours": 62
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 91,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.06770833333333333,
+          "positive_capacity_exposure_hours": 177.61120055555557,
+          "insufficient_exposure_hours": 1113,
+          "insufficient_nonfull_exposure_hours": 140
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 311,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.23139880952380953,
+          "positive_capacity_exposure_hours": 457.35710472222223,
+          "insufficient_exposure_hours": 859,
+          "insufficient_nonfull_exposure_hours": 174
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 650,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4836309523809524,
+          "positive_capacity_exposure_hours": 826.9117725,
+          "insufficient_exposure_hours": 501,
+          "insufficient_nonfull_exposure_hours": 193
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78220",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_RESSEL_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1489,
+      "cadence_median_minutes": 0.3782166666666667,
+      "acquisition_gaps_over_120_minutes": 347,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 7,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.005208333333333333,
+          "positive_capacity_exposure_hours": 4.065003333333333,
+          "insufficient_exposure_hours": 1335,
+          "insufficient_nonfull_exposure_hours": 2
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 43,
+          "recent_usable_hours": 1,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.031994047619047616,
+          "positive_capacity_exposure_hours": 44.442529444444446,
+          "insufficient_exposure_hours": 1289,
+          "insufficient_nonfull_exposure_hours": 12
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 223,
+          "recent_usable_hours": 1,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.16592261904761904,
+          "positive_capacity_exposure_hours": 272.62983555555553,
+          "insufficient_exposure_hours": 1057,
+          "insufficient_nonfull_exposure_hours": 64
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 580,
+          "recent_usable_hours": 7,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.43154761904761907,
+          "positive_capacity_exposure_hours": 662.7735855555555,
+          "insufficient_exposure_hours": 666,
+          "insufficient_nonfull_exposure_hours": 98
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78221",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_KEPLERO_01",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78222",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_CONTI_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 881,
+      "cadence_median_minutes": 34.74155,
+      "acquisition_gaps_over_120_minutes": 333,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 15,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.011160714285714286,
+          "positive_capacity_exposure_hours": 10.495353055555556,
+          "insufficient_exposure_hours": 1327,
+          "insufficient_nonfull_exposure_hours": 2
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 37,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.027529761904761904,
+          "positive_capacity_exposure_hours": 28.999265833333332,
+          "insufficient_exposure_hours": 1302,
+          "insufficient_nonfull_exposure_hours": 5
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 210,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.15625,
+          "positive_capacity_exposure_hours": 225.25120694444445,
+          "insufficient_exposure_hours": 1106,
+          "insufficient_nonfull_exposure_hours": 28
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 606,
+          "recent_usable_hours": 10,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.45089285714285715,
+          "positive_capacity_exposure_hours": 620.8048002777778,
+          "insufficient_exposure_hours": 707,
+          "insufficient_nonfull_exposure_hours": 31
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78223",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_RESIA_FOOTBALL",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 629,
+      "cadence_median_minutes": 9.757816666666667,
+      "acquisition_gaps_over_120_minutes": 189,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 25,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.018601190476190476,
+          "positive_capacity_exposure_hours": 41.368339166666665,
+          "insufficient_exposure_hours": 1271,
+          "insufficient_nonfull_exposure_hours": 48
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 77,
+          "recent_usable_hours": 3,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.057291666666666664,
+          "positive_capacity_exposure_hours": 120.14477055555555,
+          "insufficient_exposure_hours": 1183,
+          "insufficient_nonfull_exposure_hours": 84
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 282,
+          "recent_usable_hours": 3,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.20982142857142858,
+          "positive_capacity_exposure_hours": 430.76705555555554,
+          "insufficient_exposure_hours": 890,
+          "insufficient_nonfull_exposure_hours": 172
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 555,
+          "recent_usable_hours": 3,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.41294642857142855,
+          "positive_capacity_exposure_hours": 713.1743627777778,
+          "insufficient_exposure_hours": 615,
+          "insufficient_nonfull_exposure_hours": 174
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78224",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_VOLTA_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 889,
+      "cadence_median_minutes": 16.362033333333333,
+      "acquisition_gaps_over_120_minutes": 227,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 57,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.04241071428571429,
+          "positive_capacity_exposure_hours": 80.74004027777778,
+          "insufficient_exposure_hours": 1201,
+          "insufficient_nonfull_exposure_hours": 86
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 146,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.10863095238095238,
+          "positive_capacity_exposure_hours": 237.7239438888889,
+          "insufficient_exposure_hours": 1042,
+          "insufficient_nonfull_exposure_hours": 156
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 358,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.2663690476190476,
+          "positive_capacity_exposure_hours": 607.3389494444444,
+          "insufficient_exposure_hours": 709,
+          "insufficient_nonfull_exposure_hours": 277
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 617,
+          "recent_usable_hours": 5,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.45907738095238093,
+          "positive_capacity_exposure_hours": 980.7790547222222,
+          "insufficient_exposure_hours": 347,
+          "insufficient_nonfull_exposure_hours": 380
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78225",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_MANCI_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 832,
+      "cadence_median_minutes": 1.9623166666666667,
+      "acquisition_gaps_over_120_minutes": 200,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 43,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.031994047619047616,
+          "positive_capacity_exposure_hours": 65.17750805555555,
+          "insufficient_exposure_hours": 1239,
+          "insufficient_nonfull_exposure_hours": 62
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 95,
+          "recent_usable_hours": 4,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.07068452380952381,
+          "positive_capacity_exposure_hours": 158.32671833333333,
+          "insufficient_exposure_hours": 1141,
+          "insufficient_nonfull_exposure_hours": 108
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 295,
+          "recent_usable_hours": 7,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.21949404761904762,
+          "positive_capacity_exposure_hours": 463.83533,
+          "insufficient_exposure_hours": 852,
+          "insufficient_nonfull_exposure_hours": 197
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 623,
+          "recent_usable_hours": 7,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4635416666666667,
+          "positive_capacity_exposure_hours": 799.4823497222222,
+          "insufficient_exposure_hours": 522,
+          "insufficient_nonfull_exposure_hours": 199
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78226",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_C_RISPARMIO_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 3034,
+      "cadence_median_minutes": 0.9448000000000001,
+      "acquisition_gaps_over_120_minutes": 437,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 44,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.03273809523809524,
+          "positive_capacity_exposure_hours": 37.456781944444444,
+          "insufficient_exposure_hours": 1282,
+          "insufficient_nonfull_exposure_hours": 18
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 169,
+          "recent_usable_hours": 4,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.12574404761904762,
+          "positive_capacity_exposure_hours": 197.89441027777778,
+          "insufficient_exposure_hours": 1094,
+          "insufficient_nonfull_exposure_hours": 81
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 466,
+          "recent_usable_hours": 8,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.34672619047619047,
+          "positive_capacity_exposure_hours": 637.4025691666667,
+          "insufficient_exposure_hours": 674,
+          "insufficient_nonfull_exposure_hours": 204
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 704,
+          "recent_usable_hours": 8,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.5238095238095238,
+          "positive_capacity_exposure_hours": 943.7616577777778,
+          "insufficient_exposure_hours": 381,
+          "insufficient_nonfull_exposure_hours": 259
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78227",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_M_PIEVE",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 938,
+      "cadence_median_minutes": 44.57178333333333,
+      "acquisition_gaps_over_120_minutes": 360,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 5,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.003720238095238095,
+          "positive_capacity_exposure_hours": 3.276096111111111,
+          "insufficient_exposure_hours": 1339,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 18,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.013392857142857142,
+          "positive_capacity_exposure_hours": 16.192334444444445,
+          "insufficient_exposure_hours": 1323,
+          "insufficient_nonfull_exposure_hours": 3
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 163,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.1212797619047619,
+          "positive_capacity_exposure_hours": 178.01872916666667,
+          "insufficient_exposure_hours": 1156,
+          "insufficient_nonfull_exposure_hours": 25
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 595,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4427083333333333,
+          "positive_capacity_exposure_hours": 614.3117533333333,
+          "insufficient_exposure_hours": 717,
+          "insufficient_nonfull_exposure_hours": 32
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78228",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_CAMPEGNO",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 480,
+      "cadence_median_minutes": 239.72226666666666,
+      "acquisition_gaps_over_120_minutes": 270,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 1,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.000744047619047619,
+          "positive_capacity_exposure_hours": 0.7141163888888888,
+          "insufficient_exposure_hours": 1342,
+          "insufficient_nonfull_exposure_hours": 1
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 6,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.004464285714285714,
+          "positive_capacity_exposure_hours": 7.5458002777777775,
+          "insufficient_exposure_hours": 1334,
+          "insufficient_nonfull_exposure_hours": 4
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 129,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.09598214285714286,
+          "positive_capacity_exposure_hours": 130.2666113888889,
+          "insufficient_exposure_hours": 1213,
+          "insufficient_nonfull_exposure_hours": 2
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 549,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.40848214285714285,
+          "positive_capacity_exposure_hours": 549.6907341666666,
+          "insufficient_exposure_hours": 793,
+          "insufficient_nonfull_exposure_hours": 2
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78229",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_RESIA_03",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 389,
+      "cadence_median_minutes": 59.53071666666666,
+      "acquisition_gaps_over_120_minutes": 150,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 11,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.00818452380952381,
+          "positive_capacity_exposure_hours": 21.836823055555556,
+          "insufficient_exposure_hours": 1312,
+          "insufficient_nonfull_exposure_hours": 21
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 39,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.029017857142857144,
+          "positive_capacity_exposure_hours": 84.33787583333333,
+          "insufficient_exposure_hours": 1241,
+          "insufficient_nonfull_exposure_hours": 64
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 207,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.15401785714285715,
+          "positive_capacity_exposure_hours": 276.5588425,
+          "insufficient_exposure_hours": 1053,
+          "insufficient_nonfull_exposure_hours": 84
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 546,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.40625,
+          "positive_capacity_exposure_hours": 635.6672966666666,
+          "insufficient_exposure_hours": 700,
+          "insufficient_nonfull_exposure_hours": 98
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78230",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_C_RISPARMIO_02",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 3574,
+      "cadence_median_minutes": 0.9121166666666666,
+      "acquisition_gaps_over_120_minutes": 431,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 85,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.06324404761904762,
+          "positive_capacity_exposure_hours": 55.653354444444446,
+          "insufficient_exposure_hours": 1242,
+          "insufficient_nonfull_exposure_hours": 17
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 244,
+          "recent_usable_hours": 2,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.18154761904761904,
+          "positive_capacity_exposure_hours": 223.79649805555556,
+          "insufficient_exposure_hours": 1047,
+          "insufficient_nonfull_exposure_hours": 53
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 580,
+          "recent_usable_hours": 7,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.43154761904761907,
+          "positive_capacity_exposure_hours": 701.7702655555555,
+          "insufficient_exposure_hours": 605,
+          "insufficient_nonfull_exposure_hours": 159
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 858,
+          "recent_usable_hours": 10,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.6383928571428571,
+          "positive_capacity_exposure_hours": 1029.7293255555555,
+          "insufficient_exposure_hours": 295,
+          "insufficient_nonfull_exposure_hours": 191
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78231",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_SASSARI_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 326,
+      "cadence_median_minutes": 123.25625,
+      "acquisition_gaps_over_120_minutes": 164,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 5,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.003720238095238095,
+          "positive_capacity_exposure_hours": 15.299775833333333,
+          "insufficient_exposure_hours": 1317,
+          "insufficient_nonfull_exposure_hours": 22
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 26,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.019345238095238096,
+          "positive_capacity_exposure_hours": 50.4225375,
+          "insufficient_exposure_hours": 1274,
+          "insufficient_nonfull_exposure_hours": 44
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 173,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.12872023809523808,
+          "positive_capacity_exposure_hours": 238.49241555555557,
+          "insufficient_exposure_hours": 1090,
+          "insufficient_nonfull_exposure_hours": 81
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 586,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.43601190476190477,
+          "positive_capacity_exposure_hours": 683.8434222222222,
+          "insufficient_exposure_hours": 648,
+          "insufficient_nonfull_exposure_hours": 110
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78232",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_C_AUGUSTA_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1989,
+      "cadence_median_minutes": 0.4002833333333333,
+      "acquisition_gaps_over_120_minutes": 438,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 15,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.011160714285714286,
+          "positive_capacity_exposure_hours": 9.919773333333334,
+          "insufficient_exposure_hours": 1325,
+          "insufficient_nonfull_exposure_hours": 4
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 52,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.03869047619047619,
+          "positive_capacity_exposure_hours": 59.45573527777778,
+          "insufficient_exposure_hours": 1264,
+          "insufficient_nonfull_exposure_hours": 28
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 268,
+          "recent_usable_hours": 4,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.19940476190476192,
+          "positive_capacity_exposure_hours": 323.4170225,
+          "insufficient_exposure_hours": 994,
+          "insufficient_nonfull_exposure_hours": 82
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 656,
+          "recent_usable_hours": 4,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4880952380952381,
+          "positive_capacity_exposure_hours": 745.4835180555556,
+          "insufficient_exposure_hours": 582,
+          "insufficient_nonfull_exposure_hours": 106
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78233",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_GALVANI_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 617,
+      "cadence_median_minutes": 47.43605,
+      "acquisition_gaps_over_120_minutes": 149,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 34,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.025297619047619048,
+          "positive_capacity_exposure_hours": 59.22862722222222,
+          "insufficient_exposure_hours": 1243,
+          "insufficient_nonfull_exposure_hours": 67
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 112,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.08333333333333333,
+          "positive_capacity_exposure_hours": 244.95873555555556,
+          "insufficient_exposure_hours": 1064,
+          "insufficient_nonfull_exposure_hours": 168
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 253,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.18824404761904762,
+          "positive_capacity_exposure_hours": 433.7050122222222,
+          "insufficient_exposure_hours": 886,
+          "insufficient_nonfull_exposure_hours": 205
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 595,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.4427083333333333,
+          "positive_capacity_exposure_hours": 787.5943369444444,
+          "insufficient_exposure_hours": 540,
+          "insufficient_nonfull_exposure_hours": 209
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78234",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_ROMA_01",
+      "eligible_ac_points": 1,
+      "points_without_observations": [],
+      "observations": 476,
+      "cadence_median_minutes": 44.309650000000005,
+      "acquisition_gaps_over_120_minutes": 170,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 14,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.010416666666666666,
+          "positive_capacity_exposure_hours": 28.849973333333335,
+          "insufficient_exposure_hours": 1296,
+          "insufficient_nonfull_exposure_hours": 34
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 41,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.03050595238095238,
+          "positive_capacity_exposure_hours": 107.84067722222223,
+          "insufficient_exposure_hours": 1208,
+          "insufficient_nonfull_exposure_hours": 95
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 184,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.13690476190476192,
+          "positive_capacity_exposure_hours": 335.79178277777777,
+          "insufficient_exposure_hours": 989,
+          "insufficient_nonfull_exposure_hours": 171
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 523,
+          "recent_usable_hours": 6,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.38913690476190477,
+          "positive_capacity_exposure_hours": 687.1214977777778,
+          "insufficient_exposure_hours": 641,
+          "insufficient_nonfull_exposure_hours": 180
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78236",
+      "source": "Neogy-AMPECO",
+      "name": "APPIANO_14",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78248",
+      "source": "Neogy-AMPECO",
+      "name": "RENON_01",
+      "eligible_ac_points": 2,
+      "points_without_observations": [],
+      "observations": 1280,
+      "cadence_median_minutes": 2.6018166666666667,
+      "acquisition_gaps_over_120_minutes": 323,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 1.2900924999999999,
+          "insufficient_exposure_hours": 1341,
+          "insufficient_nonfull_exposure_hours": 3
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 1.2900924999999999,
+          "insufficient_exposure_hours": 1341,
+          "insufficient_nonfull_exposure_hours": 3
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 91,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.06770833333333333,
+          "positive_capacity_exposure_hours": 124.38217666666667,
+          "insufficient_exposure_hours": 1218,
+          "insufficient_nonfull_exposure_hours": 35
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 411,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.30580357142857145,
+          "positive_capacity_exposure_hours": 544.3994738888889,
+          "insufficient_exposure_hours": 798,
+          "insufficient_nonfull_exposure_hours": 135
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78268",
+      "source": "Neogy-AMPECO",
+      "name": "BZ_INNSBRUCK_01",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    },
+    {
+      "site_id": "Neogy-AMPECO:78290",
+      "source": "Neogy-AMPECO",
+      "name": "HUB_ASPIAG_BZ_BUOZZI",
+      "eligible_ac_points": 0,
+      "points_without_observations": [],
+      "observations": 0,
+      "cadence_median_minutes": null,
+      "acquisition_gaps_over_120_minutes": 0,
+      "sensitivity": [
+        {
+          "gap_minutes": 60,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 120,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 240,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        },
+        {
+          "gap_minutes": 480,
+          "usable_hours": 0,
+          "recent_usable_hours": 0,
+          "comparable_calendar_supported": false,
+          "usable_fraction": 0.0,
+          "positive_capacity_exposure_hours": 0.0,
+          "insufficient_exposure_hours": 1344,
+          "insufficient_nonfull_exposure_hours": 0
+        }
+      ],
+      "identity_mapping": "unresolved; never joined across sources",
+      "historical_capacity": "unverified"
+    }
+  ],
+  "conclusion": "Readiness diagnostics only. No threshold changed, no inference executed, no forecast analytically validated."
+}

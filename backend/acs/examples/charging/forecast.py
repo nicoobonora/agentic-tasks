@@ -252,6 +252,7 @@ def forecast_site(site, raw, metadata_evidence, start, end, horizon, folds, pred
 
 
 def analysis_bundle(bundle):
+    threshold=bundle.parameters.get("service_threshold", .9)
     tables=[]
     for site in bundle.sites:
         cells=[]
@@ -268,7 +269,7 @@ def analysis_bundle(bundle):
                 demand=max(getattr(point,field) for point in site.points if point.p==p)
                 duration=site.mean_occupancy_hours
                 access=lambda c: immediate_access(demand,duration,c)
-                required=next((c for c in range(1001) if access(c)>=.9),None)
+                required=next((c for c in range(1001) if access(c)>=threshold),None)
                 if required is None:
                     cells.append(Cell(p=p,quantile=quantile,status='unavailable',reason='Capacity exceeds search bound 1000.'))
                     continue
@@ -276,14 +277,14 @@ def analysis_bundle(bundle):
                 cells.append(Cell(p=p,quantile=quantile,status='available',demand_per_hour=demand,
                     mean_occupancy_hours=duration,access_current=access(c),access_plus_2=access(c+2),access_plus_4=access(c+4),
                     access_restored=access(len(site.plug_ids)) if site.site_name=='RENON_01' else None,
-                    required_total_capacity=required,minimum_increment=next((d for d in (0,2,4) if access(c+d)>=.9),None)))
+                    required_total_capacity=required,minimum_increment=next((d for d in (0,2,4) if access(c+d)>=threshold),None)))
         tables.append(ControlTable(site_name=site.site_name,method=site.selected_method or 'timestral',
             period_start=bundle.forecast_start.date(),period_end=(bundle.forecast_start+timedelta(hours=bundle.horizon_hours)-timedelta(seconds=1)).date(),
             measure_nature='Conditional Erlang-B scenarios from peak hourly corrected demand, not an investment recommendation.',
             high_quantile_definition='pointwise_p90_peak',operational_capacity=site.scenario_capacity or 0,
             registry_capacity=len(site.plug_ids),restored_capacity=len(site.plug_ids) if site.site_name=='RENON_01' else None,
-            service_threshold=.9,cells=cells,evidence_ids=site.evidence_ids,limitations=site.limitations))
-    return AnalysisBundle(id=bundle.analysis_id,generated_at=bundle.generated_at,input_sha256=bundle.input_sha256,
+            service_threshold=threshold,cells=cells,evidence_ids=site.evidence_ids,limitations=site.limitations))
+    return AnalysisBundle(schema_version="1.0" if len(bundle.sites)==3 else "1.1", id=bundle.analysis_id,generated_at=bundle.generated_at,input_sha256=bundle.input_sha256,
         input_start=bundle.input_start,input_end=bundle.forecast_start,method_version=VERSION,
         cleaning_parameters=bundle.parameters,reconstruction_parameters={'formula':'A/E + p*(A/(E-F)-A/E)',
             'duration':'mean complete episodes 120s..48h; >=20 required',
@@ -293,7 +294,11 @@ def analysis_bundle(bundle):
         backtest={s.site_name:[b.model_dump(mode='json') for b in s.backtest] for s in bundle.sites},tables=tables)
 
 
-def run(end=None, days=56, horizon=168, folds=2, gap=120, min_minutes=10, min_fraction=.25, offline=False, predictor=None):
+def run(end=None, days=56, horizon=168, folds=2, gap=120, min_minutes=10, min_fraction=.25, offline=False, predictor=None, site_ids=None, service_threshold=.9, publish=True, db_path=None):
+    if not 0 < service_threshold < 1:
+        raise ValueError('Service threshold must be a probability between zero and one')
+    if site_ids is not None and (not site_ids or len(site_ids)>3 or len(set(site_ids))!=len(site_ids)):
+        raise ValueError('Select one to three distinct supported site IDs')
     if not 1<=horizon<=168 or not 1<=folds<=4 or not 1<=gap<=480 or not 1<=min_minutes<=60 or not 0<min_fraction<=1:
         raise ValueError('Invalid horizon, folds, gap, exposure or coverage settings')
     if not 28<=days<=180 or days*24-folds*horizon<336:
@@ -303,11 +308,13 @@ def run(end=None, days=56, horizon=168, folds=2, gap=120, min_minutes=10, min_fr
         raise ValueError('Forecast start must be aligned to a UTC hour')
     start=end-timedelta(days=days)
     inputs=[]
-    with transaction() as db:
-        for name in SITES:
-            site=db.execute("SELECT * FROM sites WHERE source='Neogy-AMPECO' AND name=?",(name,)).fetchone()
+    with transaction(db_path) as db:
+        for name in (site_ids if site_ids is not None else SITES):
+            site=db.execute("SELECT * FROM sites WHERE source='Neogy-AMPECO' AND "+("id=?" if site_ids is not None else "name=?"),(name,)).fetchone()
             if site is None:
                 raise ValueError(f'Missing current registry for {name}; download data first')
+            if site['name'] not in SITES:
+                raise ValueError('Unsupported site; forecasting currently supports the three validated AC groups only')
             raw={}
             metadata={json.loads(site['payload'])['evidence_id']}
             for plug in db.execute('SELECT * FROM plugs WHERE site_id=?',(site['id'],)):
@@ -322,29 +329,34 @@ def run(end=None, days=56, horizon=168, folds=2, gap=120, min_minutes=10, min_fr
                     (plug['id'],(start-timedelta(minutes=gap)).isoformat().replace('+00:00','Z'),
                      end.isoformat().replace('+00:00','Z')))]
             inputs.append((dict(site),raw,metadata))
-    predictor=predictor or Timestral(offline)
+    # Weights are loaded only after all eligibility checks reach actual inference.
     class Counted:
         calls=0
+        backend=predictor
         def predict(self, *args):
+            if self.backend is None:
+                self.backend=Timestral(offline)
             self.calls += 1
-            return predictor.predict(*args)
+            return self.backend.predict(*args)
     counted=Counted()
     sites=[forecast_site(site,raw,meta,start,end,horizon,folds,counted,gap,min_minutes,min_fraction) for site,raw,meta in inputs]
     evidence=sorted({e for s in sites for e in s.evidence_ids})
-    with transaction() as db:
+    with transaction(db_path) as db:
         fingerprint=input_fingerprint(db,evidence)
     ident='forecast:'+str(uuid.uuid4())
     bundle=ForecastBundle(id=ident,generated_at=datetime.now(timezone.utc),model_name=MODEL,model_revision=REVISION,
         method_version=VERSION,input_sha256=fingerprint,
         series_sha256=hashlib.sha256(canonical([s.model_dump(mode='json')['hours'] for s in sites]).encode()).hexdigest(),
         input_start=start,forecast_start=end,horizon_hours=horizon,
-        parameters={'history_days':days,'gap_minutes':gap,'minimum_exposure_minutes':min_minutes,
+        parameters={'service_threshold':service_threshold,'history_days':days,'gap_minutes':gap,'minimum_exposure_minutes':min_minutes,
                     'minimum_valid_fraction':min_fraction,'folds':folds,'selection':'minimum common-sample mean pinball; finite future required',
                     'minimum_comparable_days':4,'model_inference_calls':counted.calls,'imputed_fraction':0,'source':'Neogy-AMPECO','group':'AC <=22kW'},
         covariates=['local_hour_sin','local_hour_cos','local_weekday_sin','local_weekday_cos'],sites=sites,
         analysis_id='analysis:'+ident.split(':')[1],limitations=list(LIMITATIONS))
     analysis=analysis_bundle(bundle)
-    with transaction() as db:
+    if not publish:
+        return bundle, analysis
+    with transaction(db_path) as db:
         check_bundle(db,analysis)
         for kind,obj in [('forecast',bundle),('analysis',analysis)]:
             if get(db,kind,obj.id) is not None:

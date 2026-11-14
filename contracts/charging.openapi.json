@@ -694,7 +694,10 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "const": "1.0",
+            "enum": [
+              "1.0",
+              "1.1"
+            ],
             "title": "Schema Version",
             "default": "1.0"
           },
@@ -776,7 +779,7 @@
             },
             "type": "array",
             "maxItems": 3,
-            "minItems": 3,
+            "minItems": 1,
             "title": "Tables"
           }
         },

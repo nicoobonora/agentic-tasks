@@ -9,10 +9,12 @@
     "dev": "vite --host 127.0.0.1",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test:frontend": "playwright test"
+    "test:frontend": "playwright test",
+    "test:integration": "playwright test -c playwright.integration.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
+    "@types/node": "^22.20.5",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.10.1",
     "typescript": "^5.9.3",

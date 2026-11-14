@@ -1,14 +1,19 @@
 import "./style.css";
-import { ApiError, createClient, type Run } from "./client";
-import { createMockClient, tasks } from "./mock";
+import type { components as ChargingComponents } from "./charging-api-types";
+import { ApiError, createClient, type Run, type ToolArtifact } from "./client";
+import { createMockClient } from "./mock";
+import { tasks as chargingTasks } from "./tasks";
+import { tasks as testTasks } from "./test-tasks";
 
 const env = (import.meta as ImportMeta & { env: Record<string, string> }).env;
+const tasks = env.VITE_TEST_CATALOG === "generic" ? testTasks : chargingTasks;
 const remote = env.VITE_DATA_SOURCE === "api";
 const mode = env.VITE_RUN_MODE === "model" ? "model" : "mock";
 const api = remote
   ? createClient(env.VITE_API_BASE_URL || "")
   : createMockClient();
 const root = document.querySelector<HTMLDivElement>("#app")!;
+const artifacts = new Map<string, ToolArtifact>();
 const runs = new Map<string, Run>();
 const taskRuns = new Map<string, string>();
 const busy = new Set<string>();
@@ -154,6 +159,8 @@ function start(taskId: string) {
   if (!item || taskRuns.has(taskId)) return;
   const payload = {
     task: item.task,
+    capability_profile:
+      env.VITE_TEST_CATALOG === "generic" ? undefined : ("charging" as const),
     mode: (remote ? mode : "mock") as "model" | "mock",
     max_rounds: 3,
   };
@@ -167,20 +174,44 @@ function start(taskId: string) {
 function card(r: Run) {
   return `<button class="run-card ${selected === r.id ? "selected" : ""}" data-select="${esc(r.id)}"><span class="badge ${r.state}">${labels[r.state]}</span><strong>${esc(r.task.title)}</strong></button>`;
 }
+function evidenceLink(id: string) {
+  return `<button class="secondary evidence-link" data-evidence="${esc(id)}">Prova ${esc(id.slice(0, 12))}</button>`;
+}
+function forecastDetail(a: ToolArtifact) {
+  if (a.outcome.origin !== "forecast") return "";
+  if (a.outcome.status !== "available")
+    return `<p>Previsione non disponibile: ${esc(a.outcome.summary)}</p>`;
+  const f = a.outcome.data as ChargingComponents["schemas"]["ForecastBundle"];
+  if (!f.sites) return "";
+  return `<h4>Previsione · origine ${esc(f.forecast_start)} · ${esc(f.horizon_hours)} ore</h4><p>Generata ${esc(f.generated_at)} · analisi ${esc(f.analysis_id)}</p>${f.sites.map((s) => `<article><b>${esc(s.site_name)} · ${esc(s.selected_method ?? s.status)}</b><p>Copertura target: ${esc((s.valid_fraction * 100).toFixed(1))}%</p>${s.status !== "available" ? `<p>${esc(s.reason)}</p>` : `<details data-disclosure="points-${esc(a.id)}-${esc(s.site_id)}"><summary>Quantili orari · richieste/ora stimate</summary><table><thead><tr><th>Ora</th><th>p</th><th>p10</th><th>p50</th><th>p90</th></tr></thead><tbody>${s.points.map((p) => `<tr><td>${esc(p.time)}</td><td>${p.p}</td><td>${p.p10.toFixed(2)}</td><td>${p.p50.toFixed(2)}</td><td>${p.p90.toFixed(2)}</td></tr>`).join("")}</tbody></table></details>`}<details data-disclosure="backtest-${esc(a.id)}-${esc(s.site_id)}"><summary>Backtest e limiti</summary><pre>${esc(JSON.stringify({ backtest: s.backtest, limitations: s.limitations }, null, 2))}</pre></details></article>`).join("")}`;
+}
+function investigation(r: Run) {
+  const calls = r.tool_activity ?? [];
+  return `<section class="investigation" aria-label="Indagine e prove"><h3>Indagine e prove</h3>${r.turn_progress?.pending_job_id ? '<p role="status">Calcolo in attesa · il ruolo riprenderà sul risultato persistito.</p>' : ""}${calls.map((c) => `<details data-disclosure="tool-${esc(c.id)}"><summary>${esc(c.request.name)} · ${esc(c.status)}${c.cached ? " · cache verificata" : ""}</summary><p>${esc(c.summary)}</p><pre>${esc(JSON.stringify(c.normalized_parameters, null, 2))}</pre>${c.artifact_id ? evidenceLink(c.artifact_id) : ""}</details>`).join("") || "<p>Nessuna richiesta di strumenti registrata.</p>"}${(
+    r.evidence ?? []
+  )
+    .filter((e) => e.artifact_id)
+    .map((e) => {
+      const a = artifacts.get(e.artifact_id!);
+      if (!a) return "";
+      return `<details open data-disclosure="artifact-${esc(e.id)}"><summary>Prova ${esc(e.name)} · ${esc(a.outcome.status)}</summary><p>Origine: ${esc(a.outcome.origin)} · metodo ${esc(a.outcome.method)} · versione ${esc(a.outcome.method_version)}</p><p>${esc(a.outcome.summary)}</p><p>Consultazione: ${esc(a.outcome.queried_at)} (non data delle osservazioni)</p><ul>${(a.outcome.limitations ?? []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>${forecastDetail(a)}<details data-disclosure="raw-${esc(a.id)}"><summary>Dati e provenienza</summary><pre>${esc(JSON.stringify(a.outcome.data, null, 2))}</pre></details></details>`;
+    })
+    .join("")}</section>`;
+}
 function proposal(r: Run) {
   const p = r.proposal;
   if (!p) return "";
-  return `<section class="proposal"><div class="eyebrow">${p.status === "draft" ? "Bozza" : p.status === "conditional" ? "Proposta condizionata" : "Proposta finale"} · v${p.version}${p.version !== r.proposal_version ? " · versione precedente" : ""}</div><h3>${esc(p.summary)}</h3>${p.recommended_actions.map((a) => `<div class="action"><strong>${esc(a.title)}</strong><p>${esc(a.description)}</p><small>${esc(a.rationale)}</small></div>`).join("")}<h4>Rischi</h4>${p.risks.length ? `<ul>${p.risks.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessun rischio segnalato.</p>"}<h4>Questioni irrisolte</h4>${p.unresolved_questions.length ? `<ul>${p.unresolved_questions.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessuna questione segnalata.</p>"}${r.state === "proposal_ready" ? `<label>Il tuo nome<input data-field="actor" maxlength="200" value="${esc(draft(r).actor)}"></label><button data-approve ${busy.has(r.id) || (r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? "disabled" : ""}>Approva proposta</button><p class="muted">L’approvazione riguarda il documento. Nessuna azione verrà eseguita.${(r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? " Prima occorre risolvere le obiezioni bloccanti." : ""}</p>` : ""}${r.approval ? `<p class="approved-note">Approvata da ${esc(r.approval.actor)} · nessuna azione eseguita.</p>` : ""}</section>`;
+  return `<section class="proposal"><div class="eyebrow">${p.status === "draft" ? "Bozza" : p.status === "conditional" ? "Proposta condizionata" : "Proposta finale"} · v${p.version}${p.version !== r.proposal_version ? " · versione precedente" : ""}</div><h3>${esc(p.summary)}</h3>${p.recommended_actions.map((a) => `<div class="action"><strong>${esc(a.title)}</strong><p>${esc(a.description)}</p><small>${esc(a.rationale)}</small>${a.evidence_ids.map(evidenceLink).join(" ")}</div>`).join("")}<h4>Rischi</h4>${p.risks.length ? `<ul>${p.risks.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessun rischio segnalato.</p>"}<h4>Questioni irrisolte</h4>${p.unresolved_questions.length ? `<ul>${p.unresolved_questions.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p>Nessuna questione segnalata.</p>"}${r.state === "proposal_ready" ? `<label>Il tuo nome<input data-field="actor" maxlength="200" value="${esc(draft(r).actor)}"></label><button data-approve ${busy.has(r.id) || (r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? "disabled" : ""}>Approva proposta</button><p class="muted">L’approvazione riguarda il documento. Nessuna azione verrà eseguita.${(r.objections ?? []).some((o) => o.status === "open" && o.blocking) ? " Prima occorre risolvere le obiezioni bloccanti." : ""}</p>` : ""}${r.approval ? `<p class="approved-note">Approvata da ${esc(r.approval.actor)} · nessuna azione eseguita.</p>` : ""}</section>`;
 }
 function detail(r: Run) {
   const q = r.question,
     d = draft(r);
   return `<div class="detail-header"><span class="badge ${r.state}">${labels[r.state]}</span><h2>${esc(r.task.title)}</h2><details data-disclosure="context"><summary>Dettagli del task e fonti</summary><p>${esc(r.task.description)}</p><p>${esc(r.task.context || "Nessun contesto aggiuntivo.")}</p><small>Modalità ${esc(r.mode)}${r.model ? " · " + esc(r.model) : ""} · ciclo ${r.cycle} · round ${r.round}/${r.max_rounds}</small><p>${esc(r.notice)}</p><p>Input forniti dall’utente, non certificazioni esterne.</p>${(r.evidence ?? []).map((e) => `<article><strong>${esc(e.name)}</strong> · ${esc(e.origin)}<p>${esc(e.text || "Riferimento non letto")}</p>${e.url ? `<p>${esc(e.url)}</p>` : ""}</article>`).join("")}</details>${remote && connection.get(r.id)?.includes("connessione") ? `<p class="muted" role="status">${esc(connection.get(r.id))}</p>` : ""}</div>
-  <div class="conversation">${(r.messages ?? []).length ? (r.messages ?? []).map((m) => `<article class="message ${m.actor}"><header><strong>${esc(actors[m.actor])}</strong></header><p>${esc(m.content.text)}</p><details data-disclosure="message-${esc(m.id)}"><summary>Motivazione e ipotesi</summary><p>${esc(m.content.explanation)}</p>${m.content.applicability === "not_applicable" ? '<p class="muted">Ruolo non applicabile a questa valutazione</p>' : ""}${m.content.claims.map((c) => `<p class="claim"><b>${{ supported: "Supportato da input · non verificato esternamente", assumption: "Ipotesi", estimate: "Stima" }[c.basis]}</b> — ${esc(c.statement)}${c.evidence_ids.length ? " · fonti: " + c.evidence_ids.map(esc).join(", ") : ""}</p>`).join("")}</details></article>`).join("") : '<p class="muted">Il task è stato preso in carico. In attesa del primo turno.</p>'}${r.state === "running" ? `<p class="working"><span></span>${esc(actors[r.next_role])} sta lavorando…</p>` : ""}</div>
+  <div class="conversation">${(r.messages ?? []).length ? (r.messages ?? []).map((m) => `<article class="message ${m.actor}"><header><strong>${esc(actors[m.actor])}</strong></header><p>${esc(m.content.text)}</p><details data-disclosure="message-${esc(m.id)}"><summary>Motivazione e ipotesi</summary><p>${esc(m.content.explanation)}</p>${m.content.applicability === "not_applicable" ? '<p class="muted">Ruolo non applicabile a questa valutazione</p>' : ""}${m.content.claims.map((c) => `<p class="claim"><b>${{ supported: "Supportato da input · non verificato esternamente", assumption: "Ipotesi", estimate: "Stima" }[c.basis]}</b> — ${esc(c.statement)}${c.evidence_ids.length ? " · fonti: " + c.evidence_ids.map(evidenceLink).join(" ") : ""}</p>`).join("")}</details></article>`).join("") : '<p class="muted">Il task è stato preso in carico. In attesa del primo turno.</p>'}${r.state === "running" ? `<p class="working"><span></span>${esc(actors[r.next_role])} sta lavorando…</p>` : ""}</div>
   ${(r.objections ?? []).length ? `<section class="objections"><h3>Obiezioni</h3>${(r.objections ?? []).map((o) => `<p><strong>${esc(o.concern)}</strong> · ${o.status === "open" ? "Aperta" : "Risolta"}${o.blocking ? " · bloccante" : ""}<br>${esc(o.explanation)}${o.resolution ? "<br>Risoluzione: " + esc(o.resolution.explanation) : ""}</p>`).join("")}</section>` : ""}
   ${r.state === "awaiting_input" && q ? `<form class="question"><div class="eyebrow">Intervento richiesto · ${q.reason === "round_limit" ? "Limite round raggiunto" : "Domanda degli agenti"}</div><h3>${esc(q.text)}</h3><p>${esc(q.explanation)}</p><details data-disclosure="identity"><summary>Rispondi come ${esc(d.actor)}</summary><label>Il tuo nome<input data-field="actor" maxlength="200" required value="${esc(d.actor)}"></label></details><label>Scelta<select data-field="option"><option value="">Scrivi una risposta oppure scegli…</option>${q.options.map((o) => `<option value="${esc(o.id)}" ${d.option === o.id ? "selected" : ""}>${esc(o.label)}</option>`).join("")}</select></label>${d.option ? `<p class="option-help">${esc(q.options.find((o) => o.id === d.option)?.explanation)}</p>` : ""}<label>Risposta libera<textarea data-field="text" maxlength="10000" placeholder="Aggiungi indicazioni per gli agenti…">${esc(d.text)}</textarea></label><button type="submit" ${busy.has(r.id) ? "disabled" : ""}>Invia risposta e riprendi</button>${q.reason === "round_limit" && r.proposal ? `<button type="button" class="secondary" data-finalize ${busy.has(r.id) ? "disabled" : ""}>Finalizza mantenendo i disaccordi</button><p>Non risolve le obiezioni e non certifica le ipotesi.</p>` : ""}</form>` : ""}
   ${r.state === "failed" ? `<section class="failure"><h3>Elaborazione interrotta</h3><p>${esc(r.error?.message || "Errore non specificato")}</p><button data-retry ${busy.has(r.id) ? "disabled" : ""}>Riprova il turno</button></section>` : ""}
-  ${proposal(r)}`;
+  ${investigation(r)}${proposal(r)}<details data-disclosure="versions"><summary>Versioni della proposta</summary>${(r.proposals ?? []).map((p) => `<article><b>v${p.version} · ${esc(p.status)}</b><p>${esc(p.summary)}</p></article>`).join("")}</details>`;
 }
 function render() {
   const oldDetail = root.querySelector(".detail");
@@ -275,6 +306,26 @@ root.addEventListener("click", (event) => {
   if (el.hasAttribute("data-finalize")) answer(true);
   const r = selected ? runs.get(selected) : undefined;
   if (!r) return;
+  if (el.dataset.evidence) {
+    const id = el.dataset.evidence;
+    void api
+      .artifact(r.id, id)
+      .then((a) => {
+        artifacts.set(id, a);
+        render();
+        const detail = root.querySelector<HTMLDetailsElement>(
+          `[data-disclosure="artifact-${CSS.escape(id)}"]`,
+        );
+        if (detail) {
+          detail.open = true;
+          detail.scrollIntoView({ block: "nearest" });
+        }
+      })
+      .catch((e) => {
+        error = String(e);
+        render();
+      });
+  }
   if (el.hasAttribute("data-retry")) {
     const payload = { proposal_version: r.proposal_version };
     void perform(r.id, payload, (key) =>

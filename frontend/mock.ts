@@ -7,38 +7,7 @@ import {
 } from "./client";
 type Run = Required<ApiRun>;
 export type Client = ReturnType<typeof createClient>;
-export const tasks: { id: string; task: Task; fail?: boolean }[] = [
-  {
-    id: "guide",
-    task: {
-      title: "Accogliere nuovi volontari",
-      description:
-        "Preparare una breve guida per i nuovi volontari della biblioteca.",
-      context:
-        "Usare le risorse già disponibili. La lunghezza della guida è da concordare.",
-    },
-  },
-  {
-    id: "meeting",
-    task: {
-      title: "Organizzare la riunione di progetto",
-      description:
-        "Proporre un ordine del giorno e una checklist per una riunione di allineamento.",
-      context: "Durata e partecipanti sono da confermare.",
-    },
-  },
-  {
-    id: "review",
-    fail: true,
-    task: {
-      title: "Rivedere il processo di onboarding",
-      description:
-        "Preparare una proposta per rendere più chiaro il primo giorno di lavoro.",
-      context:
-        "Scenario dimostrativo: errore simulato al primo turno, recuperabile con retry.",
-    },
-  },
-];
+import { tasks } from "./test-tasks";
 const copy = <T>(x: T): T => structuredClone(x);
 const now = () => new Date().toISOString();
 async function hash(text: string) {
@@ -186,17 +155,23 @@ export function createMockClient(delay = 1000): Client {
           id: crypto.randomUUID(),
           proposal_version: r.proposal_version,
           reason: "agent_request",
-          text: "Quanto deve essere dettagliata la prima versione?",
+          text: r.capability_profile
+            ? "Quali unità e vincoli operativi vuoi confermare? (Dialogo simulato)"
+            : "Quanto deve essere dettagliata la prima versione?",
           explanation: "La risposta guiderà la revisione della proposta.",
           options: [
             {
               id: "short",
-              label: "Sintetica",
+              label: r.capability_profile
+                ? "Definire perimetro e punti di ricarica"
+                : "Sintetica",
               explanation: "Una checklist essenziale da rivedere insieme.",
             },
             {
               id: "detailed",
-              label: "Dettagliata",
+              label: r.capability_profile
+                ? "Raccogliere prima i dati mancanti"
+                : "Dettagliata",
               explanation:
                 "Una bozza con istruzioni e responsabilità da validare.",
             },
@@ -213,6 +188,10 @@ export function createMockClient(delay = 1000): Client {
     }, delay);
   }
   return {
+    artifact: async () => {
+      throw new Error("Il mock locale non produce prove analitiche reali.");
+    },
+    tools: async () => [],
     health: async () => ({
       status: "ok",
       api_version: "2.0",
@@ -228,6 +207,12 @@ export function createMockClient(delay = 1000): Client {
           throw new Error("Il simulatore supporta solo mode=mock.");
         const r: Run = {
           schema_version: "2.0",
+          provider_attempts: null,
+          model_usage: {},
+          capability_profile: body.capability_profile ?? null,
+          profile_version: body.capability_profile ? "1" : null,
+          turn_progress: null,
+          tool_activity: [],
           id: crypto.randomUUID(),
           task: copy(body.task),
           mode: "mock",
