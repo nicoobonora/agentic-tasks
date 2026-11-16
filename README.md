@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/pearl-logo.png" alt="Pearl" width="400">
+</p>
+
 # Agentic Tasks — multi-agent discussion of a task
 
 A service that takes a task written in natural language (title, description, optional context and attachments) and has a small group of agents with different roles discuss it. The agents propose, challenge and revise a draft until they reach a proposal, or they stop and ask a person for a decision. The result is a **versioned proposal** with recommended actions, risks and open issues, linked to the evidence that supports it.
@@ -147,7 +151,7 @@ The guides are written in Italian.
 - Contracts: [OpenAPI](contracts/openapi.json), [agent turns](contracts/agent-turn.schema.json), [events](contracts/events.schema.json). Client: [client.ts](frontend/client.ts) and [generated types](frontend/api-types.ts).
 - [AGENTS.md](AGENTS.md): instructions for AI agents working on the repository.
 
-## Authors
+## Authors (Pearl Team)
 
 - Nico Bonora
 - Vittorio Matteo Covini
