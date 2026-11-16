@@ -255,6 +255,17 @@ approvata, il pulsante del piano. I titoli usano
 Instrument Serif, il resto Glacial Indifference; entrambi (licenza SIL OFL) sono
 inclusi in `frontend/fonts/`, senza richieste a CDN esterni.
 
+Interruttore “Easy read” in basso a sinistra: modalità di lettura a distanza
+(schermo condiviso, proiettore). Aggiunge la classe `readable` a `<html>`: testo
+molto più grande (base 19px, sintesi dei ruoli 28px, domanda 24px), contrasto
+elevato (testo bianco pieno, bordi più marcati, nessuna attenuazione dei pannelli
+inattivi) e nasconde i dettagli secondari: righe tool nei pannelli, chip delle
+fonti, paginazione dei turni, segnaposto, obiezioni risolte e maniglie dei ticket.
+Restano visibili stato dei ruoli, base dei claim (Data/Estimate/Assumption),
+obiezioni aperte, domanda, piano, dialoghi ed etichette demo/mock. È solo una
+preferenza di visualizzazione per browser (`localStorage`, chiave
+`acs-readable-mode`): non modifica run, comandi o dati del server.
+
 Su mobile ticket e completati diventano barre compatte sopra e sotto il
 workspace. Le tre valutazioni rimangono affiancate. SSE conserva testo libero,
 scelta, posizione dei pannelli e dettaglio aperto; non reinvia le operazioni.

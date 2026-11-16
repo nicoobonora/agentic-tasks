@@ -211,3 +211,30 @@ for (const viewport of [
     await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 }
+
+test("easy-read switch raises contrast, hides details and persists", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.locator('[data-task="guide"]').dragTo(page.locator("[data-drop]"));
+  await expect(page.locator(".question")).toBeVisible({ timeout: 10000 });
+  await page.screenshot({ path: "test-results/readable-off.png" });
+  const toggle = page.getByRole("switch", { name: "Easy read" });
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
+  await expect(page.locator("html")).toHaveClass(/readable/);
+  await expect(page.locator(".agent-panel .pager").first()).toBeHidden();
+  for (const chip of await page.locator(".agent-body .chip").all())
+    await expect(chip).toBeHidden();
+  // Questions, headlines and claim bases stay visible.
+  await expect(page.locator(".question")).toBeVisible();
+  await expect(page.locator(".headline").first()).toBeVisible();
+  await page.screenshot({ path: "test-results/readable-on.png" });
+  await page.reload();
+  await expect(
+    page.getByRole("switch", { name: "Easy read" }),
+  ).toHaveAttribute("aria-checked", "true");
+  await page.getByRole("switch", { name: "Easy read" }).click();
+  await expect(page.locator("html")).not.toHaveClass(/readable/);
+});

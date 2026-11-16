@@ -59,6 +59,26 @@ try {
 } catch {
   /* Storage may be unavailable; nothing to clean. */
 }
+// Readable mode: a per-viewer display preference only (higher contrast, fewer
+// secondary details). It never changes runs, commands or what the server stores.
+const READABLE_KEY = "acs-readable-mode";
+let readable = false;
+try {
+  readable = localStorage.getItem(READABLE_KEY) === "1";
+} catch {
+  /* Storage may be unavailable; default to the standard view. */
+}
+function setReadable(on: boolean) {
+  readable = on;
+  try {
+    localStorage.setItem(READABLE_KEY, on ? "1" : "0");
+  } catch {
+    /* Preference simply won't persist. */
+  }
+}
+function readableSwitch() {
+  return `<button type="button" class="readable-toggle" role="switch" aria-checked="${readable}" data-readable title="${readable ? "Back to the full view" : "Larger text, higher contrast, fewer details"}"><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span><span class="switch-label">Easy read</span></button>`;
+}
 function accept(r: Run) {
   const current = runs.get(r.id);
   // SSE replay or a slow GET must not replace a newer snapshot.
@@ -485,7 +505,8 @@ function render() {
       ),
     ).map((el) => el.dataset.disclosure),
   );
-  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Available tickets"><div class="column-title"><h2>Tickets</h2><span>${pending.length}</span></div><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Start task: ${esc(t.task.title)}" title="Start task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">All tickets are assigned.</p>'}</div>${activeRuns.length ? `<nav class="active-runs" aria-label="Tasks in progress">${activeRuns.map(card).join("")}</nav>` : ""}</aside><section class="column workspace" aria-label="Workspace" data-drop>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Close</button></div>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assign the first ticket</h2><p>Drag it here, or press ↗ on the ticket.<br>The agents will discuss it and ask you for what they need.</p><small>Demo with fictional tickets and simulated dialogues.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Drop the ticket to start</div></section><aside class="column results" aria-label="Completed tasks"><div class="column-title"><h2>Completed</h2><span>${done.length}</span></div><div class="cards">${done.map(card).join("")}</div></aside></main>`;
+  root.innerHTML = `<main class="board"><aside class="column backlog" aria-label="Available tickets"><div class="column-title"><h2>Tickets</h2><span>${pending.length}</span></div><div class="cards">${pending.map((t) => `<article class="task-card" draggable="${!busy.has(t.id)}" data-task="${t.id}"><span class="grip" aria-hidden="true">⠿</span><h3>${esc(t.task.title)}</h3><button class="start-button" data-start="${t.id}" aria-label="Start task: ${esc(t.task.title)}" title="Start task" ${busy.has(t.id) ? "disabled" : ""}>${busy.has(t.id) ? "…" : "↗"}</button></article>`).join("") || '<p class="empty-small">All tickets are assigned.</p>'}</div>${activeRuns.length ? `<nav class="active-runs" aria-label="Tasks in progress">${activeRuns.map(card).join("")}</nav>` : ""}</aside><section class="column workspace" aria-label="Workspace" data-drop>${error ? `<div class="error" role="alert">${esc(error)} <button data-dismiss class="secondary">Close</button></div>` : ""}<div class="detail">${r ? detail(r) : '<div class="empty"><span class="empty-icon" aria-hidden="true">↘</span><h2>Assign the first ticket</h2><p>Drag it here, or press ↗ on the ticket.<br>The agents will discuss it and ask you for what they need.</p><small>Demo with fictional tickets and simulated dialogues.</small></div>'}</div><div class="drop-overlay" aria-hidden="true">Drop the ticket to start</div></section><aside class="column results" aria-label="Completed tasks"><div class="column-title"><h2>Completed</h2><span>${done.length}</span></div><div class="cards">${done.map(card).join("")}</div></aside></main>${readableSwitch()}`;
+  document.documentElement.classList.toggle("readable", readable);
   if (drawer && r) {
     root.insertAdjacentHTML(
       "beforeend",
@@ -563,6 +584,12 @@ root.addEventListener("submit", (event) => {
 root.addEventListener("click", (event) => {
   const el = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
   if (!el || el.disabled) return;
+  if (el.hasAttribute("data-readable")) {
+    setReadable(!readable);
+    render();
+    root.querySelector<HTMLButtonElement>("[data-readable]")?.focus();
+    return;
+  }
   if (el.dataset.drawer) {
     drawer = el.dataset.drawer;
     render();
