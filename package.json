@@ -2,6 +2,12 @@
   "name": "chargeco-contracts",
   "version": "1.0.0",
   "private": true,
+  "author": "Nico Bonora",
+  "contributors": [
+    "Vittorio Matteo Covini",
+    "Paolo Pinto"
+  ],
+  "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "contracts:types": "openapi-typescript contracts/openapi.json -o frontend/api-types.ts && openapi-typescript contracts/charging.openapi.json -o frontend/charging-api-types.ts",

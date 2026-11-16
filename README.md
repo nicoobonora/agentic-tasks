@@ -82,3 +82,12 @@ provider/predictor controllati, riavvio durante job). Live esplicito:
 `python -m scripts.smoke_investigation`; usa un backup isolato e chiamate reali
 potenzialmente a pagamento. Risultati e limiti in
 [IMPLEMENTATION-PROGRESS.md](docs/IMPLEMENTATION-PROGRESS.md).
+
+## Autori
+
+- Nico Bonora
+- Vittorio Matteo Covini
+- Paolo Pinto
+
+Copyright (C) 2026 Nico Bonora, Vittorio Matteo Covini, Paolo Pinto.
+Distribuito sotto licenza GNU AGPL v3 (vedi [LICENSE](LICENSE)).
